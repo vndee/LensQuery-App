@@ -6,16 +6,15 @@
  */
 
 import React from 'react';
-import { iphoneXSeries } from './src/utils/Device';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-// screens
-import Lens from './src/screens/Lens/Lens';
+import store from './src/redux/store';
+import { Provider } from 'react-redux';
+import MainApplication from './src/MainApplication';
 
 function App(): JSX.Element {
   return (
-    <GestureHandlerRootView style={iphoneXSeries}>
-      <Lens />
-    </GestureHandlerRootView>
+    <Provider store={store}>
+      <MainApplication />
+    </Provider>
   );
 }
 
