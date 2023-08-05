@@ -1,7 +1,7 @@
-export const Colors = {
+export default {
   primary: '#ce393e',
-  lightPrimary: '#f6a9bb',
-  background: '#f5f5f5',
+  light_primary: '#f6a9bb',
+  background: '#ffffff',
 
   link: '#188aeb',
   placeholder: '#ced0d4',
