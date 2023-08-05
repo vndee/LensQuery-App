@@ -3,11 +3,11 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   body: {
-    fontSize: 16,
+    fontSize: 14,
     color: Colors.text_color
   },
   title: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '600',
     color: Colors.text_color,
   },

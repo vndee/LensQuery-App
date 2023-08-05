@@ -1,14 +1,19 @@
 import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Colors, Spacing, Typography, Layout } from '../../styles/index';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import Storage from '../../storage';
 import Button from '../../components/Button';
 import { setLogin } from '../../redux/slice/auth';
+import TextInputWithIcon from '../../components/Input';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Login = (): JSX.Element => {
   const dispatch = useDispatch();
   const { isLogin } = useSelector((state: any) => state.auth);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
   console.log('~ isLogin:', isLogin);
 
@@ -19,6 +24,13 @@ const Login = (): JSX.Element => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <TextInputWithIcon
+        icon="mail-outline"
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
       <Button label="Login" onPress={handleLogin} />
     </ScrollView>
   );
@@ -27,7 +39,6 @@ const Login = (): JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     ...Layout.content,
-    backgroundColor: Colors.background,
     justifyContent: 'center',
   },
 });
