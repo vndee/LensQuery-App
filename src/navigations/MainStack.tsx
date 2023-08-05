@@ -1,24 +1,26 @@
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // screens
 import Lens from '../screens/Lens/Lens';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const MainStack = (): JSX.Element => {
   return (
-    <NavigationContainer>
+    <>
       <StatusBar
         translucent={true}
         backgroundColor={'transparent'}
         barStyle="dark-content"
       />
-      <Stack.Navigator>
-        <Stack.Screen name="Lens" component={Lens} options={{ headerShown: false }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ title: undefined }} initialRouteName="Lens">
+          <Stack.Screen name="Lens" component={Lens} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
   );
 };
 
