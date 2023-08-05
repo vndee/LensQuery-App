@@ -1,13 +1,30 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { View, Text, StyleSheet } from 'react-native';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
 
+import Storage from '../../storage';
+import Button from '../../components/Button';
+import { setLogin } from '../../redux/slice/auth';
+import { Colors, Spacing, Typography, Layout } from '../../styles';
+
 const Lens = (): JSX.Element => {
+  const dispatch = useDispatch();
   const cameraRef = useRef<Camera>(null);
   const devices = useCameraDevices();
   const device = devices.back;
 
-  if (!device) return <View />;
+  const handleLogout = () => {
+    console.log('~ handleClearAll');
+    Storage.clearAll();
+    dispatch(setLogin(false));
+  };
+
+  if (!device) return (
+    <View style={styles.container}>
+      <Button label="Logout" onPress={handleLogout} />
+    </View>
+  );
 
   return (
     <Camera
@@ -19,6 +36,12 @@ const Lens = (): JSX.Element => {
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    ...Layout.content,
+    backgroundColor: Colors.background,
+    justifyContent: 'center',
+  },
+});
 
 export default Lens;

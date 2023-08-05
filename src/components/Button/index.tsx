@@ -8,7 +8,11 @@ const Button = ({ label, onPress, disabled }: {
   disabled?: boolean,
 }): JSX.Element => {
   return (
-    <TouchableOpacity style={styles.touchable} disabled={disabled}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={styles.touchable}
+      disabled={disabled}
+    >
       <Text style={styles.label}>{label}</Text>
     </TouchableOpacity>
   );
