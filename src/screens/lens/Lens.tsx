@@ -1,15 +1,24 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, Button} from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, Button } from 'react-native';
+import { Camera, useCameraDevices } from 'react-native-vision-camera';
 
 const Lens = (): JSX.Element => {
-  const [count, setCount] = useState(0);
+  const cameraRef = useRef<Camera>(null);
+  const devices = useCameraDevices();
+  const device = devices.back;
+
+  if (!device) return <View />;
 
   return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-    </div>
+    <Camera
+      ref={cameraRef}
+      style={StyleSheet.absoluteFill}
+      device={device}
+      isActive={true}
+    />
   );
 };
 
 const styles = StyleSheet.create({});
+
+export default Lens;

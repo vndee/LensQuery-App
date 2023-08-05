@@ -5380,6 +5380,11 @@ react-native-gesture-handler@^2.12.1:
     lodash "^4.17.21"
     prop-types "^15.7.2"
 
+react-native-vision-camera@^2.15.5:
+  version "2.15.5"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-2.15.5.tgz#03aa75fa04e3ec9c619aaf17d77c792f730cf78f"
+  integrity sha512-EtC3mlAOBgPTYa0AeTrp2wJCe6bnUlIMJe7rx9N2VxWQA7prOq+xb7Qdx7GPTep+YTgqnN6HoGobdDSJo0Dt5A==
+
 react-native@0.72.3:
   version "0.72.3"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.72.3.tgz#f8d85ec81c9f3592d091ec8e9ac1694956a72765"
