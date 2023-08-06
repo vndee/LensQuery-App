@@ -60,31 +60,32 @@ const Login = (): JSX.Element => {
     if (isRememberMe) {
       Storage.set('auth.email', email);
       Storage.set('auth.password', password);
-      firebaseAuth.signInWithEmailAndPassword(email, password).then((userCredential) => {
-        console.debug(userCredential);
-        // dispatch(setLogin(true));
-      }).catch((error) => {
-        switch (error.code) {
-          case FirebaseSignInResponse.WRONG_PASSWORD:
-            console.debug('wrong password');
-            break;
-          case FirebaseSignInResponse.USER_NOT_FOUND:
-            console.debug('user not found');
-            break;
-          case FirebaseSignInResponse.USER_DISABLED:
-            console.debug('user disabled');
-            break;
-          case FirebaseSignInResponse.TOO_MANY_REQUESTS:
-            console.debug('too many requests');
-            break;
-          default:
-            console.debug('unknown error:', error);
-            break;
-        }
-      });
     } else {
       clearAuthInformation();
     }
+
+    firebaseAuth.signInWithEmailAndPassword(email, password).then((userCredential) => {
+      console.debug(userCredential);
+      // dispatch(setLogin(true));
+    }).catch((error) => {
+      switch (error.code) {
+        case FirebaseSignInResponse.WRONG_PASSWORD:
+          setPasswordErrorText(Strings.login.wrongPassword);
+          break;
+        case FirebaseSignInResponse.USER_NOT_FOUND:
+          setEmailErrorText(Strings.login.emailNotFound);
+          break;
+        case FirebaseSignInResponse.USER_DISABLED:
+          setEmailErrorText(Strings.login.userDisabled);
+          break;
+        case FirebaseSignInResponse.TOO_MANY_REQUESTS:
+          setEmailErrorText(Strings.login.tooManyRequests);
+          break;
+        default:
+          setEmailErrorText(Strings.login.unknownError);
+          break;
+      }
+    });
 
     setIsLoading(false);
   };

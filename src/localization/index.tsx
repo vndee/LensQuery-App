@@ -35,6 +35,11 @@ export default new LocalizedStrings({
       emailEmptyError: 'Email is required',
       emailInvalidError: 'Email is invalid',
       passwordEmptyError: 'Password is required',
+      emailNotFound: 'Email not found',
+      wrongPassword: 'Wrong password',
+      userDisabled: 'User disabled',
+      tooManyRequests: 'Too many failed attempts, please try again later!',
+      unknownError: 'An error occurred, please try again later!',
     }
   },
   // Vietnamese
@@ -71,6 +76,11 @@ export default new LocalizedStrings({
       emailEmptyError: 'Email không được để trống',
       emailInvalidError: 'Email không hợp lệ',
       passwordEmptyError: 'Mật khẩu không được để trống',
+      emailNotFound: 'Email không tồn tại',
+      wrongPassword: 'Mật khẩu không đúng',
+      userDisabled: 'Tài khoản đã bị khóa',
+      tooManyRequests: 'Quá nhiều lần thử, vui lòng thử lại sau!',
+      unknownError: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
     }
   },
 });
