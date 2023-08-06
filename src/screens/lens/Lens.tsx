@@ -6,6 +6,7 @@ import { Camera, useCameraDevices } from 'react-native-vision-camera';
 import Storage from '../../storage';
 import Button from '../../components/Button';
 import { setLogin } from '../../redux/slice/auth';
+import { clearStorageKeepAuth } from '../../storage';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 
 const Lens = (): JSX.Element => {
@@ -16,7 +17,7 @@ const Lens = (): JSX.Element => {
 
   const handleLogout = () => {
     console.log('~ handleClearAll');
-    Storage.clearAll();
+    clearStorageKeepAuth();
     dispatch(setLogin(false));
   };
 

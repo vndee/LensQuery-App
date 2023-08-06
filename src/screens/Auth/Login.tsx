@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Colors, Spacing, Typography, Layout } from '../../styles/index';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
@@ -7,8 +7,7 @@ import Button from '../../components/Button';
 import { setLogin } from '../../redux/slice/auth';
 import Checkbox from '../../components/Checkbox';
 import TextInputWithIcon from '../../components/Input';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { set } from 'lodash';
+import { clearAuthInformation } from '../../storage';
 
 const Login = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -23,10 +22,31 @@ const Login = (): JSX.Element => {
 
   const handleLogin = () => {
     setIsLoading(true);
-    dispatch(setLogin(true));
     Storage.set('isLogin', true);
+
+    if (isRememberMe) {
+      Storage.set('auth.email', email);
+      Storage.set('auth.password', password);
+    } else {
+      clearAuthInformation();
+    }
+
+    dispatch(setLogin(true));
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    if (Storage.contains('auth.email') && Storage.contains('auth.password')) {
+      const email = Storage.getString('auth.email')
+      const password = Storage.getString('auth.password')
+
+      if (email && password) {
+        setEmail(email);
+        setPassword(password);
+        setIsRememberMe(true);
+      }
+    }
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

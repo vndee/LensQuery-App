@@ -40,6 +40,7 @@ const TextInputWithIcon = ({ icon, placeholder, value, onChangeText, secureTextE
         style={styles.textInput}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        autoCapitalize='none'
       />
       <Ionicons
         // @ts-ignore
