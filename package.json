@@ -12,6 +12,8 @@
     "watchman:clean": "watchman watch-del-all"
   },
   "dependencies": {
+    "@react-native-firebase/app": "^18.3.0",
+    "@react-native-firebase/auth": "^18.3.0",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
     "@reduxjs/toolkit": "^1.9.5",

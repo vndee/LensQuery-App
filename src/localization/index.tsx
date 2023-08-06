@@ -60,7 +60,7 @@ export default new LocalizedStrings({
       title: 'Đăng nhập',
       email: 'Email',
       password: 'Mật khẩu',
-      rememberMe: 'Ghi nhớ',
+      rememberMe: 'Ghi nhớ tôi',
       forgotPassword: 'Quên mật khẩu?',
       loginBtn: 'Đăng nhập',
       dontHaveAccount: 'Chưa có tài khoản?',
