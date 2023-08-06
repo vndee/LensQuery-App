@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "704823069061",
+    "project_id": "lensquery",
+    "storage_bucket": "lensquery.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:704823069061:android:ab420b480e12a229519cec",
+        "android_client_info": {
+          "package_name": "com.lensquery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "704823069061-mkpd3cv2lpks6a8e3oe19kvpia1ki2hd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB136LWP-i6FF8bNR_SmCx1N7xcQlN-mgk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "704823069061-04gj3gra8vfh1d9tf0855cb911lhanpj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "704823069061-kqpi6da37ier3i85cd3kekq3hsksp9ql.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.lensquery"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

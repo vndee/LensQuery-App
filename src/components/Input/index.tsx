@@ -64,7 +64,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   },
   textInput: {
     ...Typography.body,
-    paddingVertical: Spacing.M,
+    paddingVertical: Spacing.inputVerticalPadding,
     paddingHorizontal: Spacing.XS,
     flex: 13
   },

@@ -39,8 +39,8 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     gap: Spacing.XS,
   },
   checkbox: {
-    width: 20,
-    height: 20,
+    width: 16,
+    height: 16,
     borderWidth: 1,
     borderColor: Colors.borders,
     borderRadius: Spacing.XS,
@@ -48,8 +48,8 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     justifyContent: 'center',
   },
   checkboxInner: {
-    width: 16,
-    height: 16,
+    width: 12,
+    height: 12,
     backgroundColor: Colors.primary,
     borderRadius: Spacing.XS,
   },

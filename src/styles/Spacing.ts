@@ -1,4 +1,4 @@
-import { Dimensions } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 
 export const WINDOW_WIDTH = Dimensions.get('window').width;
 export const WINDOW_HEIGHT = Dimensions.get('window').height;
@@ -17,6 +17,9 @@ export default {
   M: 12,
   L: 16,
   XL: 24,
+
+  inputVerticalPadding: Platform.OS === 'ios' ? 12 : 8,
+  buttonVerticalPadding: Platform.OS === 'ios' ? 12 : 12,
 
   WINDOW_WIDTH,
   WINDOW_HEIGHT,
