@@ -3,16 +3,18 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
-const TextInputWithIcon = ({ icon, placeholder, value, onChangeText, secureTextEntry, keyboardType, ...props }: {
+const TextInputWithIcon = ({ icon, placeholder, value, onChangeText, secureTextEntry, keyboardType, iconView, ...props }: {
   icon: string,
   placeholder: string,
   value: string,
   onChangeText: (text: string) => void,
   secureTextEntry?: boolean,
   keyboardType?: string,
+  iconView?: string,
   [key: string]: any,
 }): JSX.Element => {
   const [isFocus, setIsFocus] = useState<boolean>(false);
+  const [isVisible, setIsVisible] = useState<boolean>(secureTextEntry ? secureTextEntry : false); // for password
   const inputRef = useRef(null);
 
   const handleFocus = () => {
@@ -32,7 +34,7 @@ const TextInputWithIcon = ({ icon, placeholder, value, onChangeText, secureTextE
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
-        secureTextEntry={secureTextEntry}
+        secureTextEntry={isVisible}
         // @ts-ignore
         keyboardType={keyboardType}
         style={styles.textInput}
@@ -40,10 +42,12 @@ const TextInputWithIcon = ({ icon, placeholder, value, onChangeText, secureTextE
         onBlur={handleBlur}
       />
       <Ionicons
-        name={"mail-outline"}
+        // @ts-ignore
+        name={secureTextEntry ? (isVisible ? iconView : icon) : icon}
         size={24}
         color={isFocus ? Colors.borders : Colors.disabled}
         style={styles.icon}
+        onPress={secureTextEntry ? () => setIsVisible(!isVisible) : undefined}
       />
     </View>
   );
@@ -55,6 +59,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: Spacing.XS,
+    borderColor: Colors.borders
   },
   textInput: {
     ...Typography.body,
