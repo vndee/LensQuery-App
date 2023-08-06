@@ -6,7 +6,7 @@ import Storage from '../../storage';
 import Strings from '../../localization';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
-import TextInputWithIcon from '../../components/Input';
+import TextInputWithIcon from '../../components/Input/TextInputWithIcon';
 import { clearAuthInformation } from '../../storage';
 import { setLogin, setLanguage } from '../../redux/slice/auth';
 import firebaseAuth from '../../services/firebase'

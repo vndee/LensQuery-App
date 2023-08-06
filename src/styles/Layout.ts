@@ -14,7 +14,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    alignContent: 'center',
+    alignContent: 'flex-end',
     paddingVertical: Spacing.verticalPadding,
     backgroundColor: Colors.background,
     paddingHorizontal: Spacing.horizontalPadding,

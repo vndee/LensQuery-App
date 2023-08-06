@@ -40,6 +40,20 @@ export default new LocalizedStrings({
       userDisabled: 'User disabled',
       tooManyRequests: 'Too many failed attempts, please try again later!',
       unknownError: 'An error occurred, please try again later!',
+    },
+
+    // Register
+    register: {
+      title: 'Register',
+      name: 'Name',
+      namePlaceholder: 'Enter your name',
+      email: 'Email',
+      emailPlaceholder: 'Enter your email',
+      password: 'Password',
+      passwordPlaceholder: 'Enter your password',
+      confirmPassword: 'Confirm password',
+      confirmPasswordPlaceholder: 'Enter your confirm password',
+      registerBtn: 'Register',
     }
   },
   // Vietnamese
@@ -81,6 +95,20 @@ export default new LocalizedStrings({
       userDisabled: 'Tài khoản đã bị khóa',
       tooManyRequests: 'Quá nhiều lần thử, vui lòng thử lại sau!',
       unknownError: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+    },
+
+    // Register
+    register: {
+      title: 'Đăng ký',
+      name: 'Tên',
+      namePlaceholder: 'Nhập tên của bạn',
+      email: 'Email',
+      emailPlaceholder: 'Nhập email của bạn',
+      password: 'Mật khẩu',
+      passwordPlaceholder: 'Nhập mật khẩu của bạn',
+      confirmPassword: 'Xác nhận mật khẩu',
+      confirmPasswordPlaceholder: 'Nhập lại mật khẩu của bạn',
+      registerBtn: 'Đăng ký',
     }
   },
 });
