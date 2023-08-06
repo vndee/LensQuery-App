@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Colors, Spacing, Typography, Layout } from '../../styles/index';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import Storage from '../../storage';
+import Strings from '../../localization';
 import Button from '../../components/Button';
-import { setLogin } from '../../redux/slice/auth';
 import Checkbox from '../../components/Checkbox';
 import TextInputWithIcon from '../../components/Input';
 import { clearAuthInformation } from '../../storage';
+import { setLogin, setLanguage } from '../../redux/slice/auth';
 
 const Login = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -18,11 +19,8 @@ const Login = (): JSX.Element => {
   const [password, setPassword] = useState<string>('');
   const [isRememberMe, setIsRememberMe] = useState<boolean>(false);
 
-  console.log('~ isLogin:', isLogin);
-
   const handleLogin = () => {
     setIsLoading(true);
-    Storage.set('isLogin', true);
 
     if (isRememberMe) {
       Storage.set('auth.email', email);
@@ -33,6 +31,12 @@ const Login = (): JSX.Element => {
 
     dispatch(setLogin(true));
     setIsLoading(false);
+  };
+
+  const handleLanguageChange = (language: string) => {
+    Strings.setLanguage(language);
+    dispatch(setLanguage(language));
+    console.debug('~ language:', language);
   };
 
   useEffect(() => {
@@ -53,7 +57,7 @@ const Login = (): JSX.Element => {
       <Text style={styles.appTitle}>LensQuery</Text>
       <TextInputWithIcon
         icon="mail-outline"
-        placeholder="Email"
+        placeholder={Strings.login.email}
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -61,22 +65,32 @@ const Login = (): JSX.Element => {
       <TextInputWithIcon
         icon="lock-closed-outline"
         iconView="lock-open-outline"
-        placeholder="Password"
+        placeholder={Strings.login.password}
         value={password}
         onChangeText={setPassword}
         secureTextEntry={true}
       />
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Checkbox label="Remember me" value={isRememberMe} onPress={() => setIsRememberMe(!isRememberMe)} />
+        <Checkbox label={Strings.login.rememberMe} value={isRememberMe} onPress={() => setIsRememberMe(!isRememberMe)} />
         <TouchableOpacity>
-          <Text style={{ ...Typography.body, color: Colors.primary }}>Forgot password?</Text>
+          <Text style={{ ...Typography.body, color: Colors.primary }}>{Strings.login.forgotPassword}</Text>
         </TouchableOpacity>
       </View>
-      <Button label={isLoading ? "Login..." : "Login"} onPress={handleLogin} />
+      <Button label={isLoading ? `${Strings.login.loginBtn}...` : Strings.login.loginBtn} onPress={handleLogin} />
       <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-        <Text style={{ ...Typography.body, color: Colors.disabled }}>Don't have an account? </Text>
+        <Text style={{ ...Typography.body, color: Colors.disabled }}>{Strings.login.dontHaveAccount} </Text>
         <TouchableOpacity>
-          <Text style={{ ...Typography.body, color: Colors.primary }}>Register</Text>
+          <Text style={{ ...Typography.body, color: Colors.primary }}>{Strings.login.register}</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.changeLanguageContainer}>
+        <TouchableOpacity onPress={() => handleLanguageChange('en')}>
+          <Text style={{ ...Typography.body, color: Colors.primary }}>English</Text>
+        </TouchableOpacity>
+        <Text style={{ ...Typography.body, color: Colors.disabled }}> | </Text>
+        <TouchableOpacity onPress={() => handleLanguageChange('vi')}>
+          <Text style={{ ...Typography.body, color: Colors.primary }}>Tiếng Việt</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -93,7 +107,14 @@ const styles = StyleSheet.create({
     ...Typography.H1,
     alignSelf: 'center',
     color: Colors.primary
-  }
+  },
+  changeLanguageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: Spacing.XL, // Adjust this value as needed
+    width: '100%',
+  },
 });
 
 export default Login;
