@@ -4,7 +4,8 @@ import { Colors, Spacing, Layout, Typography } from '../../styles';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { isEmpty } from 'lodash';
 
-const LabelInput = ({ icon, placeholder, value, onChangeText, secureTextEntry, keyboardType, iconView, errorText, ...props }: {
+const LabelInput = ({ label, icon, placeholder, value, onChangeText, secureTextEntry, keyboardType, iconView, errorText, ...props }: {
+  label: string,
   placeholder: string,
   value: string,
   onChangeText: (text: string) => void,
@@ -31,6 +32,7 @@ const LabelInput = ({ icon, placeholder, value, onChangeText, secureTextEntry, k
 
   return (
     <View>
+      <Text style={{ ...Typography.body, fontWeight: '500', marginBottom: Spacing.XS }}>{label}</Text>
       <View style={[styles.container, !isEmpty(errorText) && { borderColor: Colors.primary }]}>
         <TextInput
           value={value}

@@ -54,6 +54,10 @@ export default new LocalizedStrings({
       confirmPassword: 'Confirm password',
       confirmPasswordPlaceholder: 'Enter your confirm password',
       registerBtn: 'Register',
+      disclaimer: 'By registering, you agree to our',
+      terms: 'Terms of Service',
+      and: 'and',
+      privacy: 'Privacy Policy',
     }
   },
   // Vietnamese
@@ -109,6 +113,10 @@ export default new LocalizedStrings({
       confirmPassword: 'Xác nhận mật khẩu',
       confirmPasswordPlaceholder: 'Nhập lại mật khẩu của bạn',
       registerBtn: 'Đăng ký',
+      disclaimer: 'Bằng cách đăng ký, bạn đồng ý với',
+      terms: 'Điều khoản dịch vụ',
+      and: 'và',
+      privacy: 'Chính sách bảo mật',
     }
   },
 });

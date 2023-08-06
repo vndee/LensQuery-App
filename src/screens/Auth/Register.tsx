@@ -2,9 +2,10 @@ import React, { useState, useRef } from 'react';
 import Strings from '../../localization';
 import Header from '../../components/Header';
 import { ScreenProps } from '../../types/navigation';
-import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Platform, Keyboard, ScrollView } from 'react-native';
-import { Colors, Spacing, Layout, Typography } from '../../styles';
+import { Colors, Spacing, Layout, Typography, Touchable } from '../../styles';
+import Button from '../../components/Button';
 import LabelInput from '../../components/Input/LabelInput';
+import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Platform, Keyboard, ScrollView, TouchableOpacity } from 'react-native';
 
 const Register = ({ navigation, route }: ScreenProps): JSX.Element => {
   const [name, setName] = useState<string>('');
@@ -13,7 +14,7 @@ const Register = ({ navigation, route }: ScreenProps): JSX.Element => {
   const [confirmPassword, setConfirmPassword] = useState<string>('');
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <Header title={Strings.register.title} />
       <KeyboardAvoidingView
         style={styles.container}
@@ -40,6 +41,8 @@ const Register = ({ navigation, route }: ScreenProps): JSX.Element => {
                 placeholder={Strings.register.passwordPlaceholder}
                 onChangeText={setPassword}
                 secureTextEntry={true}
+                icon="lock-closed-outline"
+                iconView="lock-open-outline"
               />
               <LabelInput
                 label={Strings.register.confirmPassword}
@@ -47,11 +50,26 @@ const Register = ({ navigation, route }: ScreenProps): JSX.Element => {
                 placeholder={Strings.register.confirmPasswordPlaceholder}
                 onChangeText={setConfirmPassword}
                 secureTextEntry={true}
+                icon="lock-closed-outline"
+                iconView="lock-open-outline"
               />
             </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      <View style={styles.disclaimer}>
+        <Text style={{ ...Typography.description, textAlign: 'center' }}>{Strings.register.disclaimer}</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => { }}>
+            <Text style={{ ...Typography.description, textAlign: 'center', color: Colors.primary }}>{Strings.register.terms}</Text>
+          </TouchableOpacity>
+          <Text style={{ ...Typography.description, textAlign: 'center' }}> {Strings.register.and} </Text>
+          <TouchableOpacity onPress={() => { }}>
+            <Text style={{ ...Typography.description, textAlign: 'center', color: Colors.primary }}>{Strings.register.privacy}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <Button label={Strings.register.registerBtn} onPress={() => { }} style={styles.btn} />
     </View>
   );
 };
@@ -62,9 +80,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.XL
   },
+  content: {
+    width: '100%',
+    paddingHorizontal: Spacing.S,
+  },
   form: {
     width: '100%',
   },
+  btn: {
+    marginHorizontal: Spacing.horizontalPadding,
+    marginBottom: Spacing.XL
+  },
+  disclaimer: {
+    justifyContent: 'center',
+    marginBottom: Spacing.M
+  }
 });
 
 export default Register;

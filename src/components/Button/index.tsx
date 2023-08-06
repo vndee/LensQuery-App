@@ -2,15 +2,16 @@ import React from 'react';
 import { Colors, Spacing, Typography, Layout, Touchable } from '../../styles/index';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-const Button = ({ label, onPress, disabled }: {
+const Button = ({ label, onPress, disabled, style }: {
   label: string,
   onPress: () => void,
   disabled?: boolean,
+  style?: object,
 }): JSX.Element => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={styles.touchable}
+      style={[styles.touchable, style || {}]}
       disabled={disabled}
     >
       <Text style={styles.label}>{label}</Text>
