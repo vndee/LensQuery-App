@@ -32,6 +32,9 @@ export default new LocalizedStrings({
       loginBtn: 'Login',
       dontHaveAccount: 'Don\'t have an account?',
       register: 'Register',
+      emailEmptyError: 'Email is required',
+      emailInvalidError: 'Email is invalid',
+      passwordEmptyError: 'Password is required',
     }
   },
   // Vietnamese
@@ -65,6 +68,9 @@ export default new LocalizedStrings({
       loginBtn: 'Đăng nhập',
       dontHaveAccount: 'Chưa có tài khoản?',
       register: 'Đăng ký',
+      emailEmptyError: 'Email không được để trống',
+      emailInvalidError: 'Email không hợp lệ',
+      passwordEmptyError: 'Mật khẩu không được để trống',
     }
   },
 });

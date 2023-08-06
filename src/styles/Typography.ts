@@ -11,6 +11,10 @@ export default StyleSheet.create({
     fontWeight: '600',
     color: Colors.text_color,
   },
+  description: {
+    fontSize: 12,
+    color: Colors.text_color,
+  },
   H1: {
     fontSize: 32,
     fontWeight: 'bold',

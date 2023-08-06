@@ -9,27 +9,83 @@ import Checkbox from '../../components/Checkbox';
 import TextInputWithIcon from '../../components/Input';
 import { clearAuthInformation } from '../../storage';
 import { setLogin, setLanguage } from '../../redux/slice/auth';
+import firebaseAuth from '../../services/firebase'
+import { FirebaseSignInResponse } from '../../types/firebase';
+import { isEmpty } from 'lodash';
+import { checkEmailValid } from '../../utils/Helper';
 
 const Login = (): JSX.Element => {
   const dispatch = useDispatch();
-  const { isLogin } = useSelector((state: any) => state.auth);
+  const { isLogin, language } = useSelector((state: any) => state.auth);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isRememberMe, setIsRememberMe] = useState<boolean>(false);
 
-  const handleLogin = () => {
+  const [emailErrorText, setEmailErrorText] = useState<string>('');
+  const [passwordErrorText, setPasswordErrorText] = useState<string>('');
+
+  const handleLogin = async () => {
+    if (emailErrorText && !isEmpty(email)) {
+      setEmailErrorText('');
+    }
+
+    if (passwordErrorText && !isEmpty(password)) {
+      setPasswordErrorText('');
+    }
+
+    if (isEmpty(email) || isEmpty(password)) {
+      if (isEmpty(email)) {
+        setEmailErrorText(Strings.login.emailEmptyError);
+      }
+
+      if (isEmpty(password)) {
+        setPasswordErrorText(Strings.login.passwordEmptyError);
+      }
+
+      console.debug('invalid email or password');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!checkEmailValid(email)) {
+      setEmailErrorText(Strings.login.emailInvalidError);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
 
     if (isRememberMe) {
       Storage.set('auth.email', email);
       Storage.set('auth.password', password);
+      firebaseAuth.signInWithEmailAndPassword(email, password).then((userCredential) => {
+        console.debug(userCredential);
+        // dispatch(setLogin(true));
+      }).catch((error) => {
+        switch (error.code) {
+          case FirebaseSignInResponse.WRONG_PASSWORD:
+            console.debug('wrong password');
+            break;
+          case FirebaseSignInResponse.USER_NOT_FOUND:
+            console.debug('user not found');
+            break;
+          case FirebaseSignInResponse.USER_DISABLED:
+            console.debug('user disabled');
+            break;
+          case FirebaseSignInResponse.TOO_MANY_REQUESTS:
+            console.debug('too many requests');
+            break;
+          default:
+            console.debug('unknown error:', error);
+            break;
+        }
+      });
     } else {
       clearAuthInformation();
     }
 
-    dispatch(setLogin(true));
     setIsLoading(false);
   };
 
@@ -56,26 +112,36 @@ const Login = (): JSX.Element => {
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.appTitle}>LensQuery</Text>
-        <TextInputWithIcon
-          icon="mail-outline"
-          placeholder={Strings.login.email}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-        <TextInputWithIcon
-          icon="lock-closed-outline"
-          iconView="lock-open-outline"
-          placeholder={Strings.login.password}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-        />
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Checkbox label={Strings.login.rememberMe} value={isRememberMe} onPress={() => setIsRememberMe(!isRememberMe)} />
-          <TouchableOpacity>
-            <Text style={{ ...Typography.body, color: Colors.primary }}>{Strings.login.forgotPassword}</Text>
-          </TouchableOpacity>
+        <View>
+          <TextInputWithIcon
+            icon="mail-outline"
+            placeholder={Strings.login.email}
+            value={email}
+            onChangeText={(text) => {
+              setEmail(text);
+              if (!isEmpty(emailErrorText) && !isEmpty(text)) setEmailErrorText('');
+            }}
+            keyboardType="email-address"
+            errorText={emailErrorText}
+          />
+          <TextInputWithIcon
+            icon="lock-closed-outline"
+            iconView="lock-open-outline"
+            placeholder={Strings.login.password}
+            value={password}
+            onChangeText={(text) => {
+              setPassword(text);
+              if (!isEmpty(passwordErrorText) && !isEmpty(text)) setPasswordErrorText('');
+            }}
+            secureTextEntry={true}
+            errorText={passwordErrorText}
+          />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Checkbox label={Strings.login.rememberMe} value={isRememberMe} onPress={() => setIsRememberMe(!isRememberMe)} />
+            <TouchableOpacity>
+              <Text style={{ ...Typography.body, color: Colors.primary }}>{Strings.login.forgotPassword}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <Button label={isLoading ? `${Strings.login.loginBtn}...` : Strings.login.loginBtn} onPress={handleLogin} />
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
@@ -87,11 +153,11 @@ const Login = (): JSX.Element => {
 
         <View style={styles.changeLanguageContainer}>
           <TouchableOpacity onPress={() => handleLanguageChange('en')} style={styles.language}>
-            <Text style={{ ...Typography.body, color: Colors.primary }}>English</Text>
+            <Text style={[Typography.body, language === 'en' ? styles.languageChoice : styles.languageOption]}>English</Text>
           </TouchableOpacity>
           <Text style={{ ...Typography.body, color: Colors.disabled }}> | </Text>
           <TouchableOpacity onPress={() => handleLanguageChange('vi')} style={styles.language}>
-            <Text style={{ ...Typography.body, color: Colors.primary }}>Tiếng Việt</Text>
+            <Text style={[Typography.body, language === 'vi' ? styles.languageChoice : styles.languageOption]}>Tiếng Việt</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -115,7 +181,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     position: 'absolute',
-    bottom: Spacing.XL, // Adjust this value as needed
+    bottom: Spacing.L, // Adjust this value as needed
     width: '100%',
   },
   language: {
@@ -123,6 +189,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: Spacing.XS
+  },
+  languageOption: {
+    color: Colors.disabled
+  },
+  languageChoice: {
+    color: Colors.primary,
+    fontWeight: '600'
   }
 });
 

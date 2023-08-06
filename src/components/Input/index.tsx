@@ -2,8 +2,9 @@ import React, { useState, useRef } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { isEmpty } from 'lodash';
 
-const TextInputWithIcon = ({ icon, placeholder, value, onChangeText, secureTextEntry, keyboardType, iconView, ...props }: {
+const TextInputWithIcon = ({ icon, placeholder, value, onChangeText, secureTextEntry, keyboardType, iconView, errorText, ...props }: {
   icon: string,
   placeholder: string,
   value: string,
@@ -11,11 +12,12 @@ const TextInputWithIcon = ({ icon, placeholder, value, onChangeText, secureTextE
   secureTextEntry?: boolean,
   keyboardType?: string,
   iconView?: string,
+  errorText?: string,
   [key: string]: any,
 }): JSX.Element => {
+  const inputRef = useRef(null);
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState<boolean>(secureTextEntry ? secureTextEntry : false); // for password
-  const inputRef = useRef(null);
 
   const handleFocus = () => {
     setIsFocus(true);
@@ -27,29 +29,37 @@ const TextInputWithIcon = ({ icon, placeholder, value, onChangeText, secureTextE
     setIsFocus(false);
   };
 
+  console.debug('~ isInvalid:', errorText);
+
   return (
-    <View style={styles.container}>
-      <TextInput
-        ref={inputRef}
-        placeholder={placeholder}
-        value={value}
-        onChangeText={onChangeText}
-        secureTextEntry={isVisible}
-        // @ts-ignore
-        keyboardType={keyboardType}
-        style={styles.textInput}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        autoCapitalize='none'
-      />
-      <Ionicons
-        // @ts-ignore
-        name={secureTextEntry ? (isVisible ? iconView : icon) : icon}
-        size={24}
-        color={isFocus ? Colors.borders : Colors.disabled}
-        style={styles.icon}
-        onPress={secureTextEntry ? () => setIsVisible(!isVisible) : undefined}
-      />
+    <View>
+      <View style={[styles.container, !isEmpty(errorText) && { borderColor: Colors.primary }]}>
+        <TextInput
+          value={value}
+          ref={inputRef}
+          placeholder={placeholder}
+          placeholderTextColor={!isEmpty(errorText) ? Colors.primary : Colors.disabled}
+          onChangeText={onChangeText}
+          secureTextEntry={isVisible}
+          // @ts-ignore
+          keyboardType={keyboardType}
+          style={styles.textInput}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          autoCapitalize='none'
+        />
+        <Ionicons
+          // @ts-ignore
+          name={secureTextEntry ? (isVisible ? iconView : icon) : icon}
+          size={24}
+          color={!isEmpty(errorText) ? Colors.primary : Colors.borders}
+          style={styles.icon}
+          onPress={secureTextEntry ? () => setIsVisible(!isVisible) : undefined}
+        />
+      </View>
+      <View style={{ height: Spacing.XL, justifyContent: 'center' }}>
+        {!isEmpty(errorText) && !isEmpty(errorText) && <Text style={{ ...Typography.description, color: Colors.primary }}>{errorText}</Text>}
+      </View>
     </View>
   );
 };
