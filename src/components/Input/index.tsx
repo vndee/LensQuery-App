@@ -29,8 +29,6 @@ const TextInputWithIcon = ({ icon, placeholder, value, onChangeText, secureTextE
     setIsFocus(false);
   };
 
-  console.debug('~ isInvalid:', errorText);
-
   return (
     <View>
       <View style={[styles.container, !isEmpty(errorText) && { borderColor: Colors.primary }]}>

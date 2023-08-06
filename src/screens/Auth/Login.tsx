@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Colors, Spacing, Typography, Layout } from '../../styles/index';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import Storage from '../../storage';
 import Strings from '../../localization';
 import Button from '../../components/Button';
@@ -13,8 +13,9 @@ import firebaseAuth from '../../services/firebase'
 import { FirebaseSignInResponse } from '../../types/firebase';
 import { isEmpty } from 'lodash';
 import { checkEmailValid } from '../../utils/Helper';
+import { ScreenProps } from '../../types/navigation';
 
-const Login = (): JSX.Element => {
+const Login = ({ navigation, route }: ScreenProps): JSX.Element => {
   const dispatch = useDispatch();
   const { isLogin, language } = useSelector((state: any) => state.auth);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -44,7 +45,6 @@ const Login = (): JSX.Element => {
         setPasswordErrorText(Strings.login.passwordEmptyError);
       }
 
-      console.debug('invalid email or password');
       setIsLoading(false);
       return;
     }
@@ -110,7 +110,10 @@ const Login = (): JSX.Element => {
   }, []);
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS == 'ios' ? 'padding' : undefined}
+    >
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.appTitle}>LensQuery</Text>
         <View>
@@ -124,6 +127,7 @@ const Login = (): JSX.Element => {
             }}
             keyboardType="email-address"
             errorText={emailErrorText}
+            onSubmitEditing={() => Keyboard.dismiss()}
           />
           <TextInputWithIcon
             icon="lock-closed-outline"
@@ -136,6 +140,7 @@ const Login = (): JSX.Element => {
             }}
             secureTextEntry={true}
             errorText={passwordErrorText}
+            onSubmitEditing={() => Keyboard.dismiss()}
           />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Checkbox label={Strings.login.rememberMe} value={isRememberMe} onPress={() => setIsRememberMe(!isRememberMe)} />
@@ -147,11 +152,10 @@ const Login = (): JSX.Element => {
         <Button label={isLoading ? `${Strings.login.loginBtn}...` : Strings.login.loginBtn} onPress={handleLogin} />
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           <Text style={{ ...Typography.body, color: Colors.disabled }}>{Strings.login.dontHaveAccount} </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
             <Text style={{ ...Typography.body, color: Colors.primary }}>{Strings.login.register}</Text>
           </TouchableOpacity>
         </View>
-
         <View style={styles.changeLanguageContainer}>
           <TouchableOpacity onPress={() => handleLanguageChange('en')} style={styles.language}>
             <Text style={[Typography.body, language === 'en' ? styles.languageChoice : styles.languageOption]}>English</Text>
