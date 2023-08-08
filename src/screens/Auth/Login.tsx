@@ -65,7 +65,10 @@ const Login = ({ navigation, route }: ScreenProps): JSX.Element => {
     }
 
     firebaseAuth.signInWithEmailAndPassword(email, password).then((userCredential) => {
-      console.debug(userCredential);
+      console.debug('creds', userCredential);
+      // console.debug('user', userCredential.user);
+      // console.debug('meta', userCredential.user?.metadata);
+      // console.debug('providerData', userCredential.user?.providerData);
       // dispatch(setLogin(true));
     }).catch((error) => {
       switch (error.code) {

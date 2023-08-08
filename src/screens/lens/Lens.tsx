@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { View, Text, StyleSheet } from 'react-native';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
 
+import auth from '@react-native-firebase/auth';
 import Storage from '../../storage';
 import Button from '../../components/Button';
 import { setLogin } from '../../redux/slice/auth';
@@ -18,7 +19,10 @@ const Lens = (): JSX.Element => {
   const handleLogout = () => {
     console.log('~ handleClearAll');
     clearStorageKeepAuth();
-    dispatch(setLogin(false));
+    // dispatch(setLogin(false));
+    auth()
+      .signOut()
+      .then(() => console.log('User signed out!'));
   };
 
   return (
