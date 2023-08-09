@@ -436,6 +436,8 @@ PODS:
   - React-jsinspector (0.72.3)
   - React-logger (0.72.3):
     - glog
+  - react-native-blur (4.3.2):
+    - React-Core
   - react-native-mmkv (2.10.1):
     - MMKV (>= 1.2.13)
     - React-Core
@@ -566,9 +568,40 @@ PODS:
     - RNFBApp
   - RNGestureHandler (2.12.1):
     - React-Core
+  - RNReanimated (3.4.2):
+    - DoubleConversion
+    - FBLazyVector
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React-callinvoker
+    - React-Core
+    - React-Core/DevSupport
+    - React-Core/RCTWebSocket
+    - React-CoreModules
+    - React-cxxreact
+    - React-hermes
+    - React-jsi
+    - React-jsiexecutor
+    - React-jsinspector
+    - React-RCTActionSheet
+    - React-RCTAnimation
+    - React-RCTAppDelegate
+    - React-RCTBlob
+    - React-RCTImage
+    - React-RCTLinking
+    - React-RCTNetwork
+    - React-RCTSettings
+    - React-RCTText
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNScreens (3.24.0):
     - React-Core
     - React-RCTImage
+  - RNStaticSafeAreaInsets (2.2.0):
+    - React-Core
   - SDWebImage (5.11.1):
     - SDWebImage/Core (= 5.11.1)
   - SDWebImage/Core (5.11.1)
@@ -610,6 +643,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -634,7 +668,9 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNStaticSafeAreaInsets (from `../node_modules/react-native-static-safe-area-insets`)
   - VisionCamera (from `../node_modules/react-native-vision-camera`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -705,6 +741,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-blur:
+    :path: "../node_modules/@react-native-community/blur"
   react-native-mmkv:
     :path: "../node_modules/react-native-mmkv"
   react-native-safe-area-context:
@@ -753,8 +791,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/auth"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNStaticSafeAreaInsets:
+    :path: "../node_modules/react-native-static-safe-area-insets"
   VisionCamera:
     :path: "../node_modules/react-native-vision-camera"
   Yoga:
@@ -799,6 +841,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 59d1eb03af7d30b7d66589c410f13151271e8006
   React-jsinspector: b511447170f561157547bc0bef3f169663860be7
   React-logger: c5b527272d5f22eaa09bb3c3a690fee8f237ae95
+  react-native-blur: cfdad7b3c01d725ab62a8a729f42ea463998afa2
   react-native-mmkv: dea675cf9697ad35940f1687e98e133e1358ef9f
   react-native-safe-area-context: 9697629f7b2cda43cf52169bb7e0767d330648c2
   React-NativeModulesApple: c57f3efe0df288a6532b726ad2d0322a9bf38472
@@ -823,7 +866,9 @@ SPEC CHECKSUMS:
   RNFBApp: f0b5cf917b0b91a0ae890fbbaec0fb5d3285ea46
   RNFBAuth: e3f51b2e4acc39e4664b24117f9106af493b2dd3
   RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
+  RNReanimated: 726395a2fa2f04cea340274ba57a4e659bc0d9c1
   RNScreens: b21dc57dfa2b710c30ec600786a3fc223b1b92e7
+  RNStaticSafeAreaInsets: 055ddbf5e476321720457cdaeec0ff2ba40ec1b8
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
