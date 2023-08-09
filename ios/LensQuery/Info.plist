@@ -72,5 +72,13 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 	</array>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>$(PRODUCT_NAME) needs access to your Photo Library to save photos.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>$(PRODUCT_NAME) needs access to your Camera to take photos and videos.</string>
+	<!-- <key>NSMicrophoneUsageDescription</key>
+	<string>VisionCamera needs access to your Microphone to record videos with audio.</string> -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) needs access to your Photo Library to save photos.</string>
 </dict>
 </plist>

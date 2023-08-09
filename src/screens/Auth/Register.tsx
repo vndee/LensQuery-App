@@ -4,10 +4,12 @@ import Header from '../../components/Header';
 import { ScreenProps } from '../../types/navigation';
 import { Colors, Spacing, Layout, Typography, Touchable } from '../../styles';
 import Button from '../../components/Button';
+import { Routes } from '../../types/navigation';
 import LabelInput from '../../components/Input/LabelInput';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Platform, Keyboard, ScrollView, TouchableOpacity } from 'react-native';
 
-const Register = ({ navigation, route }: ScreenProps): JSX.Element => {
+const Register = ({ navigation, route }: NativeStackScreenProps<Routes, 'Register'>): JSX.Element => {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');

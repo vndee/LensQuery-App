@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import { Spacing } from '../../styles';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import {
   Camera,
@@ -18,22 +19,19 @@ import Reanimated, { Extrapolate, interpolate, useAnimatedGestureHandler, useAni
 import auth from '@react-native-firebase/auth';
 import { useIsForeground } from '../../hooks/useIsForeground';
 import { clearStorageKeepAuth } from '../../storage';
-import { Colors, Spacing, Typography, Layout } from '../../styles';
-import { CONTENT_SPACING, MAX_ZOOM_FACTOR, SAFE_AREA_PADDING } from '../../utils/Constants';
-import { ScreenProps } from '../../types/navigation';
+import { Routes } from '../../types/navigation';
 import { CaptureButton } from '../../components/Button/CaptureButton';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-
-const SCALE_FULL_ZOOM = 3;
-const BUTTON_SIZE = 40;
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { LENS_MAX_ZOOM_FACTOR, LENS_SCALE_FULL_ZOOM } from '../../utils/Constants';
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({
   zoom: true,
 });
 
-const Lens = ({ navigation, route }: ScreenProps): JSX.Element => {
+const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JSX.Element => {
   const dispatch = useDispatch();
   const cameraRef = useRef<Camera>(null);
 
@@ -120,7 +118,7 @@ const Lens = ({ navigation, route }: ScreenProps): JSX.Element => {
   // This just maps the zoom factor to a percentage value.
   // so e.g. for [min, neutr., max] values [1, 2, 128] this would result in [0, 0.0081, 1]
   const minZoom = device?.minZoom ?? 1;
-  const maxZoom = Math.min(device?.maxZoom ?? 1, MAX_ZOOM_FACTOR);
+  const maxZoom = Math.min(device?.maxZoom ?? 1, LENS_MAX_ZOOM_FACTOR);
 
   const cameraAnimatedProps = useAnimatedProps(() => {
     const z = Math.max(Math.min(zoom.value, maxZoom), minZoom);
@@ -148,7 +146,7 @@ const Lens = ({ navigation, route }: ScreenProps): JSX.Element => {
   const onMediaCaptured = useCallback(
     (media: PhotoFile | VideoFile, type: 'photo' | 'video') => {
       console.log(`Media captured! ${JSON.stringify(media)}`);
-      navigation.navigate('MediaPage', {
+      navigation.navigate('Media', {
         path: media.path,
         type: type,
       });
@@ -186,7 +184,7 @@ const Lens = ({ navigation, route }: ScreenProps): JSX.Element => {
     onActive: (event, context) => {
       // we're trying to map the scale gesture to a linear zoom here
       const startZoom = context.startZoom ?? 0;
-      const scale = interpolate(event.scale, [1 - 1 / SCALE_FULL_ZOOM, 1, SCALE_FULL_ZOOM], [-1, 0, 1], Extrapolate.CLAMP);
+      const scale = interpolate(event.scale, [1 - 1 / LENS_SCALE_FULL_ZOOM, 1, LENS_SCALE_FULL_ZOOM], [-1, 0, 1], Extrapolate.CLAMP);
       zoom.value = interpolate(scale, [-1, 0, 1], [minZoom, startZoom, maxZoom], Extrapolate.CLAMP);
     },
   });
@@ -291,21 +289,21 @@ const styles = StyleSheet.create({
   captureButton: {
     position: 'absolute',
     alignSelf: 'center',
-    bottom: SAFE_AREA_PADDING.paddingBottom,
+    bottom: Spacing.safePaddingBottom,
   },
   button: {
-    marginBottom: CONTENT_SPACING,
-    width: BUTTON_SIZE,
-    height: BUTTON_SIZE,
-    borderRadius: BUTTON_SIZE / 2,
+    marginBottom: Spacing.L,
+    width: 44,
+    height: 44,
+    borderRadius: 44 / 2,
     backgroundColor: 'rgba(140, 140, 140, 0.3)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   rightButtonRow: {
     position: 'absolute',
-    right: SAFE_AREA_PADDING.paddingRight,
-    top: SAFE_AREA_PADDING.paddingTop,
+    right: Spacing.safePaddingRight,
+    top: Spacing.safePaddingTop,
   },
   text: {
     color: 'white',

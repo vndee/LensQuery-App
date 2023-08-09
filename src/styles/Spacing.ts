@@ -1,9 +1,14 @@
 import { Dimensions, Platform } from 'react-native';
+import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
 
 export const WINDOW_WIDTH = Dimensions.get('window').width;
 export const WINDOW_HEIGHT = Dimensions.get('window').height;
 export const SCREEN_WIDTH = Dimensions.get('screen').width;
 export const SCREEN_HEIGHT = Dimensions.get('screen').height;
+
+const SAFE_BOTTOM = Platform.select({
+  ios: StaticSafeAreaInsets.safeAreaInsetsBottom,
+}) ?? 0;
 
 export default {
   iphone_X_margin_bottom: 14,
@@ -25,4 +30,14 @@ export default {
   WINDOW_HEIGHT,
   SCREEN_WIDTH,
   SCREEN_HEIGHT,
+
+  LENS_SCALE_FULL_ZOOM: 3,
+  LENS_MAX_ZOOM_FACTOR: 20,
+
+  safePaddingLeft: StaticSafeAreaInsets.safeAreaInsetsLeft + 16,
+  safePaddingTop: StaticSafeAreaInsets.safeAreaInsetsTop + 16,
+  safePaddingRight: StaticSafeAreaInsets.safeAreaInsetsRight + 16,
+  safePaddingBottom: SAFE_BOTTOM + 16,
+
+
 };
