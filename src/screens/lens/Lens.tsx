@@ -98,7 +98,7 @@ const Lens = ({ navigation, route }: ScreenProps): JSX.Element => {
   const supportsCameraFlipping = useMemo(() => devices.back != null && devices.front != null, [devices.back, devices.front]);
   const supportsFlash = device?.hasFlash ?? false;
   const supportsHdr = useMemo(() => formats.some((f) => f.supportsVideoHDR || f.supportsPhotoHDR), [formats]);
-  const supports60Fps = useMemo(() => formats.some((f) => f.frameRateRanges.some((rate) => frameRateIncluded(rate, 60))), [formats]);
+  // const supports60Fps = useMemo(() => formats.some((f) => f.frameRateRanges.some((rate) => frameRateIncluded(rate, 60))), [formats]);
   const canToggleNightMode = enableNightMode
     ? true // it's enabled so you have to be able to turn it off again
     : (device?.supportsLowLightBoost ?? false) || fps > 30; // either we have native support, or we can lower the FPS
@@ -205,11 +205,6 @@ const Lens = ({ navigation, route }: ScreenProps): JSX.Element => {
     console.log(`Suggestion available! ${suggestion.type}: Can do ${suggestion.suggestedFrameProcessorFps} FPS`);
   }, []);
 
-  useEffect(() => {
-    console.log('~ devices:', devices);
-    console.log('~ device back:', device);
-  }, []);
-
   return (
     <View style={styles.container}>
       <StatusBar hidden />
@@ -221,28 +216,27 @@ const Lens = ({ navigation, route }: ScreenProps): JSX.Element => {
                 ref={camera}
                 style={StyleSheet.absoluteFill}
                 device={device}
-                format={format}
-                fps={fps}
+                // format={format}
+                // fps={fps}
                 hdr={enableHdr}
                 lowLightBoost={device.supportsLowLightBoost && enableNightMode}
                 isActive={isActive}
                 onInitialized={onInitialized}
                 onError={onError}
-                enableZoomGesture={false}
+                enableZoomGesture={true}
                 animatedProps={cameraAnimatedProps}
                 photo={true}
-                video={true}
-                audio={hasMicrophonePermission}
+                // video={true}
+                // audio={hasMicrophonePermission}
                 // frameProcessor={device.supportsParallelVideoProcessing ? frameProcessor : undefined}
                 orientation="portrait"
-                frameProcessorFps={1}
-                onFrameProcessorPerformanceSuggestionAvailable={onFrameProcessorSuggestionAvailable}
+              // frameProcessorFps={1}
+              // onFrameProcessorPerformanceSuggestionAvailable={onFrameProcessorSuggestionAvailable}
               />
             </TapGestureHandler>
           </Reanimated.View>
         </PinchGestureHandler>
       )}
-      {/* <Button label="Logout" onPress={handleLogout} /> */}
       <CaptureButton
         style={styles.captureButton}
         camera={camera}
@@ -266,14 +260,14 @@ const Lens = ({ navigation, route }: ScreenProps): JSX.Element => {
             <Ionicons name={flash === 'on' ? 'flash' : 'flash-off'} color="white" size={24} />
           </TouchableOpacity>
         )}
-        {supports60Fps && (
+        {/* {supports60Fps && (
           <TouchableOpacity style={styles.button} onPress={() => setIs60Fps(!is60Fps)}>
             <Text style={styles.text}>
               {is60Fps ? '60' : '30'}
               {'\n'}FPS
             </Text>
           </TouchableOpacity>
-        )}
+        )} */}
         {supportsHdr && (
           <TouchableOpacity style={styles.button} onPress={() => setEnableHdr((h) => !h)}>
             <MaterialIcon name={enableHdr ? 'hdr' : 'hdr-off'} color="white" size={24} />
@@ -290,11 +284,6 @@ const Lens = ({ navigation, route }: ScreenProps): JSX.Element => {
 };
 
 const styles = StyleSheet.create({
-  // container: {
-  //   ...Layout.content,
-  //   backgroundColor: Colors.background,
-  //   justifyContent: 'center',
-  // },
   container: {
     flex: 1,
     backgroundColor: 'black',

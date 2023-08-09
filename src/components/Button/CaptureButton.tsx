@@ -19,6 +19,7 @@ import Reanimated, {
   useSharedValue,
   withRepeat,
 } from 'react-native-reanimated';
+import { Colors } from '../../styles';
 import type { Camera, PhotoFile, TakePhotoOptions, TakeSnapshotOptions, VideoFile } from 'react-native-vision-camera';
 import { CAPTURE_BUTTON_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH } from '../../utils/Constants';
 
@@ -296,13 +297,13 @@ const styles = StyleSheet.create({
     width: CAPTURE_BUTTON_SIZE,
     height: CAPTURE_BUTTON_SIZE,
     borderRadius: CAPTURE_BUTTON_SIZE / 2,
-    backgroundColor: '#e34077',
+    backgroundColor: Colors.primary,
   },
   button: {
     width: CAPTURE_BUTTON_SIZE,
     height: CAPTURE_BUTTON_SIZE,
     borderRadius: CAPTURE_BUTTON_SIZE / 2,
     borderWidth: BORDER_WIDTH,
-    borderColor: 'white',
+    borderColor: Colors.white_two,
   },
 });
