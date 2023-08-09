@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { Routes } from '../../types/navigation';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -59,10 +59,14 @@ const Media = ({ navigation, route }: NativeStackScreenProps<Routes, 'Media'>): 
 
   const screenStyle = useMemo(() => ({ opacity: hasMediaLoaded ? 1 : 0 }), [hasMediaLoaded]);
 
-  return (<>
-    <StatusBar hidden />
+  useEffect(() => {
+    StatusBar.setHidden(true);
+  }, []);
 
+  return (
     <View style={[styles.container, screenStyle]}>
+      <StatusBar hidden backgroundColor={'transparent'} />
+
       {type === 'photo' && (
         <Image source={source} style={StyleSheet.absoluteFill} resizeMode="cover" onLoadEnd={onMediaLoadEnd} onLoad={onMediaLoad} />
       )}
@@ -79,7 +83,6 @@ const Media = ({ navigation, route }: NativeStackScreenProps<Routes, 'Media'>): 
 
       <StatusBarBlurBackground />
     </View>
-  </>
   );
 };
 
@@ -94,8 +97,8 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     position: 'absolute',
     top: Spacing.safePaddingTop,
     left: Spacing.safePaddingLeft,
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
   },
   saveButton: {
     position: 'absolute',
