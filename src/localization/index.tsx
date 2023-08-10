@@ -58,6 +58,15 @@ export default new LocalizedStrings({
       terms: 'Terms of Service',
       and: 'and',
       privacy: 'Privacy Policy',
+      nameEmptyError: 'Name is required',
+      emailEmptyError: 'Email is required',
+      emailInvalidError: 'Email is invalid',
+      passwordEmptyError: 'Password is required',
+      confirmPasswordEmptyError: 'Confirm password is required',
+      passwordNotMatchError: 'Password does not match',
+      emailAlreadyInUse: 'Email already in use',
+      weakPassword: 'Password should be at least 6 characters',
+      unknownError: 'An error occurred, please try again later!',
     }
   },
   // Vietnamese
@@ -117,6 +126,15 @@ export default new LocalizedStrings({
       terms: 'Điều khoản dịch vụ',
       and: 'và',
       privacy: 'Chính sách bảo mật',
+      nameEmptyError: 'Tên không được để trống',
+      emailEmptyError: 'Email không được để trống',
+      emailInvalidError: 'Email không hợp lệ',
+      passwordEmptyError: 'Mật khẩu không được để trống',
+      confirmPasswordEmptyError: 'Mật khẩu xác nhận nhận không được để trống',
+      passwordNotMatchError: 'Mật khẩu không khớp',
+      emailAlreadyInUse: 'Email đã được sử dụng',
+      weakPassword: 'Mật khẩu phải có ít nhất 6 ký tự',
+      unknownError: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
     }
   },
 });

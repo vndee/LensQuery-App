@@ -135,8 +135,8 @@ const Login = ({ navigation, route }: NativeStackScreenProps<Routes, 'Login'>): 
             onSubmitEditing={() => Keyboard.dismiss()}
           />
           <TextInputWithIcon
-            icon="lock-closed-outline"
-            iconView="lock-open-outline"
+            icon="lock-open-outline"
+            iconView="lock-closed-outline"
             placeholder={Strings.login.password}
             value={password}
             onChangeText={(text) => {
