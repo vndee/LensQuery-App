@@ -286,9 +286,11 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
       flex: 1,
       justifyContent: 'center',
       paddingHorizontal: 20,
-      backgroundColor: Colors.background
+      backgroundColor: Colors.background,
+      gap: Spacing.XL
     }}>
       <Button label="Logout" onPress={handleLogout} />
+      <Button label="Chat" onPress={() => navigation.navigate('ChatBox')} />
     </View>
   );
 };

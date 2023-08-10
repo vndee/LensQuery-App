@@ -9,5 +9,6 @@ export type Routes = {
   OnboardingSetup: {
     email: string;
     password: string;
-  }
+  },
+  ChatBox: undefined;
 }

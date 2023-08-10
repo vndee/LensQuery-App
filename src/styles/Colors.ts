@@ -11,6 +11,7 @@ export default {
   very_light_pink: '#f0f0f0',
   borders: '#c7c7cd',
 
+  white: '#ffffff',
   white_two: '#f4f4f4',
   pale_mauve: '#f5ecf2',
   very_light_pink_two: '#eeeeee',

@@ -31,9 +31,6 @@ export default {
   SCREEN_WIDTH,
   SCREEN_HEIGHT,
 
-  LENS_SCALE_FULL_ZOOM: 3,
-  LENS_MAX_ZOOM_FACTOR: 20,
-
   safePaddingLeft: StaticSafeAreaInsets.safeAreaInsetsLeft + 16,
   safePaddingTop: StaticSafeAreaInsets.safeAreaInsetsTop + 16,
   safePaddingRight: StaticSafeAreaInsets.safeAreaInsetsRight + 16,

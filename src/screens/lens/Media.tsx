@@ -75,11 +75,12 @@ const Media = ({ navigation, route }: NativeStackScreenProps<Routes, 'Media'>): 
         <Ionicons name="close" size={35} color="white" style={styles.icon} />
       </TouchableOpacity>
 
-      {/* <TouchableOpacity style={styles.saveButton} onPress={onSavePressed} disabled={savingState !== 'none'}>
-        {savingState === 'none' && <Ionicons name="download" size={35} color="white" style={styles.icon} />}
-        {savingState === 'saved' && <Ionicons name="checkmark" size={35} color="white" style={styles.icon} />}
-        {savingState === 'saving' && <ActivityIndicator color="white" />}
-      </TouchableOpacity> */}
+      <TouchableOpacity
+        style={styles.askButton}
+        onPress={() => navigation.navigate('ChatBox')}
+      >
+        <Ionicons name="chatbox" size={35} color="white" style={styles.icon} />
+      </TouchableOpacity>
 
       <StatusBarBlurBackground />
     </View>
