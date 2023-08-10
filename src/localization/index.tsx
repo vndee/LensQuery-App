@@ -20,6 +20,7 @@ export default new LocalizedStrings({
       close: 'Close',
       clear: 'Clear',
       clearAll: 'Clear all',
+      clickHere: 'Click here',
     },
 
     // Login
@@ -67,7 +68,23 @@ export default new LocalizedStrings({
       emailAlreadyInUse: 'Email already in use',
       weakPassword: 'Password should be at least 6 characters',
       unknownError: 'An error occurred, please try again later!',
-    }
+    },
+
+    // Onboarding setup
+    onboardingSetup: {
+      labelInputKey: 'OpenAI API Key',
+      pleasePasteOpenAIKey: 'Please paste your OpenAI key here',
+      dontKnowHowToGetKey: 'Don\'t know how to get your key?',
+      getYourKeyInstruction: 'Please follow the instruction here',
+      disclaimer: 'Your key will be stored locally on your device, we will never send it to our server',
+      saveBtn: 'Save',
+      keyEmptyError: 'Key is required',
+      keyInvalidError: 'Key is invalid',
+      alertErrorTitle: 'Error',
+      alertErrorMessage: 'An error occurred, please try again later!',
+      alertErrorClose: 'Close',
+      alertErrorRetry: 'Retry',
+    },
   },
   // Vietnamese
   vi: {
@@ -88,6 +105,7 @@ export default new LocalizedStrings({
       close: 'Đóng',
       clear: 'Xóa',
       clearAll: 'Xóa tất cả',
+      clickHere: 'Xem tại đây',
     },
 
     // Login
@@ -135,6 +153,22 @@ export default new LocalizedStrings({
       emailAlreadyInUse: 'Email đã được sử dụng',
       weakPassword: 'Mật khẩu phải có ít nhất 6 ký tự',
       unknownError: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
-    }
+    },
+
+    // Onboarding setup
+    onboardingSetup: {
+      labelInputKey: 'OpenAI API Key',
+      pleasePasteOpenAIKey: 'Vui lòng dán OpenAI key của bạn vào đây',
+      dontKnowHowToGetKey: 'Chưa biết cách lấy key?',
+      getYourKeyInstruction: 'Bạn có thể làm theo hướng dẫn ở đây',
+      disclaimer: 'Key sẽ được lưu trữ trên thiết bị của bạn, chúng tôi sẽ không bao giờ gửi nó lên máy chủ của chúng tôi',
+      saveBtn: 'Lưu',
+      keyEmptyError: 'Key không được để trống',
+      keyInvalidError: 'Key không hợp lệ',
+      alertErrorTitle: 'Lỗi',
+      alertErrorMessage: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+      alertErrorClose: 'Đóng',
+      alertErrorRetry: 'Thử lại',
+    },
   },
 });

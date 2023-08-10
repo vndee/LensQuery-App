@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Strings from '../../localization';
 import Header from '../../components/Header';
-import { ScreenProps } from '../../types/navigation';
 import { Colors, Spacing, Layout, Typography, Touchable } from '../../styles';
 import Button from '../../components/Button';
 import { Routes } from '../../types/navigation';
@@ -12,6 +11,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, ScrollView, TouchableOpacity } from 'react-native';
 
 const Register = ({ navigation, route }: NativeStackScreenProps<Routes, 'Register'>): JSX.Element => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -69,9 +70,13 @@ const Register = ({ navigation, route }: NativeStackScreenProps<Routes, 'Registe
 
   const handleRegister = () => {
     Keyboard.dismiss();
-    if (!isFormValid()) {
-      return;
-    }
+    setIsLoading(true);
+    // if (!isFormValid()) {
+    //   return;
+    // }
+
+    navigation.navigate('OnboardingSetup', { email, password });
+    setIsLoading(false);
   };
 
   return (

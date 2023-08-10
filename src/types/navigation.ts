@@ -1,8 +1,3 @@
-export type ScreenProps = {
-  navigation: any;
-  route: any;
-};
-
 export type Routes = {
   Login: undefined;
   Register: undefined;
@@ -10,5 +5,9 @@ export type Routes = {
   Media: {
     type: 'photo' | 'video';
     path: string;
+  };
+  OnboardingSetup: {
+    email: string;
+    password: string;
   }
 }

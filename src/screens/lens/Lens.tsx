@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { Spacing } from '../../styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { Spacing, Colors } from '../../styles';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import {
   Camera,
@@ -20,6 +20,7 @@ import auth from '@react-native-firebase/auth';
 import { useIsForeground } from '../../hooks/useIsForeground';
 import { clearStorageKeepAuth } from '../../storage';
 import { Routes } from '../../types/navigation';
+import Button from '../../components/Button';
 import { CaptureButton } from '../../components/Button/CaptureButton';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -34,6 +35,8 @@ Reanimated.addWhitelistedNativeProps({
 const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JSX.Element => {
   const dispatch = useDispatch();
   const cameraRef = useRef<Camera>(null);
+  const { accountCreds } = useSelector((state: any) => state.account);
+  console.log('user', accountCreds);
 
   const handleLogout = () => {
     console.log('~ handleClearAll');
@@ -203,38 +206,36 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
     console.log(`Suggestion available! ${suggestion.type}: Can do ${suggestion.suggestedFrameProcessorFps} FPS`);
   }, []);
 
-  return (
+  if (device != null) return (
     <View style={styles.container}>
       <StatusBar hidden />
-      {device != null && (
-        <PinchGestureHandler onGestureEvent={onPinchGesture} enabled={isActive}>
-          <Reanimated.View style={StyleSheet.absoluteFill}>
-            <TapGestureHandler onEnded={onDoubleTap} numberOfTaps={2}>
-              <ReanimatedCamera
-                ref={camera}
-                style={StyleSheet.absoluteFill}
-                device={device}
-                // format={format}
-                // fps={fps}
-                hdr={enableHdr}
-                lowLightBoost={device.supportsLowLightBoost && enableNightMode}
-                isActive={isActive}
-                onInitialized={onInitialized}
-                onError={onError}
-                enableZoomGesture={true}
-                animatedProps={cameraAnimatedProps}
-                photo={true}
-                // video={true}
-                // audio={hasMicrophonePermission}
-                // frameProcessor={device.supportsParallelVideoProcessing ? frameProcessor : undefined}
-                orientation="portrait"
-              // frameProcessorFps={1}
-              // onFrameProcessorPerformanceSuggestionAvailable={onFrameProcessorSuggestionAvailable}
-              />
-            </TapGestureHandler>
-          </Reanimated.View>
-        </PinchGestureHandler>
-      )}
+      <PinchGestureHandler onGestureEvent={onPinchGesture} enabled={isActive}>
+        <Reanimated.View style={StyleSheet.absoluteFill}>
+          <TapGestureHandler onEnded={onDoubleTap} numberOfTaps={2}>
+            <ReanimatedCamera
+              ref={camera}
+              style={StyleSheet.absoluteFill}
+              device={device}
+              // format={format}
+              // fps={fps}
+              hdr={enableHdr}
+              lowLightBoost={device.supportsLowLightBoost && enableNightMode}
+              isActive={isActive}
+              onInitialized={onInitialized}
+              onError={onError}
+              enableZoomGesture={true}
+              animatedProps={cameraAnimatedProps}
+              photo={true}
+              // video={true}
+              // audio={hasMicrophonePermission}
+              // frameProcessor={device.supportsParallelVideoProcessing ? frameProcessor : undefined}
+              orientation="portrait"
+            // frameProcessorFps={1}
+            // onFrameProcessorPerformanceSuggestionAvailable={onFrameProcessorSuggestionAvailable}
+            />
+          </TapGestureHandler>
+        </Reanimated.View>
+      </PinchGestureHandler>
       <CaptureButton
         style={styles.captureButton}
         camera={camera}
@@ -277,6 +278,17 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
           </TouchableOpacity>
         )}
       </View>
+    </View>
+  );
+
+  return (
+    <View style={{
+      flex: 1,
+      justifyContent: 'center',
+      paddingHorizontal: 20,
+      backgroundColor: Colors.background
+    }}>
+      <Button label="Logout" onPress={handleLogout} />
     </View>
   );
 };

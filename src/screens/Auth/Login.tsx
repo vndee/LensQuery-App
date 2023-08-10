@@ -9,6 +9,7 @@ import Checkbox from '../../components/Checkbox';
 import TextInputWithIcon from '../../components/Input/TextInputWithIcon';
 import { clearAuthInformation } from '../../storage';
 import { setLogin, setLanguage } from '../../redux/slice/auth';
+import { setAccountCreds } from '../../redux/slice/account';
 import firebaseAuth from '../../services/firebase'
 import { FirebaseSignInResponse } from '../../types/firebase';
 import { isEmpty } from 'lodash';
@@ -68,10 +69,7 @@ const Login = ({ navigation, route }: NativeStackScreenProps<Routes, 'Login'>): 
 
     firebaseAuth.signInWithEmailAndPassword(email, password).then((userCredential) => {
       console.debug('creds', userCredential);
-      // console.debug('user', userCredential.user);
-      // console.debug('meta', userCredential.user?.metadata);
-      // console.debug('providerData', userCredential.user?.providerData);
-      // dispatch(setLogin(true));
+      // setAccountCreds(userCredential);
     }).catch((error) => {
       switch (error.code) {
         case FirebaseSignInResponse.WRONG_PASSWORD:
