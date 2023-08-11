@@ -98,7 +98,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
             onSubmitEditing={sendMessage}
           />
           <TouchableOpacity onPress={sendMessage} style={styles.sendIcon}>
-            <Feather name="send" size={32} color={Colors.primary} />
+            <Feather name="send" size={28} color={Colors.primary} />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -145,7 +145,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   messageInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.L,
+    paddingVertical: Spacing.S,
     backgroundColor: Colors.background,
     paddingHorizontal: Spacing.horizontalPadding,
   },

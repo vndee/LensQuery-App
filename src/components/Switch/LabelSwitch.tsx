@@ -59,10 +59,10 @@ const LabelSwitch = ({
 const styles = StyleSheet.create({
   container: {
     gap: Spacing.XS,
-    height: 32,
+    height: 28,
     borderRadius: Spacing.S,
     justifyContent: 'space-between',
-    padding: Spacing.XS,
+    padding: Spacing.XXS,
     flexDirection: 'row',
     alignItems: 'center',
   },
