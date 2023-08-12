@@ -291,6 +291,7 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
     }}>
       <Button label="Logout" onPress={handleLogout} />
       <Button label="Chat" onPress={() => navigation.navigate('ChatList')} />
+      {/* <Button label="Chat" onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined })} /> */}
     </View>
   );
 };

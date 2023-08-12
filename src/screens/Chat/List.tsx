@@ -28,7 +28,7 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
         <FlashList
           data={listOfChats}
           // @ts-expect-error
-          renderItem={({ item }) => <BoxCard item={item} onPress={() => navigation.navigate('ChatBox', { chatBoxId: item._id.toHexString() })} onLongPress={() => { }} />}
+          renderItem={({ item }) => <BoxCard item={item} onPress={() => navigation.navigate('ChatBox', { chatBoxId: item.id })} onLongPress={() => { }} />}
           keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           estimatedItemSize={100}

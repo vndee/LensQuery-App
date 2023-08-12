@@ -27,7 +27,7 @@ const BoxCard = ({ item, onPress, onLongPress }: IChatBoxProps) => {
           </View>
         </View>
         <Text style={Typography.body} numberOfLines={1} ellipsizeMode='tail'>
-          This is a very long long long long and long long long long message
+          {lastMessage}
         </Text>
       </View>
     </TouchableOpacity>

@@ -6,7 +6,7 @@ import { Routes } from '../../types/navigation';
 import Animated from 'react-native-reanimated';
 import { IChatEngine, IMessage } from '../../types/chat';
 import { FlashList } from '@shopify/flash-list';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, ActivityIndicator } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -14,7 +14,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import LabelSwitch from '../../components/Switch/LabelSwitch';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
 import Message from '../../components/Chat/Message';
-// import { useKeyboard } from '../../hooks/useKeyboard';
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
 import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH } from '../../utils/Constants';
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
@@ -36,18 +35,19 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
   const isKeyboardVisible = useKeyboardVisible();
   const { chatBoxId } = route.params;
   const actionSheetRef = useRef<ActionSheetRef>(null);
-  const [tooltipVisible, setTooltipVisible] = useState(false)
   const listRef = useRef<FlashList<string> | null>(null);
   const [inputMessage, setInputMessage] = useState<string>('');
   const [messages, setMessages] = useState<Array<IMessage>>([]);
   const [engine, setEngine] = useState<IChatEngine>(chatEngine[0]);
-  const chatBox = useObject('ChatBox', new Realm.BSON.ObjectId(chatBoxId));
-  const chatCollection = useObject('MessageCollection', new Realm.BSON.ObjectId(chatBox?.collectionId));
+  const [chatBoxIdCopy, setChatBoxIdCopy] = useState<string>(chatBoxId ? chatBoxId : '');
+  const chatBox = useObject('ChatBox', chatBoxIdCopy);
+  const [isFetchingHistory, setIsFetchingHistory] = useState<boolean>(false);
+  const chatCollection = useObject('MessageCollection', chatBox?.collectionId ? chatBox.collectionId : '');
 
   const pushMessage = useCallback((text: string, type: 'user' | 'bot', engineId: string, isInterupted: boolean = false) => {
     const message: IMessage = {
-      _id: new Realm.BSON.ObjectId(),
-      collectionId: chatCollection?._id,
+      id: new Realm.BSON.ObjectId().toHexString(),
+      collectionId: chatCollection?.id,
       content: text,
       type: type,
       isInterupted: isInterupted,
@@ -100,20 +100,29 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
     }
   }, [chatCollection]);
 
-  const deleteAllData = () => {
+  const handleDeleteChatBox = () => {
     realm.write(() => {
-      realm.deleteAll();
-    });
+      realm.delete(chatBox);
+      realm.delete(chatCollection);
+    }
+    );
+    navigation.goBack();
   };
 
+  const handleSearchInChatBox = (text: string) => {
+    console.debug('search', text);
+    const results = realm.objects('Message').filtered(`collectionId == "${chatCollection?.id}" && content CONTAINS[c] "${text}"`);
+    console.debug('results', results);
+  }
+
   useEffect(() => {
-    console.debug('chatBoxId', chatBoxId);
-    if (!chatBoxId) {
+    if (chatBoxId === undefined) {
       // create new chat box in realm
-      const collectionId = new Realm.BSON.ObjectId();
+      const boxId = new Realm.BSON.ObjectId().toHexString();
+      const collectionId = new Realm.BSON.ObjectId().toHexString();
       realm.write(() => {
         const chatBox = realm.create('ChatBox', {
-          _id: new Realm.BSON.ObjectId(),
+          id: boxId,
           name: '',
           engineId: engine.id,
           collectionId: collectionId,
@@ -126,20 +135,48 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
 
         // create new collection for this chat box
         realm.create('MessageCollection', {
-          _id: collectionId,
+          id: collectionId,
           chatBox: chatBox,
           messages: [],
           createAt: new Date().getTime(),
           updateAt: new Date().getTime(),
         });
       });
+      setChatBoxIdCopy(boxId);
     }
   }, [chatBoxId]);
 
   const actionItem = [
-    { icon: 'search-outline', color: Colors.text_color, label: Strings.chatBox.optionSearch, onPress: () => { actionSheetRef.current?.hide() } },
-    { icon: 'trash-outline', color: Colors.danger, label: Strings.chatBox.optionClear, onPress: () => { actionSheetRef.current?.hide() } },
+    {
+      icon: 'search-outline', color: Colors.text_color, label: Strings.chatBox.optionSearch,
+      onPress: () => {
+        actionSheetRef.current?.hide();
+        handleSearchInChatBox('Lam');
+      }
+    },
+    {
+      icon: 'trash-outline', color: Colors.danger, label: Strings.chatBox.optionClear,
+      onPress: () => {
+        actionSheetRef.current?.hide();
+        handleDeleteChatBox();
+      }
+    },
   ];
+
+  const handleFetchMore = () => {
+    const M = messages.length;
+    const N = chatCollection?.messages.length;
+
+    if (M < N) {
+      setIsFetchingHistory(true);
+      let history: Array<IMessage> = [];
+      for (let i = 0; i < Math.min(N - M, CHAT_HISTORY_LOAD_LENGTH); i++) {
+        history.push(chatCollection?.messages[N - M - i - 1]);
+      }
+      setMessages((messages) => [...messages, ...history]);
+      setIsFetchingHistory(false);
+    };
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -172,18 +209,17 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
           data={messages}
           renderItem={({ item }: { item: IMessage }) => <Message item={item} />}
           keyExtractor={(item, index) => index.toString()}
-          // style={styles.messagesContainer}
           // @ts-ignore
           contentContainerStyle={styles.messagesContentContainer}
           showsVerticalScrollIndicator={false}
-          onContentSizeChange={() => {
-            console.debug('content size changed');
-          }}
           estimatedItemSize={100}
+          onEndReached={handleFetchMore}
+          onEndReachedThreshold={0}
+          ListFooterComponent={isFetchingHistory ? <ActivityIndicator size="small" color={Colors.primary} /> : null}
         />
       </View>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <View style={[styles.messageInputContainer, { paddingBottom: isKeyboardVisible ? Spacing.S : Spacing.SAFE_BOTTOM - Spacing.S }]}>
+        <View style={[styles.messageInputContainer, { paddingBottom: isKeyboardVisible ? Spacing.S : Spacing.SAFE_BOTTOM }]}>
           <TextInput
             style={styles.messageInput}
             placeholder={Strings.chatBox.placeholder}
@@ -208,6 +244,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
             </TouchableOpacity>
           )}
           keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={{ paddingBottom: Spacing.SAFE_BOTTOM - Spacing.S }}
         />
       </ActionSheet>
     </View >

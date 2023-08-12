@@ -4,10 +4,10 @@ import { createRealmContext } from "@realm/react";
 
 // Models
 class ChatBox extends Realm.Object<IChatBox> {
-  _id!: Realm.BSON.ObjectId;
+  id!: string;
   name!: string;
   engineId!: string;
-  collectionId!: Realm.BSON.ObjectId;
+  collectionId!: string;
   lastMessage!: string;
   lastMessageAt!: number; // unix timestamp
   createAt!: number; // unix timestamp
@@ -15,12 +15,12 @@ class ChatBox extends Realm.Object<IChatBox> {
 
   static schema: Realm.ObjectSchema = {
     name: "ChatBox",
-    primaryKey: "_id",
+    primaryKey: "id",
     properties: {
-      _id: "objectId",
+      id: "string",
       name: "string",
       engineId: "string",
-      collectionId: "objectId",
+      collectionId: "string",
       lastMessage: "string",
       lastMessageAt: "int",
       createAt: "int",
@@ -30,8 +30,8 @@ class ChatBox extends Realm.Object<IChatBox> {
 };
 
 class Message extends Realm.Object<IMessage> {
-  _id!: Realm.BSON.ObjectId;
-  collectionId!: Realm.BSON.ObjectId;
+  id!: string;
+  collectionId!: string;
   type!: string;
   content!: string;
   isInterupted!: boolean;
@@ -41,10 +41,10 @@ class Message extends Realm.Object<IMessage> {
 
   static schema: Realm.ObjectSchema = {
     name: "Message",
-    primaryKey: "_id",
+    primaryKey: "id",
     properties: {
-      _id: "objectId",
-      collectionId: "objectId",
+      id: "string",
+      collectionId: "string",
       type: "string",
       content: "string",
       isInterupted: "bool",
@@ -56,7 +56,7 @@ class Message extends Realm.Object<IMessage> {
 };
 
 class MessageCollection extends Realm.Object<MessageCollection> {
-  _id!: Realm.BSON.ObjectId;
+  id!: string;
   chatBox!: ChatBox;
   messages!: Realm.List<Message>;
   createAt!: number; // unix timestamp
@@ -64,9 +64,9 @@ class MessageCollection extends Realm.Object<MessageCollection> {
 
   static schema: Realm.ObjectSchema = {
     name: "MessageCollection",
-    primaryKey: "_id",
+    primaryKey: "id",
     properties: {
-      _id: "objectId",
+      id: "string",
       chatBox: "ChatBox",
       messages: "Message[]",
       createAt: "int",
@@ -77,7 +77,7 @@ class MessageCollection extends Realm.Object<MessageCollection> {
 
 const realmConfig = {
   schema: [ChatBox, Message, MessageCollection],
-  schemaVersion: 8,
+  schemaVersion: 13,
 };
 
 export const { RealmProvider, useRealm, useObject, useQuery } = createRealmContext(realmConfig);
