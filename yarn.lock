@@ -6150,6 +6150,11 @@ react-localization@^1.0.17:
   dependencies:
     localized-strings "^0.2.0"
 
+react-native-actions-sheet@^0.9.0-alpha.21:
+  version "0.9.0-alpha.21"
+  resolved "https://registry.yarnpkg.com/react-native-actions-sheet/-/react-native-actions-sheet-0.9.0-alpha.21.tgz#3d4bb0a56fa5723151b7b79c9bb82ef26326586f"
+  integrity sha512-ZYaVjQfNUtdUZBh0uVAesjk00WyxJm9siTpADVCb07Qavimiz4npHn3Sm4jR0fyvFEokVqY3FKT4ETzaUDiVSA==
+
 react-native-fast-image@^8.6.3:
   version "8.6.3"
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.6.3.tgz#6edc3f9190092a909d636d93eecbcc54a8822255"

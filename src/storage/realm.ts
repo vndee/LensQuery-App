@@ -1,8 +1,9 @@
 import Realm from "realm";
+import { IChatBox, IMessage } from "../types/chat";
 import { createRealmContext } from "@realm/react";
 
 // Models
-class ChatBox extends Realm.Object<ChatBox> {
+class ChatBox extends Realm.Object<IChatBox> {
   _id!: Realm.BSON.ObjectId;
   name!: string;
   engineId!: string;
@@ -28,7 +29,7 @@ class ChatBox extends Realm.Object<ChatBox> {
   };
 };
 
-class Message extends Realm.Object<Message> {
+class Message extends Realm.Object<IMessage> {
   _id!: Realm.BSON.ObjectId;
   collectionId!: Realm.BSON.ObjectId;
   type!: string;

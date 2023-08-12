@@ -96,6 +96,14 @@ export default new LocalizedStrings({
     chatList: {
       title: 'Recent chats',
     },
+
+    // Chat box
+    chatBox: {
+      placeholder: 'Type a message...',
+      optionSearch: 'Search in this chatbox',
+      optionClear: 'Clear all messages',
+      searchPlaceholder: 'Search...',
+    }
   },
   // Vietnamese
   vi: {
@@ -192,5 +200,13 @@ export default new LocalizedStrings({
     chatList: {
       title: 'Cuộc trò chuyện gần đây',
     },
+
+    // Chat box
+    chatBox: {
+      placeholder: 'Nhập tin nhắn...',
+      optionSearch: 'Tìm kiếm trong tin nhắn',
+      optionClear: 'Xóa tất cả tin nhắn',
+      searchPlaceholder: 'Tìm kiếm...',
+    }
   },
 });

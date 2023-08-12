@@ -25,6 +25,7 @@
     "lodash": "^4.17.21",
     "react": "18.2.0",
     "react-native": "0.72.3",
+    "react-native-actions-sheet": "^0.9.0-alpha.21",
     "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "^2.12.1",
     "react-native-get-random-values": "^1.9.0",

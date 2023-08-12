@@ -1,18 +1,22 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import 'react-native-get-random-values'
 import Realm from 'realm';
+import Strings from '../../localization';
 import { Routes } from '../../types/navigation';
 import Animated from 'react-native-reanimated';
 import { IChatEngine, IMessage } from '../../types/chat';
 import { FlashList } from '@shopify/flash-list';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, LayoutAnimation } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import LabelSwitch from '../../components/Switch/LabelSwitch';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
+import Message from '../../components/Chat/Message';
 import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH } from '../../utils/Constants';
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
+import { FlatList } from 'react-native-gesture-handler';
 
 const chatEngine: IChatEngine[] = [
   {
@@ -28,6 +32,8 @@ const chatEngine: IChatEngine[] = [
 const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'>) => {
   const realm = useRealm();
   const { chatBoxId } = route.params;
+  const actionSheetRef = useRef<ActionSheetRef>(null);
+  const [tooltipVisible, setTooltipVisible] = useState(false)
   const listRef = useRef<FlashList<string> | null>(null);
   const [inputMessage, setInputMessage] = useState<string>('');
   const [messages, setMessages] = useState<Array<IMessage>>([]);
@@ -49,6 +55,8 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
 
     realm.write(() => {
       chatCollection.messages.push(message);
+      chatBox.lastMessage! = message.content;
+      chatBox.lastMessageAt! = message.createAt;
     });
 
     // add new message to the end of the array
@@ -65,6 +73,8 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       // add message to the front of the array
       pushMessage(text, 'user', engine.id);
       setInputMessage('');
+
+      pushMessage('Loading... This is the markup text lorem ipsum dolor sit amet', 'bot', engine.id, false);
     }
   };
 
@@ -123,38 +133,42 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
     }
   }, [chatBoxId]);
 
-  const renderItem = ({ item }: { item: IMessage }) => {
-    console.log('item', item);
-    return (
-      <View style={styles.messageContainer}>
-        <Text style={styles.messageText}>{item.content}</Text>
-      </View>
-    )
-  };
+  const actionItem = [
+    { icon: 'search-outline', color: Colors.text_color, label: Strings.chatBox.optionSearch, onPress: () => { actionSheetRef.current?.hide() } },
+    { icon: 'trash-outline', color: Colors.danger, label: Strings.chatBox.optionClear, onPress: () => { actionSheetRef.current?.hide() } },
+  ];
 
   return (
     <View style={{ flex: 1 }}>
       <View style={Layout.header}>
         <View style={styles.row}>
-          <Ionicons name="arrow-back" size={20} color={Colors.text_color} onPress={navigation.goBack} />
+          <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
+            <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
+          </TouchableOpacity>
           <Text style={Typography.H3}>Chat</Text>
         </View>
-        <LabelSwitch
-          data={chatEngine}
-          value={engine}
-          onChange={setEngine}
-          bgInActiveColor={Colors.primary}
-          bgActiveColor={Colors.white}
-          labelActiveColor={Colors.primary}
-          labelInActiveColor={Colors.white}
-        />
+        <View style={styles.headerRight}>
+          <LabelSwitch
+            data={chatEngine}
+            value={engine}
+            onChange={setEngine}
+            bgInActiveColor={Colors.primary}
+            bgActiveColor={Colors.white}
+            labelActiveColor={Colors.primary}
+            labelInActiveColor={Colors.white}
+          />
+
+          <TouchableOpacity style={styles.moreIcon} onPress={() => actionSheetRef.current?.show()}>
+            <Feather name="more-vertical" size={20} color={Colors.text_color} />
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.container}>
         <FlashList
           inverted
           ref={listRef}
           data={messages}
-          renderItem={renderItem}
+          renderItem={({ item }: { item: IMessage }) => <Message item={item} />}
           keyExtractor={(item, index) => index.toString()}
           // style={styles.messagesContainer}
           // @ts-ignore
@@ -170,7 +184,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
         <View style={styles.messageInputContainer}>
           <TextInput
             style={styles.messageInput}
-            placeholder="Type a message..."
+            placeholder={Strings.chatBox.placeholder}
             placeholderTextColor={Colors.borders}
             value={inputMessage}
             onChangeText={setInputMessage}
@@ -181,7 +195,20 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-    </View>
+      <ActionSheet ref={actionSheetRef}>
+        <View style={styles.draggleBar} />
+        <FlatList
+          data={actionItem}
+          renderItem={({ item }: { item: any }) => (
+            <TouchableOpacity onPress={item.onPress} style={styles.actionItem}>
+              <Ionicons name={item.icon} size={20} color={item.color} />
+              <Text style={[Typography.body, { color: item.color }]}>{item.label}</Text>
+            </TouchableOpacity>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </ActionSheet>
+    </View >
   );
 };
 
@@ -191,13 +218,27 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     backgroundColor: Colors.white_two,
   },
   row: {
+    flex: 1,
     gap: Spacing.XS,
     flexDirection: 'row',
     alignItems: 'center',
   },
+  headerRight: {
+    gap: Spacing.XS,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  moreIcon: {
+    width: 24,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
   backIcon: {
     width: 24,
-    height: 24,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
   headerTitle: {
     ...Typography.H3,
@@ -209,17 +250,6 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   messagesContentContainer: {
     paddingVertical: Spacing.XL,
     paddingHorizontal: Spacing.horizontalPadding,
-  },
-  messageContainer: {
-    borderRadius: 8,
-    padding: Spacing.M,
-    alignSelf: 'flex-end',
-    marginBottom: Spacing.M,
-    backgroundColor: Colors.primary,
-  },
-  messageText: {
-    ...Typography.body,
-    color: Colors.white_two,
   },
   messageInputContainer: {
     flexDirection: 'row',
@@ -242,6 +272,17 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  actionItem: {
+    ...Layout.row,
+    gap: Spacing.S,
+    paddingVertical: Spacing.S,
+    paddingHorizontal: Spacing.horizontalPadding,
+  },
+  draggleBar: {
+    height: Spacing.XS,
+    borderRadius: Spacing.XXS,
+    marginVertical: Spacing.XS,
+  }
 });
 
 export default ChatBox;
