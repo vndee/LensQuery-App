@@ -10,7 +10,7 @@ export default StyleSheet.create({
     paddingHorizontal: Spacing.horizontalPadding,
   },
   header: {
-    height: getStatusBarHeight(false) + 44,
+    height: getStatusBarHeight(false) + 52,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',

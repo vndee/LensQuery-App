@@ -44,6 +44,9 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
   const [isFetchingHistory, setIsFetchingHistory] = useState<boolean>(false);
   const chatCollection = useObject('MessageCollection', chatBox?.collectionId ? chatBox.collectionId : '');
 
+  const [searchText, setSearchText] = useState<string>('');
+  const [isSearchBarVisible, setIsSearchBarVisible] = useState<boolean>(false);
+
   const pushMessage = useCallback((text: string, type: 'user' | 'bot', engineId: string, isInterupted: boolean = false) => {
     const message: IMessage = {
       id: new Realm.BSON.ObjectId().toHexString(),
@@ -104,8 +107,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
     realm.write(() => {
       realm.delete(chatBox);
       realm.delete(chatCollection);
-    }
-    );
+    });
     navigation.goBack();
   };
 
@@ -151,7 +153,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       icon: 'search-outline', color: Colors.text_color, label: Strings.chatBox.optionSearch,
       onPress: () => {
         actionSheetRef.current?.hide();
-        handleSearchInChatBox('Lam');
+        setIsSearchBarVisible(true);
       }
     },
     {
@@ -181,27 +183,51 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
   return (
     <View style={{ flex: 1 }}>
       <View style={Layout.header}>
-        <View style={styles.row}>
-          <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
-            <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
-          </TouchableOpacity>
-          <Text style={Typography.H3}>Chat</Text>
-        </View>
-        <View style={styles.headerRight}>
-          <LabelSwitch
-            data={chatEngine}
-            value={engine}
-            onChange={setEngine}
-            bgInActiveColor={Colors.primary}
-            bgActiveColor={Colors.white}
-            labelActiveColor={Colors.primary}
-            labelInActiveColor={Colors.white}
-          />
+        {!isSearchBarVisible ? (
+          <>
+            <View style={styles.row}>
+              <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
+                <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
+              </TouchableOpacity>
+              <Text style={Typography.H3}>Chat</Text>
+            </View>
+            <View style={styles.headerRight}>
+              <LabelSwitch
+                data={chatEngine}
+                value={engine}
+                onChange={setEngine}
+                bgInActiveColor={Colors.primary}
+                bgActiveColor={Colors.white}
+                labelActiveColor={Colors.primary}
+                labelInActiveColor={Colors.white}
+              />
 
-          <TouchableOpacity style={styles.moreIcon} onPress={() => actionSheetRef.current?.show()}>
-            <Feather name="more-vertical" size={20} color={Colors.text_color} />
-          </TouchableOpacity>
-        </View>
+              <TouchableOpacity style={styles.moreIcon} onPress={() => actionSheetRef.current?.show()}>
+                <Feather name="more-vertical" size={20} color={Colors.text_color} />
+              </TouchableOpacity>
+            </View>
+          </>) : (
+          <>
+            <TouchableOpacity onPress={() => setIsSearchBarVisible(false)} style={styles.backIcon}>
+              <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
+            </TouchableOpacity>
+            <View style={styles.searchContainer}>
+              <TextInput
+                autoFocus
+                style={styles.searchBar}
+                placeholder={Strings.chatBox.searchPlaceholder}
+                placeholderTextColor={Colors.text_color}
+                onChangeText={setSearchText}
+              />
+              <TouchableOpacity onPress={() => {
+                setIsSearchBarVisible(false);
+                handleSearchInChatBox(searchText);
+              }}>
+                <Ionicons name="search" size={20} color={Colors.text_color} />
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
       </View>
       <View style={styles.container}>
         <FlashList
@@ -321,6 +347,19 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     height: Spacing.XS,
     borderRadius: Spacing.XXS,
     marginVertical: Spacing.XS,
+  },
+  searchContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.white_two,
+    borderRadius: 8,
+    paddingHorizontal: Spacing.M,
+    paddingVertical: Spacing.S,
+  },
+  searchBar: {
+    ...Typography.body,
+    flex: 1,
   }
 });
 
