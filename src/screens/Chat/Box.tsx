@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import 'react-native-get-random-values'
 import Realm from 'realm';
 import { Routes } from '../../types/navigation';
-import { IChatEngine } from '../../types/chat';
 import Animated from 'react-native-reanimated';
+import { IChatEngine, IMessage } from '../../types/chat';
 import { FlashList } from '@shopify/flash-list';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, LayoutAnimation } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
@@ -12,6 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import LabelSwitch from '../../components/Switch/LabelSwitch';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
+import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH } from '../../utils/Constants';
 
 const chatEngine: IChatEngine[] = [
   {
@@ -22,46 +23,98 @@ const chatEngine: IChatEngine[] = [
     id: 'gpt-4',
     name: 'GPT-4'
   }
-]
+];
 
 const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'>) => {
   const realm = useRealm();
   const { chatBoxId } = route.params;
   const listRef = useRef<FlashList<string> | null>(null);
-  const [message, setMessage] = useState<string>('');
-  const [messages, setMessages] = useState<Array<string>>([]);
+  const [inputMessage, setInputMessage] = useState<string>('');
+  const [messages, setMessages] = useState<Array<IMessage>>([]);
   const [engine, setEngine] = useState<IChatEngine>(chatEngine[0]);
+  const chatBox = useObject('ChatBox', new Realm.BSON.ObjectId(chatBoxId));
+  const chatCollection = useObject('MessageCollection', new Realm.BSON.ObjectId(chatBox?.collectionId));
 
-  const sendMessage = () => {
+  const pushMessage = useCallback((text: string, type: 'user' | 'bot', engineId: string, isInterupted: boolean = false) => {
+    const message: IMessage = {
+      _id: new Realm.BSON.ObjectId(),
+      collectionId: chatCollection?._id,
+      content: text,
+      type: type,
+      isInterupted: isInterupted,
+      engineId: engineId,
+      createAt: new Date().getTime(),
+      updateAt: new Date().getTime(),
+    };
+
+    realm.write(() => {
+      chatCollection.messages.push(message);
+    });
+
+    // add new message to the end of the array
+    if (messages.length >= CHAT_HISTORY_CACHE_LENGTH) {
+      setMessages((messages) => [message, ...messages.splice(0, messages.length - 1)]);
+    } else {
+      setMessages((messages) => [message, ...messages]);
+    }
+  }, [chatCollection]);
+
+  const sendMessage = (text: string) => {
     Keyboard.dismiss();
-    if (message.length > 0) {
+    if (text.length > 0) {
       // add message to the front of the array
-      setMessages([message, ...messages]);
-      setMessage('');
-
-      // listRef.current?.prepareForLayoutAnimationRender();
-      // LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+      pushMessage(text, 'user', engine.id);
+      setInputMessage('');
     }
   };
-
-  useEffect(() => {
-    console.debug('messages', messages);
-  }, [messages]);
 
   useEffect(() => {
     console.debug('engine', engine);
   }, [engine]);
 
   useEffect(() => {
+    console.debug('chatBox', chatBox);
+  }, [chatBox]);
+
+  useEffect(() => {
+    if (messages.length === 0 && chatCollection?.messages.length > 0) {
+      let history: Array<IMessage> = [];
+      const L = chatCollection?.messages.length;
+      for (let i = 0; i < Math.min(L, CHAT_HISTORY_LOAD_LENGTH); i++) {
+        history.push(chatCollection?.messages[L - i - 1]);
+      };
+      setMessages(history);
+    }
+  }, [chatCollection]);
+
+  const deleteAllData = () => {
+    realm.write(() => {
+      realm.deleteAll();
+    });
+  };
+
+  useEffect(() => {
+    console.debug('chatBoxId', chatBoxId);
     if (!chatBoxId) {
       // create new chat box in realm
+      const collectionId = new Realm.BSON.ObjectId();
       realm.write(() => {
-        realm.create('ChatBox', {
+        const chatBox = realm.create('ChatBox', {
           _id: new Realm.BSON.ObjectId(),
           name: '',
           engineId: engine.id,
+          collectionId: collectionId,
           lastMessage: '',
           lastMessageAt: new Date().getTime(),
+          messages: [],
+          createAt: new Date().getTime(),
+          updateAt: new Date().getTime(),
+        });
+
+        // create new collection for this chat box
+        realm.create('MessageCollection', {
+          _id: collectionId,
+          chatBox: chatBox,
           messages: [],
           createAt: new Date().getTime(),
           updateAt: new Date().getTime(),
@@ -70,11 +123,14 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
     }
   }, [chatBoxId]);
 
-  const renderItem = ({ item }: { item: string }) => (
-    <View style={styles.messageContainer}>
-      <Text style={styles.messageText}>{item}</Text>
-    </View>
-  );
+  const renderItem = ({ item }: { item: IMessage }) => {
+    console.log('item', item);
+    return (
+      <View style={styles.messageContainer}>
+        <Text style={styles.messageText}>{item.content}</Text>
+      </View>
+    )
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -116,11 +172,11 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
             style={styles.messageInput}
             placeholder="Type a message..."
             placeholderTextColor={Colors.borders}
-            value={message}
-            onChangeText={setMessage}
-            onSubmitEditing={sendMessage}
+            value={inputMessage}
+            onChangeText={setInputMessage}
+            onSubmitEditing={() => sendMessage(inputMessage)}
           />
-          <TouchableOpacity onPress={sendMessage} style={styles.sendIcon}>
+          <TouchableOpacity onPress={() => sendMessage(inputMessage)} style={styles.sendIcon}>
             <Feather name="send" size={28} color={Colors.primary} />
           </TouchableOpacity>
         </View>

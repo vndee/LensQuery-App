@@ -23,6 +23,12 @@ export default new LocalizedStrings({
       clickHere: 'Click here',
     },
 
+    timeDiff: {
+      now: 'Just now',
+      minutesAgo: 'minutes ago',
+      hoursAgo: 'hours ago',
+    },
+
     // Login
     login: {
       title: 'Login',
@@ -85,6 +91,11 @@ export default new LocalizedStrings({
       alertErrorClose: 'Close',
       alertErrorRetry: 'Retry',
     },
+
+    // Chat listing
+    chatList: {
+      title: 'Recent chats',
+    },
   },
   // Vietnamese
   vi: {
@@ -106,6 +117,12 @@ export default new LocalizedStrings({
       clear: 'Xóa',
       clearAll: 'Xóa tất cả',
       clickHere: 'Xem tại đây',
+    },
+
+    timeDiff: {
+      now: 'Vừa xong',
+      minutesAgo: 'phút trước',
+      hoursAgo: 'giờ trước',
     },
 
     // Login
@@ -169,6 +186,11 @@ export default new LocalizedStrings({
       alertErrorMessage: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
       alertErrorClose: 'Đóng',
       alertErrorRetry: 'Thử lại',
+    },
+
+    // Chat listing
+    chatList: {
+      title: 'Cuộc trò chuyện gần đây',
     },
   },
 });

@@ -1,3 +1,5 @@
+import Realm from "realm";
+
 export type Routes = {
   Login: undefined;
   Register: undefined;
@@ -12,5 +14,6 @@ export type Routes = {
   },
   ChatBox: {
     chatBoxId: string | undefined;
-  }
+  };
+  ChatList: undefined;
 }
