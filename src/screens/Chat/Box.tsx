@@ -4,6 +4,7 @@ import Realm from 'realm';
 import Strings from '../../localization';
 import { Routes } from '../../types/navigation';
 import Animated from 'react-native-reanimated';
+import EventSource from '../../services/sse';
 import { IChatEngine, IMessage } from '../../types/chat';
 import { FlashList } from '@shopify/flash-list';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, ActivityIndicator } from 'react-native';
@@ -80,7 +81,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       pushMessage(text, 'user', engine.id);
       setInputMessage('');
 
-      pushMessage('Loading... This is the markup text lorem ipsum dolor sit amet', 'bot', engine.id, false);
+      pushMessage('Loading... This is the new markup text lorem ipsum dolor sit amet', 'bot', engine.id, false);
     }
   };
 
