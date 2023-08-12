@@ -10,5 +10,7 @@ export type Routes = {
     email: string;
     password: string;
   },
-  ChatBox: undefined;
+  ChatBox: {
+    chatBoxId: string | undefined;
+  }
 }

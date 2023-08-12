@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import 'react-native-get-random-values'
+import Realm from 'realm';
 import { Routes } from '../../types/navigation';
 import { IChatEngine } from '../../types/chat';
 import Animated from 'react-native-reanimated';
@@ -9,6 +11,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import LabelSwitch from '../../components/Switch/LabelSwitch';
+import { useRealm, useQuery, useObject } from '../../storage/realm';
 
 const chatEngine: IChatEngine[] = [
   {
@@ -22,6 +25,8 @@ const chatEngine: IChatEngine[] = [
 ]
 
 const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'>) => {
+  const realm = useRealm();
+  const { chatBoxId } = route.params;
   const listRef = useRef<FlashList<string> | null>(null);
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<Array<string>>([]);
@@ -46,6 +51,24 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
   useEffect(() => {
     console.debug('engine', engine);
   }, [engine]);
+
+  useEffect(() => {
+    if (!chatBoxId) {
+      // create new chat box in realm
+      realm.write(() => {
+        realm.create('ChatBox', {
+          _id: new Realm.BSON.ObjectId(),
+          name: '',
+          engineId: engine.id,
+          lastMessage: '',
+          lastMessageAt: new Date().getTime(),
+          messages: [],
+          createAt: new Date().getTime(),
+          updateAt: new Date().getTime(),
+        });
+      });
+    }
+  }, [chatBoxId]);
 
   const renderItem = ({ item }: { item: string }) => (
     <View style={styles.messageContainer}>

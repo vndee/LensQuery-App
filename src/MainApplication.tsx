@@ -10,6 +10,7 @@ import { setLogin } from './redux/slice/auth';
 import MainStack from './navigations/MainStack';
 import AuthStack from './navigations/AuthStack';
 import { setAccountCreds } from './redux/slice/account';
+import { RealmProvider } from './storage/realm';
 
 const MainApplication = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -39,7 +40,9 @@ const MainApplication = (): JSX.Element => {
 
   return (
     <GestureHandlerRootView style={iphoneXSeries}>
-      {isLogin ? <MainStack /> : <AuthStack />}
+      <RealmProvider>
+        {isLogin ? <MainStack /> : <AuthStack />}
+      </RealmProvider>
     </GestureHandlerRootView>
   );
 }

@@ -290,7 +290,7 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
       gap: Spacing.XL
     }}>
       <Button label="Logout" onPress={handleLogout} />
-      <Button label="Chat" onPress={() => navigation.navigate('ChatBox')} />
+      <Button label="Chat" onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined })} />
     </View>
   );
 };
