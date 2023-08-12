@@ -14,6 +14,8 @@ import Feather from 'react-native-vector-icons/Feather';
 import LabelSwitch from '../../components/Switch/LabelSwitch';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
 import Message from '../../components/Chat/Message';
+// import { useKeyboard } from '../../hooks/useKeyboard';
+import { useKeyboardVisible } from '../../hooks/useKeyboard';
 import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH } from '../../utils/Constants';
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { FlatList } from 'react-native-gesture-handler';
@@ -31,6 +33,7 @@ const chatEngine: IChatEngine[] = [
 
 const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'>) => {
   const realm = useRealm();
+  const isKeyboardVisible = useKeyboardVisible();
   const { chatBoxId } = route.params;
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const [tooltipVisible, setTooltipVisible] = useState(false)
@@ -166,7 +169,6 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       <View style={styles.container}>
         <FlashList
           inverted
-          ref={listRef}
           data={messages}
           renderItem={({ item }: { item: IMessage }) => <Message item={item} />}
           keyExtractor={(item, index) => index.toString()}
@@ -181,7 +183,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
         />
       </View>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <View style={styles.messageInputContainer}>
+        <View style={[styles.messageInputContainer, { paddingBottom: isKeyboardVisible ? Spacing.S : Spacing.SAFE_BOTTOM - Spacing.S }]}>
           <TextInput
             style={styles.messageInput}
             placeholder={Strings.chatBox.placeholder}
@@ -254,7 +256,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   messageInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.S,
+    paddingTop: Spacing.S,
     backgroundColor: Colors.background,
     paddingHorizontal: Spacing.horizontalPadding,
   },

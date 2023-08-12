@@ -36,5 +36,7 @@ export default {
   safePaddingRight: StaticSafeAreaInsets.safeAreaInsetsRight + 16,
   safePaddingBottom: SAFE_BOTTOM + 16,
 
-
+  SAFE_BOTTOM: Platform.select({
+    ios: StaticSafeAreaInsets.safeAreaInsetsBottom,
+  }) ?? 0
 };
