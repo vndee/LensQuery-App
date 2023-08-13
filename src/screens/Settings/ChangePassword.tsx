@@ -22,7 +22,7 @@ const ChangePassword = ({ navigation, route }: NativeStackScreenProps<Routes, 'C
   };
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <View style={Layout.header}>
         <View style={Layout.row}>
           <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
@@ -90,7 +90,7 @@ const ChangePassword = ({ navigation, route }: NativeStackScreenProps<Routes, 'C
         </View>
       </ScrollView>
       <Button style={styles.btnBottom} label={Strings.changePassword.saveBtn} onPress={handleSavePassword} />
-    </>
+    </View>
   );
 };
 
@@ -99,8 +99,12 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     ...Layout.content,
   },
   btnBottom: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    alignSelf: 'center',
+    marginBottom: Spacing.SAFE_BOTTOM,
     marginHorizontal: Spacing.horizontalPadding,
-    marginBottom: Spacing.XL,
   },
 });
 

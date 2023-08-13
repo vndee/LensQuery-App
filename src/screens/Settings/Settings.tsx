@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     alignSelf: 'center',
-    marginBottom: Spacing.XL
+    marginBottom: Spacing.SAFE_BOTTOM
   },
   moreIcon: {
     width: 24,
