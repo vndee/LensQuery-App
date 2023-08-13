@@ -17,8 +17,7 @@ import { useRealm, useQuery, useObject } from '../../storage/realm';
 import Message from '../../components/Chat/Message';
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
 import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH } from '../../utils/Constants';
-import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
-import { FlatList } from 'react-native-gesture-handler';
+import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
 const chatEngine: IChatEngine[] = [
   {
@@ -149,16 +148,20 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
     }
   }, [chatBoxId]);
 
-  const actionItem = [
+  const actionItem: Array<ActionItemProps> = [
     {
-      icon: 'search-outline', color: Colors.text_color, label: Strings.chatBox.optionSearch,
+      icon: 'search-outline',
+      color: Colors.text_color,
+      label: Strings.chatBox.optionSearch,
       onPress: () => {
         actionSheetRef.current?.hide();
         setIsSearchBarVisible(true);
       }
     },
     {
-      icon: 'trash-outline', color: Colors.danger, label: Strings.chatBox.optionClear,
+      icon: 'trash-outline',
+      color: Colors.danger,
+      label: Strings.chatBox.optionClear,
       onPress: () => {
         actionSheetRef.current?.hide();
         handleDeleteChatBox();
@@ -260,20 +263,8 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-      <ActionSheet ref={actionSheetRef}>
-        <View style={styles.draggleBar} />
-        <FlatList
-          data={actionItem}
-          renderItem={({ item }: { item: any }) => (
-            <TouchableOpacity onPress={item.onPress} style={styles.actionItem}>
-              <Ionicons name={item.icon} size={20} color={item.color} />
-              <Text style={[Typography.body, { color: item.color }]}>{item.label}</Text>
-            </TouchableOpacity>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-          contentContainerStyle={{ paddingBottom: Spacing.SAFE_BOTTOM - Spacing.S }}
-        />
-      </ActionSheet>
+
+      <BottomActionSheet actionRef={actionSheetRef} actions={actionItem} />
     </View >
   );
 };

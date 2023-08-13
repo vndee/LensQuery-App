@@ -8,7 +8,7 @@ import Lens from '../screens/Lens/Lens';
 import Media from '../screens/Lens/Media';
 import ChatBox from '../screens/Chat/Box';
 import ChatList from '../screens/Chat/List';
-import Setting from '../screens/Setting/Setting';
+import Settings from '../screens/Settings/Settings';
 
 const Stack = createNativeStackNavigator<Routes>();
 
@@ -26,7 +26,7 @@ const MainStack = (): JSX.Element => {
           <Stack.Screen name="Media" component={Media} options={{ headerShown: false }} />
           <Stack.Screen name="ChatList" component={ChatList} options={{ headerShown: false }} />
           <Stack.Screen name="ChatBox" component={ChatBox} options={{ headerShown: false }} />
-          <Stack.Screen name="Setting" component={Setting} options={{ headerShown: false }} />
+          <Stack.Screen name="Settings" component={Settings} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

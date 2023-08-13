@@ -103,6 +103,19 @@ export default new LocalizedStrings({
       optionSearch: 'Search in this chatbox',
       optionClear: 'Clear all messages',
       searchPlaceholder: 'Search...',
+    },
+
+    // Setting
+    setting: {
+      title: 'Settings',
+      language: 'Language',
+      darkMode: 'Dark mode',
+      email: 'Email',
+      saveBtn: 'Save',
+      actionChangeInformation: 'Change information',
+      actionChangePassword: 'Change password',
+      actionDeleteAccuont: 'Delete account',
+      actionLogOut: 'Log out',
     }
   },
   // Vietnamese
@@ -207,6 +220,19 @@ export default new LocalizedStrings({
       optionSearch: 'Tìm kiếm trong tin nhắn',
       optionClear: 'Xóa tất cả tin nhắn',
       searchPlaceholder: 'Tìm kiếm...',
+    },
+
+    // Setting
+    setting: {
+      title: 'Cài đặt',
+      language: 'Ngôn ngữ',
+      darkMode: 'Chế độ tối',
+      email: 'Email',
+      saveBtn: 'Lưu',
+      actionChangeInformation: 'Thay đổi thông tin',
+      actionChangePassword: 'Đổi mật khẩu',
+      actionDeleteAccuont: 'Xóa tài khoản',
+      actionLogOut: 'Đăng xuất',
     }
   },
 });

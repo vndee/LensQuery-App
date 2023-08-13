@@ -16,9 +16,7 @@ import {
 import { useIsFocused } from '@react-navigation/core';
 import { PinchGestureHandler, PinchGestureHandlerGestureEvent, TapGestureHandler } from 'react-native-gesture-handler';
 import Reanimated, { Extrapolate, interpolate, useAnimatedGestureHandler, useAnimatedProps, useSharedValue } from 'react-native-reanimated';
-import auth from '@react-native-firebase/auth';
 import { useIsForeground } from '../../hooks/useIsForeground';
-import { clearStorageKeepAuth } from '../../storage';
 import { Routes } from '../../types/navigation';
 import Button from '../../components/Button';
 import { CaptureButton } from '../../components/Button/CaptureButton';

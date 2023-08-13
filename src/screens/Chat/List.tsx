@@ -23,7 +23,7 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
         <View style={{ flex: 1 }}>
           <Text style={Typography.H3}>{Strings.chatList.title}</Text>
         </View>
-        <TouchableOpacity style={styles.settingIcon} onPress={() => navigation.navigate('Setting')}>
+        <TouchableOpacity style={styles.settingIcon} onPress={() => navigation.navigate('Settings')}>
           <Ionicons name='settings-outline' size={24} color={Colors.primary} />
         </TouchableOpacity>
       </View>
