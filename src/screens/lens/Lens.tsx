@@ -38,15 +38,6 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
   const { accountCreds } = useSelector((state: any) => state.account);
   console.log('user', accountCreds);
 
-  const handleLogout = () => {
-    console.log('~ handleClearAll');
-    clearStorageKeepAuth();
-    // dispatch(setLogin(false));
-    auth()
-      .signOut()
-      .then(() => console.log('User signed out!'));
-  };
-
   const camera = useRef<Camera>(null);
   const [isCameraInitialized, setIsCameraInitialized] = useState(false);
   const [hasMicrophonePermission, setHasMicrophonePermission] = useState(false);
@@ -289,7 +280,6 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
       backgroundColor: Colors.background,
       gap: Spacing.XL
     }}>
-      <Button label="Logout" onPress={handleLogout} />
       <Button label="Chat" onPress={() => navigation.navigate('ChatList')} />
       {/* <Button label="Chat" onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined })} /> */}
     </View>

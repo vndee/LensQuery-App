@@ -16,4 +16,5 @@ export type Routes = {
     chatBoxId: string | undefined;
   };
   ChatList: undefined;
+  Setting: undefined;
 }
