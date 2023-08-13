@@ -17,4 +17,5 @@ export type Routes = {
   };
   ChatList: undefined;
   Settings: undefined;
+  ChangePassword: undefined;
 }

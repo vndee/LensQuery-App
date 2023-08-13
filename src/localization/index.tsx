@@ -116,7 +116,26 @@ export default new LocalizedStrings({
       actionChangePassword: 'Change password',
       actionDeleteAccuont: 'Delete account',
       actionLogOut: 'Log out',
-    }
+    },
+
+    // Change password
+    changePassword: {
+      title: 'Change password',
+      currentPassword: 'Current password',
+      currentPasswordPlaceholder: 'Enter your current password',
+      newPassword: 'New password',
+      newPasswordPlaceholder: 'Enter your new password',
+      confirmPassword: 'Confirm password',
+      confirmPasswordPlaceholder: 'Enter your confirm password',
+      saveBtn: 'Save',
+      currentPasswordEmptyError: 'Current password is required',
+      newPasswordEmptyError: 'New password is required',
+      confirmPasswordEmptyError: 'Confirm password is required',
+      passwordNotMatchError: 'Password does not match',
+      weakPassword: 'Password should be at least 6 characters',
+      wrongPassword: 'Wrong password',
+      unknownError: 'An error occurred, please try again later!',
+    },
   },
   // Vietnamese
   vi: {
@@ -233,6 +252,25 @@ export default new LocalizedStrings({
       actionChangePassword: 'Đổi mật khẩu',
       actionDeleteAccuont: 'Xóa tài khoản',
       actionLogOut: 'Đăng xuất',
-    }
+    },
+
+    // Change password
+    changePassword: {
+      title: 'Đổi mật khẩu',
+      currentPassword: 'Mật khẩu hiện tại',
+      currentPasswordPlaceholder: 'Nhập mật khẩu hiện tại của bạn',
+      newPassword: 'Mật khẩu mới',
+      newPasswordPlaceholder: 'Nhập mật khẩu mới của bạn',
+      confirmPassword: 'Xác nhận mật khẩu',
+      confirmPasswordPlaceholder: 'Nhập lại mật khẩu mới của bạn',
+      saveBtn: 'Lưu',
+      currentPasswordEmptyError: 'Mật khẩu hiện tại không được để trống',
+      newPasswordEmptyError: 'Mật khẩu mới không được để trống',
+      confirmPasswordEmptyError: 'Xác nhận mật khẩu không được để trống',
+      passwordNotMatchError: 'Mật khẩu không khớp',
+      weakPassword: 'Mật khẩu phải có ít nhất 6 ký tự',
+      wrongPassword: 'Mật khẩu không đúng',
+      unknownError: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+    },
   },
 });

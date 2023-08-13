@@ -46,6 +46,7 @@ const TextEdit = ({ label, value, onChange, placeholder, errorText, isEdit, icon
 const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   container: {
     borderWidth: 1,
+    paddingHorizontal: Spacing.XS,
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: Spacing.XS,

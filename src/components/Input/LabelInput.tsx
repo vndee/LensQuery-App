@@ -70,7 +70,8 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: Spacing.XS,
-    borderColor: Colors.borders
+    borderColor: Colors.borders,
+    paddingHorizontal: Spacing.XS,
   },
   textInput: {
     ...Typography.body,

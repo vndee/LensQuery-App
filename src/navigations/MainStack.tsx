@@ -9,6 +9,7 @@ import Media from '../screens/Lens/Media';
 import ChatBox from '../screens/Chat/Box';
 import ChatList from '../screens/Chat/List';
 import Settings from '../screens/Settings/Settings';
+import ChangePassword from '../screens/Settings/ChangePassword';
 
 const Stack = createNativeStackNavigator<Routes>();
 
@@ -27,6 +28,7 @@ const MainStack = (): JSX.Element => {
           <Stack.Screen name="ChatList" component={ChatList} options={{ headerShown: false }} />
           <Stack.Screen name="ChatBox" component={ChatBox} options={{ headerShown: false }} />
           <Stack.Screen name="Settings" component={Settings} options={{ headerShown: false }} />
+          <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

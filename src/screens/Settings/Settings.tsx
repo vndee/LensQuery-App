@@ -3,7 +3,7 @@ import { Routes } from '../../types/navigation';
 import Button from '../../components/Button';
 import auth from '@react-native-firebase/auth';
 import Strings from '../../localization';
-import { isEmpty, set } from 'lodash';
+import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearStorageKeepAuth } from '../../storage';
 import TextEdit from '../../components/Input/TextEdit';
@@ -12,7 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
@@ -70,6 +70,7 @@ const Settings = ({ navigation }: NativeStackScreenProps<Routes, 'Settings'>) =>
       color: Colors.text_color,
       onPress: () => {
         actionSheetRef.current?.hide();
+        navigation.navigate('ChangePassword');
       }
     },
     {
