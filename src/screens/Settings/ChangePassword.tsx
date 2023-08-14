@@ -22,8 +22,8 @@ const ChangePassword = ({ navigation, route }: NativeStackScreenProps<Routes, 'C
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={Layout.header}>
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
+      <View style={[Layout.header, { paddingHorizontal: Spacing.XS }]}>
         <View style={Layout.row}>
           <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
             <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
@@ -89,7 +89,9 @@ const ChangePassword = ({ navigation, route }: NativeStackScreenProps<Routes, 'C
           />
         </View>
       </ScrollView>
-      <Button style={styles.btnBottom} label={Strings.changePassword.saveBtn} onPress={handleSavePassword} />
+      <View style={{ paddingHorizontal: Spacing.horizontalPadding }}>
+        <Button style={styles.btnBottom} label={Strings.changePassword.saveBtn} onPress={handleSavePassword} />
+      </View>
     </View>
   );
 };
@@ -98,10 +100,14 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   container: {
     ...Layout.content,
   },
+  backIcon: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
   btnBottom: {
+    width: '100%',
     position: 'absolute',
     bottom: 0,
-    width: '100%',
     alignSelf: 'center',
     marginBottom: Spacing.SAFE_BOTTOM,
     marginHorizontal: Spacing.horizontalPadding,

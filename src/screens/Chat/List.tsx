@@ -37,7 +37,7 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
           estimatedItemSize={100}
         />
       </View>
-      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('Lens')}>
+      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined })}>
         <Ionicons name='add' size={24} color={Colors.white} />
       </TouchableOpacity>
     </View>

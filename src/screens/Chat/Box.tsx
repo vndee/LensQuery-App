@@ -16,7 +16,7 @@ import LabelSwitch from '../../components/Switch/LabelSwitch';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
 import Message from '../../components/Chat/Message';
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
-import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH } from '../../utils/Constants';
+import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST } from '../../utils/Constants';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
 const chatEngine: IChatEngine[] = [
@@ -30,8 +30,11 @@ const chatEngine: IChatEngine[] = [
   }
 ];
 
+const API_KEY = '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'
+
 const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'>) => {
   const realm = useRealm();
+  let es: EventSource | null = null;
   const isKeyboardVisible = useKeyboardVisible();
   const { chatBoxId } = route.params;
   const actionSheetRef = useRef<ActionSheetRef>(null);
@@ -79,18 +82,53 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       // add message to the front of the array
       pushMessage(text, 'user', engine.id);
       setInputMessage('');
+    }
+  };
 
-      pushMessage('Loading... This is the new markup text lorem ipsum dolor sit amet', 'bot', engine.id, false);
+  const handleEvensourceEvent = (event: any) => {
+    if (event.type === 'open') {
+      console.log('open sse:', event)
+    } else if (event.type === 'message') {
+      console.log('message sse:', event.data);
+    } else if (event.type === 'error') {
+      console.log(event);
+    } else if (event.type === 'done') {
+      console.log(event);
+      es?.close();
     }
   };
 
   useEffect(() => {
-    console.debug('engine', engine);
-  }, [engine]);
+    if (messages.length > 0 && messages[0].type === 'user') {
+      let failedCnt = 0;
 
-  useEffect(() => {
-    console.debug('chatBox', chatBox);
-  }, [chatBox]);
+      const requestBody = {
+        model: engine.id,
+        messages: [...messages].reverse().map((message) => {
+          return {
+            role: message.type,
+            content: message.content,
+          }
+        }),
+        stream: true
+      };
+      console.log('requestBody', requestBody);
+      es = new EventSource(OPENAI_HOST, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${API_KEY}`, body: JSON.stringify(requestBody) } })
+      es.addEventListener('open', handleEvensourceEvent);
+      es.addEventListener('message', handleEvensourceEvent);
+      es.addEventListener('error', handleEvensourceEvent);
+      es.addEventListener('done', handleEvensourceEvent);
+      console.log('[EventSource]:', es);
+    }
+  }, [messages]);
+
+  // useEffect(() => {
+  //   console.debug('engine', engine);
+  // }, [engine]);
+
+  // useEffect(() => {
+  //   console.debug('chatBox', chatBox);
+  // }, [chatBox]);
 
   useEffect(() => {
     if (messages.length === 0 && chatCollection?.messages.length > 0) {

@@ -116,19 +116,19 @@ const Settings = ({ navigation }: NativeStackScreenProps<Routes, 'Settings'>) =>
   }, []);
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: Colors.background }}>
-      <View style={Layout.header}>
+    <View style={{ flex: 1 }}>
+      <View style={[Layout.header, { paddingHorizontal: Spacing.XS }]}>
         <View style={Layout.row}>
           <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
             <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
           </TouchableOpacity>
           <Text style={Typography.H3}>{Strings.setting.title}</Text>
         </View>
-        <TouchableOpacity style={styles.moreIcon} onPress={() => actionSheetRef.current?.show()}>
+        <TouchableOpacity style={styles.moreIcon} onPress={() => actionSheetRef.current?.show()} disabled={isEditing}>
           <Feather name="more-vertical" size={20} color={Colors.text_color} />
         </TouchableOpacity>
       </View>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View>
           <TextEdit
             label={Strings.setting.email}
@@ -166,15 +166,18 @@ const Settings = ({ navigation }: NativeStackScreenProps<Routes, 'Settings'>) =>
           options={languageOptions}
           selectedValue={language}
         />
+      </ScrollView>
 
-        {isEditing && <Button label={Strings.onboardingSetup.saveBtn} onPress={handleSaveKey} style={styles.btnBottom} />}
-      </View>
+      {isEditing &&
+        <View style={{ paddingHorizontal: Spacing.horizontalPadding }}>
+          <Button label={Strings.onboardingSetup.saveBtn} onPress={handleSaveKey} style={styles.btnBottom} />
+        </View>}
 
       <BottomActionSheet
         actionRef={actionSheetRef}
         actions={actionSheet}
       />
-    </ScrollView>
+    </View>
   );
 };
 
@@ -184,8 +187,6 @@ const styles = StyleSheet.create({
     gap: Spacing.XL,
   },
   backIcon: {
-    width: 24,
-    height: 32,
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     alignSelf: 'center',
-    marginBottom: Spacing.SAFE_BOTTOM
+    marginBottom: Spacing.SAFE_BOTTOM,
   },
   moreIcon: {
     width: 24,
