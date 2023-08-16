@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } fr
 import { Layout, Typography, Spacing, Colors } from '../../styles';
 import { IMessage } from '../../types/chat';
 import { unixToTime } from '../../utils/Helper';
+import { TypingAnimation } from 'react-native-typing-animation';
 
 type Props = {
   item: IMessage,
@@ -11,16 +12,27 @@ type Props = {
 
 const Message = ({ item, onLongPress }: Props) => {
   const isUser = item.type === 'user';
+  const isTyping = item.content === '...' && !isUser;
   const [timeVisible, setTimeVisible] = useState<boolean>(false);
 
   return (
     <TouchableOpacity
-      style={[styles.messageContainer, isUser ? styles.userBubble : styles.botBubble]}
+      style={[styles.messageContainer, isUser ? styles.userBubble : styles.botBubble, isTyping && styles.typingContainer]}
       onPress={setTimeVisible.bind(null, !timeVisible)}
       onLongPress={onLongPress}
     >
       <View>
-        <Text style={[styles.messageText, isUser ? styles.userText : styles.botText]}>{item.content}</Text>
+        {!isTyping ?
+          <Text style={[styles.messageText, isUser ? styles.userText : styles.botText]}>{item.content}</Text> :
+          <TypingAnimation
+            dotColor={Colors.white}
+            dotMargin={3}
+            dotAmplitude={3}
+            dotSpeed={0.15}
+            dotRadius={2.5}
+            dotX={12}
+            dotY={6}
+          />}
         {timeVisible && (
           <Text style={[styles.time, { color: isUser ? Colors.second_text_color : Colors.white }]}>
             {unixToTime(item.createAt)}
@@ -64,6 +76,11 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   time: {
     ...Typography.description,
     alignSelf: 'flex-end',
+  },
+  typingContainer: {
+    padding: Spacing.S,
+    width: 50,
+    height: 36,
   }
 });
 

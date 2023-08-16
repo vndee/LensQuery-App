@@ -77,7 +77,8 @@ class MessageCollection extends Realm.Object<MessageCollection> {
 
 const realmConfig = {
   schema: [ChatBox, Message, MessageCollection],
-  schemaVersion: 13,
+  schemaVersion: 14,
+  deleteRealmIfMigrationNeeded: true
 };
 
 export const { RealmProvider, useRealm, useObject, useQuery } = createRealmContext(realmConfig);

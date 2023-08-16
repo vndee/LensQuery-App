@@ -86,7 +86,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       createAt: new Date().getTime(),
       updateAt: new Date().getTime(),
     }
-  }, []);
+  }, [chatCollection]);
 
   const setFirstMessageState = useCallback((message: IMessage) => {
     setMessages((messages) => {
@@ -114,6 +114,13 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
     } else if (event.type === 'done') {
       const message = constructMessage(event.data, 'bot', false, engine.id);
       setFirstMessageState(message);
+      realm.write(() => {
+        if (chatCollection?.messages?.length > 0) {
+          chatCollection.messages[chatCollection?.messages?.length - 1] = message;
+        }
+        chatBox.lastMessage! = message.content;
+        chatBox.lastMessageAt! = message.createAt;
+      });
       es?.close();
     }
   };
@@ -146,7 +153,6 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       };
 
       setInputMessage('');
-      console.log('requestBody', requestBody);
       es = new EventSource(OPENAI_HOST, {
         method: 'POST',
         headers: {

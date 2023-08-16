@@ -6,7 +6,7 @@ export type IChatEngine = {
 };
 
 export type IChatBox = {
-  _id: Realm.BSON.ObjectId;
+  id: string;
   name: string;
   engineId: string;
   lastMessage: string;
@@ -17,7 +17,7 @@ export type IChatBox = {
 
 export type IMessage = {
   id: string;
-  collectionId: Realm.BSON.ObjectId;
+  collectionId: string;
   type: 'user' | 'bot';
   content: string;
   isInterupted: boolean;
