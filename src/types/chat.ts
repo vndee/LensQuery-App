@@ -16,7 +16,7 @@ export type IChatBox = {
 }
 
 export type IMessage = {
-  _id: Realm.BSON.ObjectId;
+  id: string;
   collectionId: Realm.BSON.ObjectId;
   type: 'user' | 'bot';
   content: string;

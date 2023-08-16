@@ -16,7 +16,7 @@ import LabelSwitch from '../../components/Switch/LabelSwitch';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
 import Message from '../../components/Chat/Message';
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
-import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST } from '../../utils/Constants';
+import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE } from '../../utils/Constants';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
 const chatEngine: IChatEngine[] = [
@@ -30,7 +30,7 @@ const chatEngine: IChatEngine[] = [
   }
 ];
 
-const API_KEY = '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'
+const API_KEY = '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'
 
 const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'>) => {
   const realm = useRealm();
@@ -48,6 +48,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
   const chatCollection = useObject('MessageCollection', chatBox?.collectionId ? chatBox.collectionId : '');
 
   const [searchText, setSearchText] = useState<string>('');
+  const [failedCount, setFailedCount] = useState<number>(0);
   const [isSearchBarVisible, setIsSearchBarVisible] = useState<boolean>(false);
 
   const pushMessage = useCallback((text: string, type: 'user' | 'bot', engineId: string, isInterupted: boolean = false) => {
@@ -68,67 +69,99 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       chatBox.lastMessageAt! = message.createAt;
     });
 
-    // add new message to the end of the array
-    if (messages.length >= CHAT_HISTORY_CACHE_LENGTH) {
-      setMessages((messages) => [message, ...messages.splice(0, messages.length - 1)]);
-    } else {
-      setMessages((messages) => [message, ...messages]);
+    setMessages((messages) => [message, ...messages]);
+    if (messages.length > CHAT_HISTORY_LOAD_LENGTH) {
+      setMessages((messages) => messages.slice(0, CHAT_HISTORY_CACHE_LENGTH));
     }
   }, [chatCollection]);
 
-  const sendMessage = (text: string) => {
-    Keyboard.dismiss();
-    if (text.length > 0) {
-      // add message to the front of the array
-      pushMessage(text, 'user', engine.id);
-      setInputMessage('');
+  const constructMessage = useCallback((content: string, type: 'bot' | 'user', isInterupted: boolean, engineId: string): IMessage => {
+    return {
+      id: new Realm.BSON.ObjectId().toHexString(),
+      collectionId: chatCollection?.id,
+      content: content,
+      type: type,
+      isInterupted: isInterupted,
+      engineId: engineId,
+      createAt: new Date().getTime(),
+      updateAt: new Date().getTime(),
     }
-  };
+  }, []);
+
+  const setFirstMessageState = useCallback((message: IMessage) => {
+    setMessages((messages) => {
+      const newMessages = [...messages];
+      newMessages[0] = message;
+      return newMessages;
+    });
+  }, []);
 
   const handleEvensourceEvent = (event: any) => {
     if (event.type === 'open') {
       console.log('open sse:', event)
     } else if (event.type === 'message') {
-      console.log('message sse:', event.data);
+      if (!event.data) return;
+      const message = constructMessage(event.data, 'bot', true, engine.id);
+      setFirstMessageState(message);
     } else if (event.type === 'error') {
-      console.log(event);
+      console.log('error', failedCount + 1, event);
+      if (failedCount + 1 > 3) {
+        es?.close();
+        return;
+      }
+      setFailedCount((failedCount) => failedCount + 1);
+      es?.open();
     } else if (event.type === 'done') {
-      console.log(event);
+      const message = constructMessage(event.data, 'bot', false, engine.id);
+      setFirstMessageState(message);
       es?.close();
     }
   };
 
-  useEffect(() => {
-    if (messages.length > 0 && messages[0].type === 'user') {
-      let failedCnt = 0;
+  const sendMessage = (text: string) => {
+    Keyboard.dismiss();
+    setFailedCount(0);
+    if (text.length > 0) {
+      // copy last message with CHAT_WINDOW_SIZE
+      let context: Array<IMessage> = [];
+      const L = messages.length;
+      if (L > CHAT_WINDOW_SIZE) {
+        context = messages.slice(0, CHAT_WINDOW_SIZE);
+      } else {
+        context = messages;
+      }
+
+      pushMessage(text, 'user', engine.id);
+      pushMessage('...', 'bot', engine.id, true);
 
       const requestBody = {
         model: engine.id,
-        messages: [...messages].reverse().map((message) => {
+        messages: [...context.reverse().map((message) => {
           return {
-            role: message.type,
+            role: message.type === 'bot' ? 'assistant' : 'user',
             content: message.content,
           }
-        }),
+        }), { role: 'user', content: text }],
         stream: true
       };
+
+      setInputMessage('');
       console.log('requestBody', requestBody);
-      es = new EventSource(OPENAI_HOST, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${API_KEY}`, body: JSON.stringify(requestBody) } })
+      es = new EventSource(OPENAI_HOST, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${API_KEY}`,
+        },
+        body: JSON.stringify(requestBody),
+        debug: false,
+      })
       es.addEventListener('open', handleEvensourceEvent);
       es.addEventListener('message', handleEvensourceEvent);
       es.addEventListener('error', handleEvensourceEvent);
       es.addEventListener('done', handleEvensourceEvent);
-      console.log('[EventSource]:', es);
     }
-  }, [messages]);
-
-  // useEffect(() => {
-  //   console.debug('engine', engine);
-  // }, [engine]);
-
-  // useEffect(() => {
-  //   console.debug('chatBox', chatBox);
-  // }, [chatBox]);
+  };
 
   useEffect(() => {
     if (messages.length === 0 && chatCollection?.messages.length > 0) {
