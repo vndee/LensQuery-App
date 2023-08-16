@@ -21,6 +21,7 @@ import { Routes } from '../../types/navigation';
 import Button from '../../components/Button';
 import { CaptureButton } from '../../components/Button/CaptureButton';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CameraRollPicker from 'react-native-camera-roll-picker';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { LENS_MAX_ZOOM_FACTOR, LENS_SCALE_FULL_ZOOM } from '../../utils/Constants';
@@ -270,6 +271,13 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
     </View>
   );
 
+  const [selected, setSelected] = useState({ num: 0, selected: [] });
+  const getSelectedImages = (images: any, current: any) => {
+    let num = images.length;
+    setSelected({ num: num, selected: images });
+    console.log(current);
+    console.log(selected);
+  };
   return (
     <View style={{
       flex: 1,
@@ -280,7 +288,9 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
     }}>
       <Button label="Chat" onPress={() => navigation.navigate('ChatList')} />
       {/* <Button label="Chat" onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined })} /> */}
-    </View>
+      {/* <CameraRollPicker
+        callback={getSelectedImages} /> */}
+    </View >
   );
 };
 
