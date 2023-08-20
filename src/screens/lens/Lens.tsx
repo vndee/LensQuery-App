@@ -1,28 +1,29 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Spacing, Colors } from '../../styles';
-import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
+import { Spacing, Colors, Typography } from '../../styles';
+import { View, Platform, PermissionsAndroid, StyleSheet, TouchableOpacity, StatusBar, Text } from 'react-native';
 import {
   Camera,
   CameraDeviceFormat,
   CameraRuntimeError,
-  FrameProcessorPerformanceSuggestion,
   PhotoFile,
   sortFormats,
   useCameraDevices,
   VideoFile,
   frameRateIncluded
 } from 'react-native-vision-camera';
+import { MediaType } from 'react-native-image-picker';
 import { useIsFocused } from '@react-navigation/core';
 import { PinchGestureHandler, PinchGestureHandlerGestureEvent, TapGestureHandler } from 'react-native-gesture-handler';
 import Reanimated, { Extrapolate, interpolate, useAnimatedGestureHandler, useAnimatedProps, useSharedValue } from 'react-native-reanimated';
 import { useIsForeground } from '../../hooks/useIsForeground';
 import { Routes } from '../../types/navigation';
 import Button from '../../components/Button';
+import * as ImagePicker from 'react-native-image-picker';
 import { CaptureButton } from '../../components/Button/CaptureButton';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import CameraRollPicker from 'react-native-camera-roll-picker';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { LENS_MAX_ZOOM_FACTOR, LENS_SCALE_FULL_ZOOM } from '../../utils/Constants';
 
@@ -37,10 +38,11 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
   const { accountCreds } = useSelector((state: any) => state.account);
   console.log('user', accountCreds);
 
+  const zoom = useSharedValue(0);
   const camera = useRef<Camera>(null);
+  const [imageSource, setImageSource] = useState<string | undefined>();
   const [isCameraInitialized, setIsCameraInitialized] = useState(false);
   const [hasMicrophonePermission, setHasMicrophonePermission] = useState(false);
-  const zoom = useSharedValue(0);
   const isPressingButton = useSharedValue(false);
 
   // check if camera page is active
@@ -192,9 +194,26 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
     console.log('re-rendering camera page without active camera');
   }
 
-  const onFrameProcessorSuggestionAvailable = useCallback((suggestion: FrameProcessorPerformanceSuggestion) => {
-    console.log(`Suggestion available! ${suggestion.type}: Can do ${suggestion.suggestedFrameProcessorFps} FPS`);
-  }, []);
+  const selectImage = async () => {
+    const options: {
+      selectionLimit: number;
+      mediaType: MediaType;
+      includeBase64: boolean;
+    } = {
+      selectionLimit: 0,
+      mediaType: 'photo',
+      includeBase64: false,
+    };
+
+    const onSelect = (selected: any) => {
+      navigation.navigate('Media', {
+        path: selected?.assets?.[0]?.uri,
+        type: 'photo',
+      });
+    };
+
+    await ImagePicker.launchImageLibrary(options, onSelect);
+  };
 
   if (device != null) return (
     <View style={styles.container}>
@@ -206,8 +225,6 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
               ref={camera}
               style={StyleSheet.absoluteFill}
               device={device}
-              // format={format}
-              // fps={fps}
               hdr={enableHdr}
               lowLightBoost={device.supportsLowLightBoost && enableNightMode}
               isActive={isActive}
@@ -216,16 +233,12 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
               enableZoomGesture={true}
               animatedProps={cameraAnimatedProps}
               photo={true}
-              // video={true}
-              // audio={hasMicrophonePermission}
-              // frameProcessor={device.supportsParallelVideoProcessing ? frameProcessor : undefined}
               orientation="portrait"
-            // frameProcessorFps={1}
-            // onFrameProcessorPerformanceSuggestionAvailable={onFrameProcessorSuggestionAvailable}
             />
           </TapGestureHandler>
         </Reanimated.View>
       </PinchGestureHandler>
+
       <CaptureButton
         style={styles.captureButton}
         camera={camera}
@@ -249,14 +262,6 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
             <Ionicons name={flash === 'on' ? 'flash' : 'flash-off'} color="white" size={24} />
           </TouchableOpacity>
         )}
-        {/* {supports60Fps && (
-          <TouchableOpacity style={styles.button} onPress={() => setIs60Fps(!is60Fps)}>
-            <Text style={styles.text}>
-              {is60Fps ? '60' : '30'}
-              {'\n'}FPS
-            </Text>
-          </TouchableOpacity>
-        )} */}
         {supportsHdr && (
           <TouchableOpacity style={styles.button} onPress={() => setEnableHdr((h) => !h)}>
             <MaterialIcon name={enableHdr ? 'hdr' : 'hdr-off'} color="white" size={24} />
@@ -267,17 +272,13 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
             <Ionicons name={enableNightMode ? 'moon' : 'moon-outline'} color="white" size={24} />
           </TouchableOpacity>
         )}
+        <TouchableOpacity style={styles.button} onPress={selectImage}>
+          <MaterialCommunityIcon name="file-image-plus-outline" color="white" size={24} />
+        </TouchableOpacity>
       </View>
     </View>
   );
 
-  const [selected, setSelected] = useState({ num: 0, selected: [] });
-  const getSelectedImages = (images: any, current: any) => {
-    let num = images.length;
-    setSelected({ num: num, selected: images });
-    console.log(current);
-    console.log(selected);
-  };
   return (
     <View style={{
       flex: 1,
@@ -287,6 +288,7 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
       gap: Spacing.XL
     }}>
       <Button label="Chat" onPress={() => navigation.navigate('ChatList')} />
+      <Button label="Select Image" onPress={selectImage} />
       {/* <Button label="Chat" onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined })} /> */}
       {/* <CameraRollPicker
         callback={getSelectedImages} /> */}
@@ -324,6 +326,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  selectImageBtn: {
+    position: 'absolute',
+    bottom: Spacing.L + 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    right: Spacing.safePaddingLeft,
+    padding: Spacing.M,
+    borderRadius: 10,
+    zIndex: 1
+  }
 });
 
 export default Lens;

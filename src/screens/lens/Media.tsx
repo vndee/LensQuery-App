@@ -25,6 +25,7 @@ import {
 import CameraRoll from '@react-native-camera-roll/camera-roll'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { StatusBarBlurBackground } from '../../components/StatusBar/StatusBarBlurBackgound';
+import ImageEditor from "@react-native-community/image-editor";
 
 const requestSavePermission = async (): Promise<boolean> => {
   if (Platform.OS !== 'android') return true;
@@ -45,6 +46,7 @@ const Media = ({ navigation, route }: NativeStackScreenProps<Routes, 'Media'>): 
   const isForeground = useIsForeground();
   const isScreenFocused = useIsFocused();
   const [savingState, setSavingState] = useState<'none' | 'saving' | 'saved'>('none');
+  const [cropData, setCropData] = useState(null);
 
   const onMediaLoad = useCallback((event: any | NativeSyntheticEvent<ImageLoadEventData>) => {
     console.log(`Image loaded. Size: ${event.nativeEvent.source.width}x${event.nativeEvent.source.height}`);
@@ -63,6 +65,20 @@ const Media = ({ navigation, route }: NativeStackScreenProps<Routes, 'Media'>): 
     StatusBar.setHidden(true);
   }, []);
 
+  const cropImage = async () => {
+    const crop = await ImageEditor.cropImage(path, cropData).then(
+      uri => {
+        console.log("Cropped image uri", uri);
+        return uri;
+      },
+      error => {
+        console.log("Crop failed", error);
+        return null;
+      }
+    )
+    setCropData(crop);
+  };
+
   return (
     <View style={[styles.container, screenStyle]}>
       <StatusBar hidden backgroundColor={'transparent'} />
@@ -77,9 +93,16 @@ const Media = ({ navigation, route }: NativeStackScreenProps<Routes, 'Media'>): 
 
       <TouchableOpacity
         style={styles.askButton}
-        onPress={() => navigation.navigate('ChatBox')}
+        onPress={() => navigation.navigate('ChatList')}
       >
         <Ionicons name="chatbox" size={35} color="white" style={styles.icon} />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.cropButton}
+        onPress={cropImage}
+      >
+        <Ionicons name="crop" size={35} color="white" style={styles.icon} />
       </TouchableOpacity>
 
       <StatusBarBlurBackground />
@@ -105,6 +128,13 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     position: 'absolute',
     bottom: Spacing.safePaddingBottom,
     left: Spacing.safePaddingLeft,
+    width: 40,
+    height: 40,
+  },
+  cropButton: {
+    position: 'absolute',
+    bottom: Spacing.safePaddingBottom,
+    right: Spacing.safePaddingRight,
     width: 40,
     height: 40,
   },
