@@ -47,7 +47,7 @@ const healthCheck = async (): Promise<healthCheckResponse> => {
 
 const getOCRAccessToken = async (): Promise<GetOCRAccessTokenResponse> => {
   try {
-    const resp = await brainBackend.get('/api/v1/ocr/get_access_token');
+    const resp = await brainBackend.get('/api/v1/ocr/token');
     return { status: resp?.status, data: resp?.data }
   } catch (error: any) {
     return { status: error?.response?.status, data: { app_token: '', app_token_expires_at: 0 } }
