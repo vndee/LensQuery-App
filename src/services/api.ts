@@ -1,7 +1,7 @@
 import qs from 'querystring';
 import axios, { AxiosError } from 'axios';
 import auth from '@react-native-firebase/auth';
-import { GetOCRAccessTokenResponse } from '../types/api';
+import { healthCheckResponse, GetOCRAccessTokenResponse } from '../types/api';
 
 const brainBackend = axios.create({
   baseURL: 'https://brain.lensquery.com',
@@ -26,7 +26,7 @@ brainBackend.interceptors.request.use(
 
 brainBackend.interceptors.response.use(
   response => {
-    return response.data;
+    return response;
   },
   (error: AxiosError) => {
     if (error.response?.status === 401) {
@@ -36,21 +36,21 @@ brainBackend.interceptors.response.use(
   }
 );
 
-const healthCheck = async () => {
+const healthCheck = async (): Promise<healthCheckResponse> => {
   try {
-    const response = await brainBackend.get('/healthcheck');
-    return response;
-  } catch (error) {
-    console.log('~[api /healthcheck]', error);
+    const resp = await brainBackend.get('/healthcheck');
+    return { status: resp?.status, data: resp?.data }
+  } catch (error: any) {
+    return { status: error?.response?.status, data: error?.response?.data }
   }
 };
 
 const getOCRAccessToken = async (): Promise<GetOCRAccessTokenResponse> => {
   try {
-    return await brainBackend.get('/api/v1/ocr/get_access_token') as GetOCRAccessTokenResponse;
-  } catch (error) {
-    console.log('~[api /api/v1/ocr/get_access_token]', error);
-    return { app_token: '', app_token_expires_at: 0 }
+    const resp = await brainBackend.get('/api/v1/ocr/get_access_token');
+    return { status: resp?.status, data: resp?.data }
+  } catch (error: any) {
+    return { status: error?.response?.status, data: { app_token: '', app_token_expires_at: 0 } }
   }
 }
 

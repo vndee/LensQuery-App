@@ -8,7 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FlashList } from '@shopify/flash-list';
 import BoxCard from '../../components/Chat/BoxCard';
 import { useQuery } from '../../storage/realm';
-import { getOCRAccessToken } from '../../services/api'
+import { healthCheck, getOCRAccessToken } from '../../services/api'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatList'>) => {
@@ -19,8 +19,14 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
     console.log('resp', resp);
   }
 
+  const handleHealthCheck = async () => {
+    const resp = await healthCheck();
+    console.log('resp', resp);
+  }
+
   useEffect(() => {
     console.debug('ChatList', listOfChats);
+    handleHealthCheck();
     handleGetOCRAccessToken();
   }, []);
 
