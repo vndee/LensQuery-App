@@ -8,13 +8,20 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FlashList } from '@shopify/flash-list';
 import BoxCard from '../../components/Chat/BoxCard';
 import { useQuery } from '../../storage/realm';
+import { getOCRAccessToken } from '../../services/api'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatList'>) => {
   const listOfChats = useQuery('ChatBox').sorted('lastMessageAt', true);
 
+  const handleGetOCRAccessToken = async () => {
+    const resp = await getOCRAccessToken();
+    console.log('resp', resp);
+  }
+
   useEffect(() => {
     console.debug('ChatList', listOfChats);
+    handleGetOCRAccessToken();
   }, []);
 
   return (

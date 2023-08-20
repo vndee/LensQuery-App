@@ -1,5 +1,3 @@
-import Realm from "realm";
-
 export type Routes = {
   Login: undefined;
   Register: undefined;
