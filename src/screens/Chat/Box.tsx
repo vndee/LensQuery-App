@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import 'react-native-get-random-values'
 import Realm from 'realm';
 import Strings from '../../localization';
-import { Routes } from '../../types/navigation';
+import { Routes } from '../../types/navigation'; 123456
 import Animated from 'react-native-reanimated';
 import EventSource from '../../services/sse';
 import { IChatEngine, IMessage } from '../../types/chat';
@@ -15,6 +15,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import LabelSwitch from '../../components/Switch/LabelSwitch';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
 import Message from '../../components/Chat/Message';
+import { constructMessage } from '../../utils/Helper';
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
 import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE } from '../../utils/Constants';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
@@ -36,7 +37,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
   const realm = useRealm();
   let es: EventSource | null = null;
   const isKeyboardVisible = useKeyboardVisible();
-  const { chatBoxId } = route.params;
+  const { chatBoxId, imageUri } = route.params;
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const listRef = useRef<FlashList<string> | null>(null);
   const [inputMessage, setInputMessage] = useState<string>('');
@@ -75,19 +76,6 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
     }
   }, [chatCollection]);
 
-  const constructMessage = useCallback((content: string, type: 'bot' | 'user', isInterupted: boolean, engineId: string): IMessage => {
-    return {
-      id: new Realm.BSON.ObjectId().toHexString(),
-      collectionId: chatCollection?.id,
-      content: content,
-      type: type,
-      isInterupted: isInterupted,
-      engineId: engineId,
-      createAt: new Date().getTime(),
-      updateAt: new Date().getTime(),
-    }
-  }, [chatCollection]);
-
   const setFirstMessageState = useCallback((message: IMessage) => {
     setMessages((messages) => {
       const newMessages = [...messages];
@@ -101,7 +89,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       console.log('open sse:', event)
     } else if (event.type === 'message') {
       if (!event.data) return;
-      const message = constructMessage(event.data, 'bot', true, engine.id);
+      const message = constructMessage(chatCollection?.id, event.data, 'bot', true, engine.id);
       setFirstMessageState(message);
     } else if (event.type === 'error') {
       console.log('error', failedCount + 1, event);
@@ -112,7 +100,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       setFailedCount((failedCount) => failedCount + 1);
       es?.open();
     } else if (event.type === 'done') {
-      const message = constructMessage(event.data, 'bot', false, engine.id);
+      const message = constructMessage(chatCollection?.id, event.data, 'bot', false, engine.id);
       setFirstMessageState(message);
       realm.write(() => {
         if (chatCollection?.messages?.length > 0) {
@@ -223,6 +211,12 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       });
       setChatBoxIdCopy(boxId);
     }
+
+    if (imageUri !== undefined) {
+      const message = constructMessage(chatCollection?.id, imageUri, 'image', false, engine.id);
+      setMessages((messages) => [message, ...messages]);
+    }
+
   }, [chatBoxId]);
 
   const actionItem: Array<ActionItemProps> = [

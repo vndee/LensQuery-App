@@ -206,9 +206,9 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
     };
 
     const onSelect = (selected: any) => {
-      navigation.navigate('Media', {
-        path: selected?.assets?.[0]?.uri,
-        type: 'photo',
+      navigation.navigate('ChatBox', {
+        imageUri: selected?.assets?.[0]?.uri,
+        chatBoxId: undefined,
       });
     };
 
@@ -289,9 +289,6 @@ const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JS
     }}>
       <Button label="Chat" onPress={() => navigation.navigate('ChatList')} />
       <Button label="Select Image" onPress={selectImage} />
-      {/* <Button label="Chat" onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined })} /> */}
-      {/* <CameraRollPicker
-        callback={getSelectedImages} /> */}
     </View >
   );
 };

@@ -18,7 +18,7 @@ export type IChatBox = {
 export type IMessage = {
   id: string;
   collectionId: string;
-  type: 'user' | 'bot';
+  type: 'user' | 'bot' | 'image';
   content: string;
   isInterupted: boolean;
   engineId: string;

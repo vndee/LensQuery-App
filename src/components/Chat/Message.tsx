@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Layout, Typography, Spacing, Colors } from '../../styles';
 import { IMessage } from '../../types/chat';
 import { unixToTime } from '../../utils/Helper';
@@ -14,6 +14,14 @@ const Message = ({ item, onLongPress }: Props) => {
   const isUser = item.type === 'user';
   const isTyping = item.content === '...' && !isUser;
   const [timeVisible, setTimeVisible] = useState<boolean>(false);
+
+  if (item.type === 'image') {
+    return (
+      <TouchableOpacity style={[styles.messageContainer, styles.userBubble]}>
+        <Image source={{ uri: item.content }} style={{ width: Spacing.WINDOW_WIDTH * 0.5, height: Spacing.WINDOW_HEIGHT * 0.5 }} />
+      </TouchableOpacity>
+    )
+  }
 
   return (
     <TouchableOpacity

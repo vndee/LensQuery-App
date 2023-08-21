@@ -18,12 +18,12 @@ import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../compon
 
 const Settings = ({ navigation }: NativeStackScreenProps<Routes, 'Settings'>) => {
   const dispatch = useDispatch();
-  const { openaiKey } = useSelector((state: any) => state.account);
   const [key, setKey] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [keyErrorText, setKeyErrorText] = useState<string>('');
   const actionSheetRef = React.useRef<ActionSheetRef>(null);
+  const { openaiKey } = useSelector((state: any) => state.account);
   const [language, setLanguage] = useState<string>(Strings.getLanguage());
   const [email, setEmail] = useState<string>('');
 

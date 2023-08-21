@@ -12,6 +12,7 @@ export type Routes = {
   },
   ChatBox: {
     chatBoxId: string | undefined;
+    imageUri: string | undefined;
   };
   ChatList: undefined;
   Settings: undefined;

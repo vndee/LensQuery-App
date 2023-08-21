@@ -1,4 +1,5 @@
 import Strings from '../localization'
+import { IMessage } from '../types/chat';
 
 export const checkEmailValid = (email: string) => {
   const regex = /\S+@\S+\.\S+/;
@@ -27,4 +28,17 @@ export const unixToTime = (unix: number) => {
   const options = { hour: 'numeric', minute: 'numeric' };
   // @ts-ignore
   return new Date(unix).toLocaleTimeString(undefined, options);
+};
+
+export const constructMessage = (chatCollectionId: string, content: string, type: 'bot' | 'user' | 'image', isInterupted: boolean, engineId: string): IMessage => {
+  return {
+    id: new Realm.BSON.ObjectId().toHexString(),
+    collectionId: chatCollectionId,
+    content: content,
+    type: type,
+    isInterupted: isInterupted,
+    engineId: engineId,
+    createAt: new Date().getTime(),
+    updateAt: new Date().getTime(),
+  }
 };
