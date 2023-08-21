@@ -18,3 +18,5 @@ export const SCREEN_HEIGHT = Platform.select<number>({
 export const CAPTURE_BUTTON_SIZE = 78;
 
 export const OPENAI_HOST = 'https://api.openai.com/v1/chat/completions';
+export const MATHPIX_HOST = 'https://api.mathpix.com/v3/text';
+export const MATHPIX_APP_ID = 'vndee_huynh_gmail_com_fc337d';

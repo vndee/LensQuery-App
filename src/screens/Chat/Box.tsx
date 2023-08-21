@@ -16,6 +16,7 @@ import LabelSwitch from '../../components/Switch/LabelSwitch';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
 import Message from '../../components/Chat/Message';
 import { constructMessage } from '../../utils/Helper';
+import { getOCRAccessToken, getOCRResult } from '../../services/api'
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
 import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE } from '../../utils/Constants';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
@@ -52,6 +53,14 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
   const [failedCount, setFailedCount] = useState<number>(0);
   const [isSearchBarVisible, setIsSearchBarVisible] = useState<boolean>(false);
 
+  const handleGetOCRResult = async (imageUri: string): Promise<string> => {
+    const { status, data } = await getOCRResult(imageUri);
+    if (status === 200) {
+      return data;
+    }
+    return '';
+  };
+
   const pushMessage = useCallback((text: string, type: 'user' | 'bot', engineId: string, isInterupted: boolean = false) => {
     const message: IMessage = {
       id: new Realm.BSON.ObjectId().toHexString(),
@@ -65,11 +74,13 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
     };
 
     realm.write(() => {
+      console.log('checkpoint 1');
       chatCollection.messages.push(message);
       chatBox.lastMessage! = message.content;
       chatBox.lastMessageAt! = message.createAt;
     });
 
+    console.log('checkpoint 2');
     setMessages((messages) => [message, ...messages]);
     if (messages.length > CHAT_HISTORY_LOAD_LENGTH) {
       setMessages((messages) => messages.slice(0, CHAT_HISTORY_CACHE_LENGTH));
@@ -129,6 +140,9 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       pushMessage(text, 'user', engine.id);
       pushMessage('...', 'bot', engine.id, true);
 
+      // filter out image message
+      context = context.filter((message) => message.type !== 'image');
+
       const requestBody = {
         model: engine.id,
         messages: [...context.reverse().map((message) => {
@@ -183,40 +197,45 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
   }
 
   useEffect(() => {
-    if (chatBoxId === undefined) {
-      // create new chat box in realm
-      const boxId = new Realm.BSON.ObjectId().toHexString();
-      const collectionId = new Realm.BSON.ObjectId().toHexString();
-      realm.write(() => {
-        const chatBox = realm.create('ChatBox', {
-          id: boxId,
-          name: '',
-          engineId: engine.id,
-          collectionId: collectionId,
-          lastMessage: '',
-          lastMessageAt: new Date().getTime(),
-          messages: [],
-          createAt: new Date().getTime(),
-          updateAt: new Date().getTime(),
+    const initData = async () => {
+      if (chatBoxId === undefined) {
+        let text: string = '';
+        if (imageUri !== undefined) {
+          const message = constructMessage(chatCollection?.id, imageUri, 'image', false, engine.id);
+          setMessages((messages) => [message, ...messages]);
+          text = await handleGetOCRResult(imageUri)
+        }
+
+        // create new chat box in realm
+        const boxId = new Realm.BSON.ObjectId().toHexString();
+        const collectionId = new Realm.BSON.ObjectId().toHexString();
+        const ocrMessage = constructMessage(collectionId, text, 'bot', false, engine.id);
+        setMessages((messages) => [ocrMessage, ...messages]);
+        realm.write(() => {
+          const chatBox = realm.create('ChatBox', {
+            id: boxId,
+            name: '',
+            engineId: engine.id,
+            collectionId: collectionId,
+            lastMessage: '',
+            lastMessageAt: new Date().getTime(),
+            createAt: new Date().getTime(),
+            updateAt: new Date().getTime(),
+          });
+
+          // create new collection for this chat box
+          realm.create('MessageCollection', {
+            id: collectionId,
+            chatBox: chatBox,
+            messages: [ocrMessage],
+            createAt: new Date().getTime(),
+            updateAt: new Date().getTime(),
+          });
         });
-
-        // create new collection for this chat box
-        realm.create('MessageCollection', {
-          id: collectionId,
-          chatBox: chatBox,
-          messages: [],
-          createAt: new Date().getTime(),
-          updateAt: new Date().getTime(),
-        });
-      });
-      setChatBoxIdCopy(boxId);
-    }
-
-    if (imageUri !== undefined) {
-      const message = constructMessage(chatCollection?.id, imageUri, 'image', false, engine.id);
-      setMessages((messages) => [message, ...messages]);
-    }
-
+        setChatBoxIdCopy(boxId);
+      }
+    };
+    initData();
   }, [chatBoxId]);
 
   const actionItem: Array<ActionItemProps> = [

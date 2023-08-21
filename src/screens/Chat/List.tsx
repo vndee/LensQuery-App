@@ -21,11 +21,6 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
   const selectedChatBox = useObject('ChatBox', selectedChatBoxId);
   const selectedMessageCollection = useObject('MessageCollection', selectedChatBox?.collectionId || '');
 
-  const handleGetOCRAccessToken = async () => {
-    const resp = await getOCRAccessToken();
-    console.log('resp', resp);
-  }
-
   const handleHealthCheck = async () => {
     const resp = await healthCheck();
     console.log('resp', resp);
@@ -73,7 +68,6 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
   useEffect(() => {
     console.debug('ChatList', listOfChats);
     handleHealthCheck();
-    handleGetOCRAccessToken();
   }, []);
 
   return (
@@ -97,7 +91,7 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
           estimatedItemSize={100}
         />
       </View>
-      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: undefined })}>
+      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('Lens')}>
         <Ionicons name='add' size={24} color={Colors.white} />
       </TouchableOpacity>
 

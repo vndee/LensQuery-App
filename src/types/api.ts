@@ -10,3 +10,8 @@ export type GetOCRAccessTokenResponse = {
     app_token_expires_at: number;
   }
 }
+
+export type OCRResultResponse = {
+  status: number;
+  data: string;
+}
