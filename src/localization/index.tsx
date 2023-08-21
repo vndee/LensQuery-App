@@ -22,6 +22,7 @@ export default new LocalizedStrings({
       clearAll: 'Clear all',
       clickHere: 'Click here',
       unknownError: 'An error occurred, please try again later!',
+      alertTitle: 'Alert',
     },
 
     timeDiff: {
@@ -96,6 +97,12 @@ export default new LocalizedStrings({
     // Chat listing
     chatList: {
       title: 'Recent chats',
+      searchPlaceholder: 'Search...',
+      editNameOption: 'Edit name',
+      deleteOption: 'Delete',
+      deleteConfirmationMessage: 'Are you sure you want to delete this chat?',
+      deleteConfirmationYes: 'Yes',
+      deleteConfirmationNo: 'No',
     },
 
     // Chat box
@@ -159,6 +166,7 @@ export default new LocalizedStrings({
       clearAll: 'Xóa tất cả',
       clickHere: 'Xem tại đây',
       unknownError: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+      alertTitle: 'Thông báo',
     },
 
     timeDiff: {
@@ -233,6 +241,12 @@ export default new LocalizedStrings({
     // Chat listing
     chatList: {
       title: 'Cuộc trò chuyện gần đây',
+      searchPlaceholder: 'Tìm kiếm...',
+      editNameOption: 'Đổi tên',
+      deleteOption: 'Xóa',
+      deleteConfirmationMessage: 'Bạn có chắc chắn muốn xóa cuộc trò chuyện này?',
+      deleteConfirmationYes: 'Có',
+      deleteConfirmationNo: 'Không',
     },
 
     // Chat box

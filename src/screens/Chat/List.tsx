@@ -2,17 +2,24 @@ import Realm from 'realm';
 import Strings from '../../localization';
 import { Routes } from '../../types/navigation';
 import React, { useState, useEffect, useRef } from 'react';
-import { Keyboard, LayoutAnimation, View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
+import { Keyboard, LayoutAnimation, View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, NativeSyntheticEvent, TextInputChangeEventData, Alert } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FlashList } from '@shopify/flash-list';
 import BoxCard from '../../components/Chat/BoxCard';
-import { useQuery } from '../../storage/realm';
+import { useRealm, useQuery, useObject } from '../../storage/realm';
 import { healthCheck, getOCRAccessToken } from '../../services/api'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
 const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatList'>) => {
+  const realm = useRealm();
+  const listRef = useRef<FlashList<number> | null>(null);
   const listOfChats = useQuery('ChatBox').sorted('lastMessageAt', true);
+  const actionSheetRef = useRef<ActionSheetRef>(null);
+  const [selectedChatBoxId, setSelectedChatBoxId] = useState<string>('');
+  const selectedChatBox = useObject('ChatBox', selectedChatBoxId);
+  const selectedMessageCollection = useObject('MessageCollection', selectedChatBox?.collectionId || '');
 
   const handleGetOCRAccessToken = async () => {
     const resp = await getOCRAccessToken();
@@ -23,6 +30,45 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
     const resp = await healthCheck();
     console.log('resp', resp);
   }
+
+  const handleDeleteChatBox = () => {
+    actionSheetRef.current?.hide();
+    realm.write(() => {
+      realm.delete(selectedChatBox);
+      realm.delete(selectedMessageCollection);
+    });
+
+    listRef.current?.prepareForLayoutAnimationRender();
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    console.log(`Delete chatbox ${selectedChatBoxId} successfully!`);
+  }
+
+  const actionItem: Array<ActionItemProps> = [
+    {
+      icon: 'create-outline',
+      label: Strings.chatList.editNameOption,
+      color: Colors.text_color,
+      onPress: () => {
+        actionSheetRef.current?.hide();
+        console.log('Edit chatbox name');
+      }
+    },
+    {
+      icon: 'trash-outline',
+      label: Strings.chatList.deleteOption,
+      color: Colors.text_color,
+      onPress: () => {
+        Alert.alert(
+          Strings.common.alertTitle,
+          Strings.chatList.deleteConfirmationMessage,
+          [
+            { text: Strings.common.cancel, onPress: () => { }, style: 'cancel' },
+            { text: Strings.common.ok, onPress: () => handleDeleteChatBox(), style: 'destructive' }
+          ],
+        );
+      }
+    }
+  ];
 
   useEffect(() => {
     console.debug('ChatList', listOfChats);
@@ -42,17 +88,20 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
       </View>
       <View style={{ flex: 1 }}>
         <FlashList
+          ref={listRef}
           data={listOfChats}
           // @ts-expect-error
-          renderItem={({ item }) => <BoxCard item={item} onPress={() => navigation.navigate('ChatBox', { chatBoxId: item.id })} onLongPress={() => { }} />}
+          renderItem={({ item }) => <BoxCard item={item} onPress={() => navigation.navigate('ChatBox', { chatBoxId: item.id })} onLongPress={() => { setSelectedChatBoxId(item?.id); actionSheetRef?.current?.show(); }} />}
           keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           estimatedItemSize={100}
         />
       </View>
-      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined })}>
+      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: undefined })}>
         <Ionicons name='add' size={24} color={Colors.white} />
       </TouchableOpacity>
+
+      <BottomActionSheet actionRef={actionSheetRef} actions={actionItem} />
     </View>
   )
 };
