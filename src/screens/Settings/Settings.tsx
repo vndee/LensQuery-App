@@ -30,7 +30,6 @@ const Settings = ({ navigation }: NativeStackScreenProps<Routes, 'Settings'>) =>
   const handleLogout = () => {
     console.log('~ handleClearAll');
     clearStorageKeepAuth();
-    // dispatch(setLogin(false));
     auth()
       .signOut()
       .then(() => console.log('User signed out!'));
@@ -160,6 +159,8 @@ const Settings = ({ navigation }: NativeStackScreenProps<Routes, 'Settings'>) =>
             <Text style={Typography.description}>{Strings.onboardingSetup.disclaimer}</Text>
           </View>
         </View>
+
+        <View style={{ height: Spacing.XL }} />
 
         <InlineOptionSheet
           title={Strings.setting.language}

@@ -5,6 +5,9 @@ import { isEmpty } from 'lodash';
 import Button from '../../components/Button';
 import LabelInput from '../../components/Input/LabelInput';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import firebaseAuth from '../../services/firebase';
+import { firebase } from "@react-native-firebase/auth";
+import { FirebaseSignInResponse } from '../../types/firebase';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
@@ -17,8 +20,43 @@ const ChangePassword = ({ navigation, route }: NativeStackScreenProps<Routes, 'C
   const [currentPasswordErrorText, setCurrentPasswordErrorText] = useState<string>('');
   const [newPasswordErrorText, setNewPasswordErrorText] = useState<string>('');
   const [confirmNewPasswordErrorText, setConfirmNewPasswordErrorText] = useState<string>('');
+  const [erorText, setErrorText] = useState<string>(Strings.common.unknownError);
 
-  const handleSavePassword = () => {
+  const handleSavePassword = async () => {
+    if (newPassword !== confirmNewPassword) {
+      setConfirmNewPasswordErrorText(Strings.changePassword.passwordNotMatchError);
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const user = firebaseAuth.currentUser;
+      if (user) {
+        const credentials = firebase.auth.EmailAuthProvider.credential(
+          user.email || '',
+          currentPassword
+        );
+        // Sign in the user with the credentials to verify the current password
+        user.reauthenticateWithCredential(credentials).then(() => {
+          // If the reauthentication is successful, update the password
+          user.updatePassword(newPassword).then(() => {
+            setIsLoading(false);
+            console.log('Password updated!')
+            navigation.goBack();
+          }).catch((error) => {
+            setIsLoading(false);
+            setErrorText(Strings.common.unknownError);
+          });
+        }).catch((error) => {
+          setIsLoading(false);
+          const errorCode = error?.code || '';
+          if (errorCode === FirebaseSignInResponse.WRONG_PASSWORD) {
+            setCurrentPasswordErrorText(Strings.login.wrongPassword);
+          }
+        });
+      }
+    } catch (error) {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,6 +83,9 @@ const ChangePassword = ({ navigation, route }: NativeStackScreenProps<Routes, 'C
               if (!isEmpty(currentPassword) && !isEmpty(text)) {
                 setCurrentPasswordErrorText('')
               }
+              if (!isEmpty(erorText)) {
+                setErrorText('')
+              }
             }}
             secureTextEntry={true}
             icon="lock-open-outline"
@@ -62,6 +103,9 @@ const ChangePassword = ({ navigation, route }: NativeStackScreenProps<Routes, 'C
               };
               if (!isEmpty(newPassword) && !isEmpty(text)) {
                 setNewPasswordErrorText('')
+              }
+              if (!isEmpty(erorText)) {
+                setErrorText('')
               }
             }}
             secureTextEntry={true}
@@ -81,6 +125,9 @@ const ChangePassword = ({ navigation, route }: NativeStackScreenProps<Routes, 'C
               if (!isEmpty(confirmNewPassword) && !isEmpty(text)) {
                 setConfirmNewPasswordErrorText('')
               }
+              if (!isEmpty(erorText)) {
+                setErrorText('')
+              }
             }}
             secureTextEntry={true}
             icon="lock-open-outline"
@@ -89,8 +136,9 @@ const ChangePassword = ({ navigation, route }: NativeStackScreenProps<Routes, 'C
           />
         </View>
       </ScrollView>
-      <View style={{ paddingHorizontal: Spacing.horizontalPadding }}>
-        <Button style={styles.btnBottom} label={Strings.changePassword.saveBtn} onPress={handleSavePassword} />
+      <View style={[styles.btnBottom, { paddingHorizontal: Spacing.horizontalPadding }]}>
+        {erorText !== '' && <Text style={[Typography.error, { alignSelf: 'center', marginBottom: Spacing.S }]}>{erorText}</Text>}
+        <Button label={Strings.changePassword.saveBtn} onPress={handleSavePassword} />
       </View>
     </View>
   );

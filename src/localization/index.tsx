@@ -21,6 +21,7 @@ export default new LocalizedStrings({
       clear: 'Clear',
       clearAll: 'Clear all',
       clickHere: 'Click here',
+      unknownError: 'An error occurred, please try again later!',
     },
 
     timeDiff: {
@@ -157,6 +158,7 @@ export default new LocalizedStrings({
       clear: 'Xóa',
       clearAll: 'Xóa tất cả',
       clickHere: 'Xem tại đây',
+      unknownError: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
     },
 
     timeDiff: {

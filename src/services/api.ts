@@ -1,6 +1,6 @@
 import qs from 'querystring';
 import axios, { AxiosError } from 'axios';
-import auth from '@react-native-firebase/auth';
+import firebaseAuth from './firebase'
 import { healthCheckResponse, GetOCRAccessTokenResponse } from '../types/api';
 
 const brainBackend = axios.create({
@@ -13,7 +13,7 @@ const brainBackend = axios.create({
 
 brainBackend.interceptors.request.use(
   async config => {
-    const token = await auth().currentUser?.getIdToken();
+    const token = await firebaseAuth.currentUser?.getIdToken();
     if (token) {
       config.headers.Authorization = `${token}`;
     }

@@ -29,5 +29,9 @@ export default StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: Colors.text_color,
+  },
+  error: {
+    fontSize: 14,
+    color: Colors.danger,
   }
 });
