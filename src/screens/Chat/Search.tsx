@@ -1,7 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Routes } from '../../types/navigation';
 import Strings from '../../localization';
+import { FlashList } from '@shopify/flash-list';
+import { useQuery } from '../../storage/realm';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { IChatBox } from '../../types/chat';
+import BoxCard from '../../components/Chat/BoxCard';
 import { View, Text, TouchableOpacity, StyleSheet, Keyboard, TextInput } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -9,11 +13,13 @@ import { StackScreenProps } from '@react-navigation/stack';
 
 const ChatSearch = ({ navigation, route }: StackScreenProps<Routes, 'ChatSearch'>) => {
   const [searchText, setSearchText] = useState<string>('');
+  const listRef = useRef<FlashList<IChatBox> | null>(null);
+  const listOfChats = useQuery('ChatBox').sorted('lastMessageAt', true).filtered(`name CONTAINS[c] "${searchText}"`);
 
   const renderSearchHeader = useCallback(() => {
     return (
       <View style={styles.row}>
-        <TouchableOpacity onPress={() => { setSearchText(''); Keyboard.dismiss(); }}>
+        <TouchableOpacity onPress={() => { setSearchText(''); Keyboard.dismiss(); navigation.goBack(); }}>
           <Ionicons name='arrow-back-outline' size={24} color={Colors.primary} />
         </TouchableOpacity>
         <TextInput
@@ -28,9 +34,26 @@ const ChatSearch = ({ navigation, route }: StackScreenProps<Routes, 'ChatSearch'
   }, [searchText]);
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1 }}>
       <View style={Layout.header}>
         {renderSearchHeader()}
+      </View>
+      <View style={{ flex: 1 }}>
+        <FlashList
+          ref={listRef}
+          // @ts-ignore
+          data={listOfChats}
+          renderItem={({ item }: { item: IChatBox }) => <BoxCard
+            item={item}
+            isSelected={false}
+            selectedMode={false}
+            onPress={() => navigation.navigate('ChatBox', { chatBoxId: item?.id, imageUri: undefined })}
+            onLongPress={() => { }}
+          />}
+          keyExtractor={(item, index) => index.toString()}
+          showsVerticalScrollIndicator={false}
+          estimatedItemSize={100}
+        />
       </View>
     </View>
   );

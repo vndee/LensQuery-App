@@ -65,19 +65,19 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
     StatusBar.setHidden(true);
   }, []);
 
-  const cropImage = async () => {
-    const crop = await ImageEditor.cropImage(path, cropData).then(
-      uri => {
-        console.log("Cropped image uri", uri);
-        return uri;
-      },
-      error => {
-        console.log("Crop failed", error);
-        return null;
-      }
-    )
-    setCropData(crop);
-  };
+  // const cropImage = async () => {
+  //   const crop = await ImageEditor.cropImage(path, cropData).then(
+  //     uri => {
+  //       console.log("Cropped image uri", uri);
+  //       return uri;
+  //     },
+  //     error => {
+  //       console.log("Crop failed", error);
+  //       return null;
+  //     }
+  //   )
+  //   setCropData(crop);
+  // };
 
   return (
     <View style={[styles.container, screenStyle]}>
@@ -100,7 +100,7 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
 
       <TouchableOpacity
         style={styles.cropButton}
-        onPress={cropImage}
+        onPress={() => { }}
       >
         <Ionicons name="crop" size={35} color="white" style={styles.icon} />
       </TouchableOpacity>
