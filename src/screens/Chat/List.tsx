@@ -15,7 +15,7 @@ import { IChatBox, IMessageCollection } from '../../types/chat';
 const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) => {
   const realm = useRealm();
   const listRef = useRef<FlashList<IChatBox> | null>(null);
-  const listOfChats = useQuery('ChatBox').sorted('lastMessageAt', true);
+  const listOfChats = useQuery<IChatBox>('ChatBox').sorted('lastMessageAt', true);
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const [isSelectedMode, setIsSelectedMode] = useState<boolean>(false);
   const [selectedBox, setSelectedBox] = useState<Set<string>>(new Set());
@@ -151,7 +151,6 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
       <View style={{ flex: 1 }}>
         <FlashList
           ref={listRef}
-          // @ts-ignore
           data={listOfChats}
           renderItem={({ item }: { item: IChatBox }) => <BoxCard
             item={item}

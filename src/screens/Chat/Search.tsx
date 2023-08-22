@@ -14,7 +14,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 const ChatSearch = ({ navigation, route }: StackScreenProps<Routes, 'ChatSearch'>) => {
   const [searchText, setSearchText] = useState<string>('');
   const listRef = useRef<FlashList<IChatBox> | null>(null);
-  const listOfChats = useQuery('ChatBox').sorted('lastMessageAt', true).filtered(`name CONTAINS[c] "${searchText}"`);
+  const listOfChats = useQuery<IChatBox>('ChatBox').sorted('lastMessageAt', true).filtered(`name CONTAINS[c] "${searchText}"`);
 
   const renderSearchHeader = useCallback(() => {
     return (
@@ -41,7 +41,6 @@ const ChatSearch = ({ navigation, route }: StackScreenProps<Routes, 'ChatSearch'
       <View style={{ flex: 1 }}>
         <FlashList
           ref={listRef}
-          // @ts-ignore
           data={listOfChats}
           renderItem={({ item }: { item: IChatBox }) => <BoxCard
             item={item}
