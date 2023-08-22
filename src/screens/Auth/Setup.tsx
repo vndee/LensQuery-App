@@ -8,11 +8,11 @@ import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
 import firebaseAuth from '../../services/firebase'
 import { setOpenaiKey } from '../../redux/slice/account';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreenProps } from '@react-navigation/stack';
 import { Spacing, Typography, Layout, Colors } from '../../styles';
 
 
-const OnboardingSetup = ({ navigation, route }: NativeStackScreenProps<Routes, 'OnboardingSetup'>): JSX.Element => {
+const OnboardingSetup = ({ navigation, route }: StackScreenProps<Routes, 'OnboardingSetup'>): JSX.Element => {
   const dispatch = useDispatch();
   const { email, password } = route.params;
 

@@ -8,12 +8,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FlashList } from '@shopify/flash-list';
 import BoxCard from '../../components/Chat/BoxCard';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
-import { healthCheck, getOCRAccessToken } from '../../services/api'
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreenProps } from '@react-navigation/stack';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 import { IChatBox, IMessageCollection } from '../../types/chat';
 
-const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatList'>) => {
+const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) => {
   const realm = useRealm();
   const listRef = useRef<FlashList<IChatBox> | null>(null);
   const listOfChats = useQuery('ChatBox').sorted('lastMessageAt', true);
@@ -24,11 +23,6 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
   const [selectedChatBoxId, setSelectedChatBoxId] = useState<string>('');
   const selectedChatBox = useObject<IChatBox>('ChatBox', selectedChatBoxId);
   const selectedMessageCollection = useObject<IMessageCollection>('MessageCollection', selectedChatBox?.collectionId || '');
-
-  const handleHealthCheck = async () => {
-    const resp = await healthCheck();
-    console.log('resp', resp);
-  }
 
   const handleDeleteChatBox = () => {
     actionSheetRef.current?.hide();
@@ -114,6 +108,9 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
   const renderDefaultHeader = useCallback(() => {
     return (
       <>
+        <TouchableOpacity onPress={() => navigation.navigate('ChatSearch')} style={{ marginRight: Spacing.S }}>
+          <Ionicons name='search-outline' size={24} color={Colors.text_color} />
+        </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={Typography.H3}>{Strings.chatList.title}</Text>
         </View>

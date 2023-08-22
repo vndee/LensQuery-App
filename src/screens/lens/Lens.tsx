@@ -24,7 +24,7 @@ import { CaptureButton } from '../../components/Button/CaptureButton';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreenProps } from '@react-navigation/stack';
 import { LENS_MAX_ZOOM_FACTOR, LENS_SCALE_FULL_ZOOM } from '../../utils/Constants';
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
@@ -32,7 +32,7 @@ Reanimated.addWhitelistedNativeProps({
   zoom: true,
 });
 
-const Lens = ({ navigation, route }: NativeStackScreenProps<Routes, 'Lens'>): JSX.Element => {
+const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Element => {
   const dispatch = useDispatch();
   const cameraRef = useRef<Camera>(null);
   const { accountCreds } = useSelector((state: any) => state.account);

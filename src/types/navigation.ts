@@ -15,6 +15,7 @@ export type Routes = {
     imageUri: string | undefined;
   };
   ChatList: undefined;
+  ChatSearch: undefined;
   Settings: undefined;
   ChangePassword: undefined;
 }

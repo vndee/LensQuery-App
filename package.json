@@ -19,7 +19,7 @@
     "@react-native-firebase/app": "^18.3.0",
     "@react-native-firebase/auth": "^18.3.0",
     "@react-navigation/native": "^6.1.7",
-    "@react-navigation/native-stack": "^6.9.13",
+    "@react-navigation/stack": "^6.3.17",
     "@realm/react": "^0.5.2",
     "@reduxjs/toolkit": "^1.9.5",
     "@shopify/flash-list": "^1.5.0",

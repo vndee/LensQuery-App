@@ -11,12 +11,12 @@ import { setOpenaiKey } from '../../redux/slice/account';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreenProps } from '@react-navigation/stack';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
-const Settings = ({ navigation }: NativeStackScreenProps<Routes, 'Settings'>) => {
+const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const dispatch = useDispatch();
   const [key, setKey] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(false);

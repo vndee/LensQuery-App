@@ -8,7 +8,7 @@ import EventSource from '../../services/sse';
 import { FlashList } from '@shopify/flash-list';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, ActivityIndicator } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreenProps } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import LabelSwitch from '../../components/Switch/LabelSwitch';
@@ -34,7 +34,7 @@ const chatEngine: IChatEngine[] = [
 
 const API_KEY = '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'
 
-const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'>) => {
+const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => {
   const realm = useRealm();
   let es: EventSource | null = null;
   const isKeyboardVisible = useKeyboardVisible();
@@ -204,17 +204,16 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
     const initData = async () => {
       if (chatBoxId === undefined) {
         let text: string = '';
-        if (imageUri !== undefined) {
-          if (!chatCollection?.id) return;
+        const boxId = new Realm.BSON.ObjectId().toHexString();
+        const collectionId = new Realm.BSON.ObjectId().toHexString();
 
-          const message = constructMessage(chatCollection?.id, imageUri, 'image', false, engine.id);
+        if (imageUri !== undefined) {
+          const message = constructMessage(collectionId, imageUri, 'image', false, engine.id);
           setMessages((messages) => [message, ...messages]);
           text = await handleGetOCRResult(imageUri)
         }
 
         // create new chat box in realm
-        const boxId = new Realm.BSON.ObjectId().toHexString();
-        const collectionId = new Realm.BSON.ObjectId().toHexString();
         const ocrMessage = constructMessage(collectionId, text, 'bot', false, engine.id);
         setMessages((messages) => [ocrMessage, ...messages]);
         const updatedTime = new Date().getTime();

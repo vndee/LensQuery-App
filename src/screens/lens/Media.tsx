@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { Routes } from '../../types/navigation';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreenProps } from '@react-navigation/stack';
 import { useIsFocused } from '@react-navigation/native';
 import { useIsForeground } from '../../hooks/useIsForeground';
 import {
@@ -40,7 +40,7 @@ const requestSavePermission = async (): Promise<boolean> => {
   return hasPermission;
 };
 
-const Media = ({ navigation, route }: NativeStackScreenProps<Routes, 'Media'>): JSX.Element => {
+const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.Element => {
   const { path, type } = route.params;
   const [hasMediaLoaded, setHasMediaLoaded] = useState(false);
   const isForeground = useIsForeground();

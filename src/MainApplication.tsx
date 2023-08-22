@@ -3,6 +3,7 @@ import { iphoneXSeries } from '../src/utils/Device';
 import { useDispatch, useSelector } from 'react-redux';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
+import { NavigationContainer } from '@react-navigation/native';
 
 import Storage from './storage';
 import Strings from './localization';

@@ -7,10 +7,10 @@ import { Routes } from '../../types/navigation';
 import { isEmpty } from 'lodash';
 import { checkEmailValid } from '../../utils/Helper';
 import LabelInput from '../../components/Input/LabelInput';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreenProps } from '@react-navigation/stack';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, ScrollView, TouchableOpacity } from 'react-native';
 
-const Register = ({ navigation, route }: NativeStackScreenProps<Routes, 'Register'>): JSX.Element => {
+const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [name, setName] = useState<string>('');

@@ -1,13 +1,13 @@
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { Routes } from '../types/navigation';
 // screens
 import Login from '../screens/Auth/Login';
 import Register from '../screens/Auth/Register';
 import OnboardingSetup from '../screens/Auth/Setup';
 
-const Stack = createNativeStackNavigator<Routes>();
+const Stack = createStackNavigator<Routes>();
 
 const AuthStack = (): JSX.Element => {
   return (

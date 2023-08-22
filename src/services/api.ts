@@ -1,10 +1,10 @@
 import qs from 'querystring';
-import axios, { AxiosError } from 'axios';
 import firebaseAuth from './firebase'
-import { MATHPIX_HOST, MATHPIX_APP_ID } from '../utils/Constants'
+import axios, { AxiosError } from 'axios';
+import { MATHPIX_HOST } from '../utils/Constants'
 import { healthCheckResponse, GetOCRAccessTokenResponse, OCRResultResponse } from '../types/api';
 
-const brainBackend = axios.create({
+const queryBackend = axios.create({
   baseURL: 'https://brain.lensquery.com',
   headers: {
     'Content-Type': 'application/json',
@@ -12,7 +12,7 @@ const brainBackend = axios.create({
   paramsSerializer: params => qs.stringify(params),
 });
 
-brainBackend.interceptors.request.use(
+queryBackend.interceptors.request.use(
   async config => {
     const token = await firebaseAuth.currentUser?.getIdToken();
     if (token) {
@@ -25,7 +25,7 @@ brainBackend.interceptors.request.use(
   }
 );
 
-brainBackend.interceptors.response.use(
+queryBackend.interceptors.response.use(
   response => {
     return response;
   },
@@ -39,7 +39,7 @@ brainBackend.interceptors.response.use(
 
 const healthCheck = async (): Promise<healthCheckResponse> => {
   try {
-    const resp = await brainBackend.get('/healthcheck');
+    const resp = await queryBackend.get('/healthcheck');
     return { status: resp?.status, data: resp?.data }
   } catch (error: any) {
     return { status: error?.response?.status, data: error?.response?.data }
@@ -48,8 +48,7 @@ const healthCheck = async (): Promise<healthCheckResponse> => {
 
 const getOCRAccessToken = async (): Promise<GetOCRAccessTokenResponse> => {
   try {
-    const resp = await brainBackend.get('/api/v1/ocr/token');
-    console.log('resp:', resp?.data)
+    const resp = await queryBackend.get('/api/v1/ocr/token');
     return { status: resp?.status, data: resp?.data }
   } catch (error: any) {
     return { status: error?.response?.status, data: { app_id: '', app_token: '', app_token_expires_at: 0 } }
@@ -59,7 +58,6 @@ const getOCRAccessToken = async (): Promise<GetOCRAccessTokenResponse> => {
 const getOCRResult = async (image: string): Promise<OCRResultResponse> => {
   try {
     const { data, status } = await getOCRAccessToken();
-    console.log('data:', data);
     if (status === 200) {
       const formData = new FormData();
       formData.append('file', {

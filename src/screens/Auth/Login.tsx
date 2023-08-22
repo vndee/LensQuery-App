@@ -15,10 +15,10 @@ import { FirebaseSignInResponse } from '../../types/firebase';
 import { isEmpty } from 'lodash';
 import { checkEmailValid } from '../../utils/Helper';
 import { Routes } from '../../types/navigation'
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreenProps } from '@react-navigation/stack';
 
 
-const Login = ({ navigation, route }: NativeStackScreenProps<Routes, 'Login'>): JSX.Element => {
+const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.Element => {
   const dispatch = useDispatch();
   const { isLogin, language } = useSelector((state: any) => state.auth);
   const [isLoading, setIsLoading] = useState<boolean>(false);

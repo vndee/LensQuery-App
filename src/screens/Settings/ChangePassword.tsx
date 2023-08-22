@@ -9,10 +9,10 @@ import firebaseAuth from '../../services/firebase';
 import { firebase } from "@react-native-firebase/auth";
 import { FirebaseSignInResponse } from '../../types/firebase';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreenProps } from '@react-navigation/stack';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 
-const ChangePassword = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChangePassword'>): JSX.Element => {
+const ChangePassword = ({ navigation, route }: StackScreenProps<Routes, 'ChangePassword'>): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentPassword, setCurrentPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
