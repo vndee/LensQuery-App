@@ -98,11 +98,15 @@ export default new LocalizedStrings({
     chatList: {
       title: 'Recent chats',
       searchPlaceholder: 'Search...',
+      selectedOption: 'Select',
       editNameOption: 'Edit name',
       deleteOption: 'Delete',
       deleteConfirmationMessage: 'Are you sure you want to delete this chat?',
       deleteConfirmationYes: 'Yes',
       deleteConfirmationNo: 'No',
+      selected: 'Selected',
+      chatBox: 'chat box',
+      deleteBatchMessageWarning: 'You have selected {0} chat boxes. Are you sure you want to delete them?',
     },
 
     // Chat box
@@ -242,11 +246,15 @@ export default new LocalizedStrings({
     chatList: {
       title: 'Cuộc trò chuyện gần đây',
       searchPlaceholder: 'Tìm kiếm...',
+      selectedOption: 'Chọn',
       editNameOption: 'Đổi tên',
       deleteOption: 'Xóa',
       deleteConfirmationMessage: 'Bạn có chắc chắn muốn xóa cuộc trò chuyện này?',
       deleteConfirmationYes: 'Có',
       deleteConfirmationNo: 'Không',
+      selected: 'Đã chọn',
+      chatBox: 'cuộc trò chuyện',
+      deleteBatchMessageWarning: 'Bạn đã chọn {0} cuộc trò chuyện. Bạn có chắc chắn muốn xóa chúng?',
     },
 
     // Chat box

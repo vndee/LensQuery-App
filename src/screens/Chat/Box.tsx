@@ -211,16 +211,17 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
         const collectionId = new Realm.BSON.ObjectId().toHexString();
         const ocrMessage = constructMessage(collectionId, text, 'bot', false, engine.id);
         setMessages((messages) => [ocrMessage, ...messages]);
+        const updatedTime = new Date().getTime();
         realm.write(() => {
           const chatBox = realm.create('ChatBox', {
             id: boxId,
             name: '',
             engineId: engine.id,
             collectionId: collectionId,
-            lastMessage: '',
-            lastMessageAt: new Date().getTime(),
-            createAt: new Date().getTime(),
-            updateAt: new Date().getTime(),
+            lastMessage: text,
+            lastMessageAt: updatedTime,
+            createAt: updatedTime,
+            updateAt: updatedTime,
           });
 
           // create new collection for this chat box
@@ -228,8 +229,8 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
             id: collectionId,
             chatBox: chatBox,
             messages: [ocrMessage],
-            createAt: new Date().getTime(),
-            updateAt: new Date().getTime(),
+            createAt: updatedTime,
+            updateAt: updatedTime,
           });
         });
         setChatBoxIdCopy(boxId);

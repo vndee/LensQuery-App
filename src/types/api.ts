@@ -6,6 +6,7 @@ export type healthCheckResponse = {
 export type GetOCRAccessTokenResponse = {
   status: number;
   data: {
+    app_id: string;
     app_token: string;
     app_token_expires_at: number;
   }

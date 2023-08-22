@@ -49,9 +49,10 @@ const healthCheck = async (): Promise<healthCheckResponse> => {
 const getOCRAccessToken = async (): Promise<GetOCRAccessTokenResponse> => {
   try {
     const resp = await brainBackend.get('/api/v1/ocr/token');
+    console.log('resp:', resp?.data)
     return { status: resp?.status, data: resp?.data }
   } catch (error: any) {
-    return { status: error?.response?.status, data: { app_token: '', app_token_expires_at: 0 } }
+    return { status: error?.response?.status, data: { app_id: '', app_token: '', app_token_expires_at: 0 } }
   }
 }
 
@@ -73,7 +74,7 @@ const getOCRResult = async (image: string): Promise<OCRResultResponse> => {
 
       const resp = await axios.post(MATHPIX_HOST, formData, {
         headers: {
-          'app_id': MATHPIX_APP_ID,
+          'app_id': data.app_id,
           'app_token': data.app_token,
           'Content-Type': 'multipart/form-data',
         },
