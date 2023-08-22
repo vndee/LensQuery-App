@@ -5,7 +5,6 @@ import Strings from '../../localization';
 import { Routes } from '../../types/navigation'; 123456
 import Animated from 'react-native-reanimated';
 import EventSource from '../../services/sse';
-import { IChatEngine, IMessage } from '../../types/chat';
 import { FlashList } from '@shopify/flash-list';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, ActivityIndicator } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
@@ -16,8 +15,9 @@ import LabelSwitch from '../../components/Switch/LabelSwitch';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
 import Message from '../../components/Chat/Message';
 import { constructMessage } from '../../utils/Helper';
-import { getOCRAccessToken, getOCRResult } from '../../services/api'
+import { getOCRResult } from '../../services/api'
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
+import { IChatEngine, IMessage, IChatBox, IMessageCollection } from '../../types/chat';
 import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE } from '../../utils/Constants';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
@@ -45,9 +45,9 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
   const [messages, setMessages] = useState<Array<IMessage>>([]);
   const [engine, setEngine] = useState<IChatEngine>(chatEngine[0]);
   const [chatBoxIdCopy, setChatBoxIdCopy] = useState<string>(chatBoxId ? chatBoxId : '');
-  const chatBox = useObject('ChatBox', chatBoxIdCopy);
+  const chatBox = useObject<IChatBox>('ChatBox', chatBoxIdCopy);
   const [isFetchingHistory, setIsFetchingHistory] = useState<boolean>(false);
-  const chatCollection = useObject('MessageCollection', chatBox?.collectionId ? chatBox.collectionId : '');
+  const chatCollection = useObject<IMessageCollection>('MessageCollection', chatBox?.collectionId ? chatBox.collectionId : '');
 
   const [searchText, setSearchText] = useState<string>('');
   const [failedCount, setFailedCount] = useState<number>(0);
@@ -62,6 +62,8 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
   };
 
   const pushMessage = useCallback((text: string, type: 'user' | 'bot', engineId: string, isInterupted: boolean = false) => {
+    if (!chatCollection?.id || !chatBox) return;
+
     const message: IMessage = {
       id: new Realm.BSON.ObjectId().toHexString(),
       collectionId: chatCollection?.id,
@@ -74,7 +76,6 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
     };
 
     realm.write(() => {
-      console.log('checkpoint 1');
       chatCollection.messages.push(message);
       chatBox.lastMessage! = message.content;
       chatBox.lastMessageAt! = message.createAt;
@@ -99,7 +100,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
     if (event.type === 'open') {
       console.log('open sse:', event)
     } else if (event.type === 'message') {
-      if (!event.data) return;
+      if (!event.data || !chatCollection?.id) return;
       const message = constructMessage(chatCollection?.id, event.data, 'bot', true, engine.id);
       setFirstMessageState(message);
     } else if (event.type === 'error') {
@@ -111,6 +112,7 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       setFailedCount((failedCount) => failedCount + 1);
       es?.open();
     } else if (event.type === 'done') {
+      if (!chatCollection?.id || !chatBox) return;
       const message = constructMessage(chatCollection?.id, event.data, 'bot', false, engine.id);
       setFirstMessageState(message);
       realm.write(() => {
@@ -172,7 +174,9 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
   };
 
   useEffect(() => {
-    if (messages.length === 0 && chatCollection?.messages.length > 0) {
+    if (!chatCollection?.messages?.length) return;
+
+    if (messages.length === 0 && chatCollection?.messages?.length > 0) {
       let history: Array<IMessage> = [];
       const L = chatCollection?.messages.length;
       for (let i = 0; i < Math.min(L, CHAT_HISTORY_LOAD_LENGTH); i++) {
@@ -201,6 +205,8 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
       if (chatBoxId === undefined) {
         let text: string = '';
         if (imageUri !== undefined) {
+          if (!chatCollection?.id) return;
+
           const message = constructMessage(chatCollection?.id, imageUri, 'image', false, engine.id);
           setMessages((messages) => [message, ...messages]);
           text = await handleGetOCRResult(imageUri)
@@ -261,6 +267,8 @@ const ChatBox = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatBox'
   ];
 
   const handleFetchMore = () => {
+    if (!chatCollection?.messages?.length) return;
+
     const M = messages.length;
     const N = chatCollection?.messages.length;
 

@@ -2,7 +2,7 @@ import Realm from 'realm';
 import Strings from '../../localization';
 import { Routes } from '../../types/navigation';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Keyboard, LayoutAnimation, View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, NativeSyntheticEvent, TextInputChangeEventData, Alert } from 'react-native';
+import { Keyboard, LayoutAnimation, View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FlashList } from '@shopify/flash-list';
@@ -11,19 +11,19 @@ import { useRealm, useQuery, useObject } from '../../storage/realm';
 import { healthCheck, getOCRAccessToken } from '../../services/api'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
-import { IChatBox } from '../../types/chat';
+import { IChatBox, IMessageCollection } from '../../types/chat';
 
 const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatList'>) => {
   const realm = useRealm();
-  const listRef = useRef<FlashList<number> | null>(null);
+  const listRef = useRef<FlashList<IChatBox> | null>(null);
   const listOfChats = useQuery('ChatBox').sorted('lastMessageAt', true);
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const [isSelectedMode, setIsSelectedMode] = useState<boolean>(false);
   const [selectedBox, setSelectedBox] = useState<Set<string>>(new Set());
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false);
   const [selectedChatBoxId, setSelectedChatBoxId] = useState<string>('');
-  const selectedChatBox = useObject('ChatBox', selectedChatBoxId);
-  const selectedMessageCollection = useObject('MessageCollection', selectedChatBox?.collectionId || '');
+  const selectedChatBox = useObject<IChatBox>('ChatBox', selectedChatBoxId);
+  const selectedMessageCollection = useObject<IMessageCollection>('MessageCollection', selectedChatBox?.collectionId || '');
 
   const handleHealthCheck = async () => {
     const resp = await healthCheck();
@@ -57,8 +57,8 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
 
     realm.write(() => {
       for (const id of selectedBox) {
-        const chatBox = realm.objectForPrimaryKey('ChatBox', id);
-        const messageCollection = realm.objectForPrimaryKey('MessageCollection', chatBox?.collectionId || '');
+        const chatBox = realm.objectForPrimaryKey<IChatBox>('ChatBox', id);
+        const messageCollection = realm.objectForPrimaryKey<IMessageCollection>('MessageCollection', chatBox?.collectionId || '');
         realm.delete(chatBox);
         realm.delete(messageCollection);
       }
