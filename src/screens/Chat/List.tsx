@@ -43,7 +43,6 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
   }
 
   const handleDeleteBactch = () => {
-    console.log('selectedBox', selectedBox)
     if (isSelectedAll) {
       realm.write(() => {
         realm.delete(listOfChats);
@@ -57,7 +56,12 @@ const ChatList = ({ navigation, route }: NativeStackScreenProps<Routes, 'ChatLis
     }
 
     realm.write(() => {
-      realm.delete(listOfChats.filtered(`id IN $0`, Array.from(selectedBox)));
+      for (const id of selectedBox) {
+        const chatBox = realm.objectForPrimaryKey('ChatBox', id);
+        const messageCollection = realm.objectForPrimaryKey('MessageCollection', chatBox?.collectionId || '');
+        realm.delete(chatBox);
+        realm.delete(messageCollection);
+      }
       setSelectedBox(new Set());
     });
   };
