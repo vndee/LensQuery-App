@@ -1,4 +1,3 @@
-import Realm from 'realm';
 import Strings from '../../localization';
 import { Routes } from '../../types/navigation';
 import React, { useState, useEffect, useRef, useCallback } from 'react';

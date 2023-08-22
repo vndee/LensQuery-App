@@ -206,9 +206,13 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
     };
 
     const onSelect = (selected: any) => {
-      navigation.navigate('ChatBox', {
-        imageUri: selected?.assets?.[0]?.uri,
-        chatBoxId: undefined,
+      // navigation.navigate('ChatBox', {
+      //   imageUri: selected?.assets?.[0]?.uri,
+      //   chatBoxId: undefined,
+      // });
+      navigation.navigate('Media', {
+        path: selected?.assets?.[0]?.uri,
+        type: 'photo',
       });
     };
 

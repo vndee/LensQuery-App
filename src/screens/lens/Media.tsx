@@ -17,15 +17,18 @@ import {
   Alert,
   PermissionsAndroid,
   ActivityIndicator,
+  LayoutRectangle,
   Image,
   StatusBar,
   NativeSyntheticEvent,
   ImageLoadEventData
 } from 'react-native';
+import { getImageSize } from '../../utils/Helper';
 import CameraRoll from '@react-native-camera-roll/camera-roll'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { StatusBarBlurBackground } from '../../components/StatusBar/StatusBarBlurBackgound';
 import ImageEditor from "@react-native-community/image-editor";
+import CropperComponent from 'react-native-image-cropview';
+import { StatusBarBlurBackground } from '../../components/StatusBar/StatusBarBlurBackgound';
 
 const requestSavePermission = async (): Promise<boolean> => {
   if (Platform.OS !== 'android') return true;
@@ -42,6 +45,7 @@ const requestSavePermission = async (): Promise<boolean> => {
 
 const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.Element => {
   const { path, type } = route.params;
+  const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const [hasMediaLoaded, setHasMediaLoaded] = useState(false);
   const isForeground = useIsForeground();
   const isScreenFocused = useIsFocused();
@@ -59,33 +63,39 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
 
   const source = useMemo(() => ({ uri: `file://${path}` }), [path]);
 
-  const screenStyle = useMemo(() => ({ opacity: hasMediaLoaded ? 1 : 0 }), [hasMediaLoaded]);
+  // const screenStyle = useMemo(() => ({ opacity: hasMediaLoaded ? 1 : 0 }), [hasMediaLoaded]);
+
+  const onCropDone = (layout: LayoutRectangle) => {
+    const cropData = {
+      offset: { x: layout.x, y: layout.y },
+      size: { width: layout.width, height: layout.height },
+    };
+
+    ImageEditor.cropImage(source.uri, cropData).then(url => {
+      setCroppedImage(url);
+    });
+  }
+
+  const onCropCancel = () => {
+    setCroppedImage(null);
+  }
 
   useEffect(() => {
     StatusBar.setHidden(true);
   }, []);
 
-  // const cropImage = async () => {
-  //   const crop = await ImageEditor.cropImage(path, cropData).then(
-  //     uri => {
-  //       console.log("Cropped image uri", uri);
-  //       return uri;
-  //     },
-  //     error => {
-  //       console.log("Crop failed", error);
-  //       return null;
-  //     }
-  //   )
-  //   setCropData(crop);
-  // };
-
   return (
-    <View style={[styles.container, screenStyle]}>
+    <View style={[styles.container]}>
       <StatusBar hidden backgroundColor={'transparent'} />
 
-      {type === 'photo' && (
-        <Image source={source} style={StyleSheet.absoluteFill} resizeMode="cover" onLoadEnd={onMediaLoadEnd} onLoad={onMediaLoad} />
-      )}
+      <CropperComponent
+        uri={source.uri}
+        onDone={onCropDone}
+        onCancel={onCropCancel}
+        hideFooter={true}
+        scaleMax={5}
+        getImageSize={getImageSize}
+      />
 
       <TouchableOpacity style={styles.closeButton} onPress={navigation.goBack}>
         <Ionicons name="close" size={35} color="white" style={styles.icon} />
