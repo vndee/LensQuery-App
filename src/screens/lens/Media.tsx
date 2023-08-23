@@ -27,7 +27,7 @@ import { getImageSize } from '../../utils/Helper';
 import CameraRoll from '@react-native-camera-roll/camera-roll'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ImageEditor from "@react-native-community/image-editor";
-import CropperComponent from 'react-native-image-cropview';
+import Cropper from 'react-native-image-cropview';
 import { StatusBarBlurBackground } from '../../components/StatusBar/StatusBarBlurBackgound';
 
 const requestSavePermission = async (): Promise<boolean> => {
@@ -51,6 +51,7 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
   const isScreenFocused = useIsFocused();
   const [savingState, setSavingState] = useState<'none' | 'saving' | 'saved'>('none');
   const [cropData, setCropData] = useState(null);
+  const [isCropMode, setIsCropMode] = useState(false);
 
   const onMediaLoad = useCallback((event: any | NativeSyntheticEvent<ImageLoadEventData>) => {
     console.log(`Image loaded. Size: ${event.nativeEvent.source.width}x${event.nativeEvent.source.height}`);
@@ -84,38 +85,55 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
     StatusBar.setHidden(true);
   }, []);
 
+  const renderHeader = useCallback(() => {
+    return (
+      <View style={styles.row}>
+        <TouchableOpacity onPress={() => { navigation.goBack(); }}>
+          <Ionicons name='arrow-back-outline' size={24} color={Colors.primary} />
+        </TouchableOpacity>
+      </View>
+    );
+  }, []);
+
   return (
-    <View style={[styles.container]}>
-      <StatusBar hidden backgroundColor={'transparent'} />
+    <View style={{ flex: 1 }}>
+      <View style={Layout.header}>
+        {renderHeader()}
+      </View>
 
-      <CropperComponent
-        uri={source.uri}
-        onDone={onCropDone}
-        onCancel={onCropCancel}
-        hideFooter={true}
-        scaleMax={5}
-        getImageSize={getImageSize}
-      />
+      <View style={{ flex: 1 }}>
+        {isCropMode ?
+          <Cropper
+            uri={source.uri}
+            onDone={onCropDone}
+            onCancel={onCropCancel}
+            hideFooter={true}
+            scaleMax={5}
+            getImageSize={getImageSize}
+          /> :
+          <Image
+            source={source}
+            style={{ flex: 1 }}
+            resizeMode='contain'
+            onLoad={onMediaLoad}
+            onLoadEnd={onMediaLoadEnd}
+          />}
+      </View>
 
-      <TouchableOpacity style={styles.closeButton} onPress={navigation.goBack}>
-        <Ionicons name="close" size={35} color="white" style={styles.icon} />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.askButton}
-        onPress={() => navigation.navigate('ChatList')}
-      >
-        <Ionicons name="chatbox" size={35} color="white" style={styles.icon} />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.cropButton}
-        onPress={() => { }}
-      >
-        <Ionicons name="crop" size={35} color="white" style={styles.icon} />
-      </TouchableOpacity>
-
-      <StatusBarBlurBackground />
+      <View style={styles.bottomBar}>
+        <TouchableOpacity
+          style={styles.bottomBarBtn}
+          onPress={() => { }}
+        >
+          <Ionicons name="save" size={35} color={Colors.primary} style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.bottomBarBtn}
+          onPress={() => setIsCropMode(true)}
+        >
+          <Ionicons name="crop" size={35} color={Colors.primary} style={styles.icon} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -155,6 +173,21 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
       width: 0,
     },
     textShadowRadius: 1,
+  },
+  bottomBar: {
+    width: '100%',
+    height: 64,
+    backgroundColor: Colors.background,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+  },
+  bottomBarBtn: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
