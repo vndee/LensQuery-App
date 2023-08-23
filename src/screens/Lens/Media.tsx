@@ -19,10 +19,9 @@ import ImageEditor from "@react-native-community/image-editor";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.Element => {
-  const { path, type } = route.params;
+  const { path } = route.params;
   const cropperRef = useRef(null);
   const [isCropMode, setIsCropMode] = useState(false);
-  const [croppedImage, setCroppedImage] = useState<string | undefined>(undefined);
 
   const onMediaLoad = useCallback((event: any | NativeSyntheticEvent<ImageLoadEventData>) => {
     console.log(`Image loaded. Size: ${event.nativeEvent.source.width}x${event.nativeEvent.source.height}`);
@@ -41,14 +40,11 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
     };
 
     ImageEditor.cropImage(source.uri, cropData).then(url => {
-      // console.log('Cropped image uri', url)
-      setCroppedImage(url);
       navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: url });
     });
   }
 
   const onCropCancel = () => {
-    setCroppedImage(undefined);
   }
 
   useEffect(() => {
@@ -57,19 +53,23 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
 
   const handleCropData = () => {
     // @ts-ignore
-    const image = cropperRef?.current?.done();
+    cropperRef?.current?.done();
+  }
+
+  const handleGoBack = () => {
+    if (navigation.canGoBack()) navigation.goBack();
   }
 
   const renderFooterDefaultMode = useCallback(() => {
     return (
       <View style={styles.bottomBarBtn}>
-        <TouchableOpacity onPress={() => { }} style={styles.button}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.button}>
           <Ionicons name="close" size={26} color={Colors.white} style={styles.icon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setIsCropMode(true)} style={styles.button}>
           <MaterialCommunityIcons name="crop-free" size={26} color={Colors.white} style={styles.icon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleCropData} style={styles.button}>
+        <TouchableOpacity onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: source.uri })} style={styles.button}>
           <Ionicons name="checkmark-outline" size={26} color={Colors.white} style={styles.icon} />
         </TouchableOpacity>
       </View>
