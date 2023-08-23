@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Layout, Typography, Spacing, Colors } from '../../styles';
 import { IMessage } from '../../types/chat';
 import { unixToTime } from '../../utils/Helper';
+import { getImageSize } from '../../utils/Helper';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { Typography, Spacing, Colors } from '../../styles';
 import { TypingAnimation } from 'react-native-typing-animation';
 
 type Props = {
@@ -15,10 +16,21 @@ const Message = ({ item, onLongPress }: Props) => {
   const isTyping = item.content === '...' && !isUser;
   const [timeVisible, setTimeVisible] = useState<boolean>(false);
 
+  const [imageWidth, setImageWidth] = useState<number>(0);
+  const [imageHeight, setImageHeight] = useState<number>(0);
+
   if (item.type === 'image') {
+    (async () => {
+      const size = await getImageSize(item.content);
+      const { width, height } = size;
+      const ratio = width / height;
+      setImageWidth(Spacing.WINDOW_WIDTH * 0.7);
+      setImageHeight((Spacing.WINDOW_WIDTH * 0.7) / ratio);
+    })();
+
     return (
       <TouchableOpacity style={[styles.messageContainer, styles.userBubble]}>
-        <Image source={{ uri: item.content }} style={{ width: Spacing.WINDOW_WIDTH * 0.5, height: Spacing.WINDOW_HEIGHT * 0.5 }} />
+        <Image source={{ uri: item.content }} style={{ width: imageWidth, height: imageHeight }} resizeMode="contain" />
       </TouchableOpacity>
     )
   }

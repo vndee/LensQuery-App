@@ -241,6 +241,9 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         setChatBoxIdCopy(boxId);
       }
     };
+
+    console.log('chatBoxId', chatBoxId);
+    console.log('imageUri', imageUri);
     initData();
   }, [chatBoxId]);
 
@@ -288,7 +291,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         {!isSearchBarVisible ? (
           <>
             <View style={styles.row}>
-              <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
+              <TouchableOpacity onPress={() => navigation.navigate('ChatList')} style={styles.backIcon}>
                 <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
               </TouchableOpacity>
               <Text style={Typography.H3}>Chat</Text>

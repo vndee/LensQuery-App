@@ -1,57 +1,28 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
+import { Colors, Spacing } from '../../styles';
 import { Routes } from '../../types/navigation';
-import { Colors, Spacing, Typography, Layout } from '../../styles';
-import { StackScreenProps } from '@react-navigation/stack';
-import { useIsFocused } from '@react-navigation/native';
-import { useIsForeground } from '../../hooks/useIsForeground';
 import {
   View,
-  Text,
-  StyleSheet,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  PermissionsAndroid,
-  ActivityIndicator,
-  LayoutRectangle,
   Image,
   StatusBar,
+  StyleSheet,
+  TouchableOpacity,
+  LayoutRectangle,
   NativeSyntheticEvent,
   ImageLoadEventData
 } from 'react-native';
-import { getImageSize } from '../../utils/Helper';
-import CameraRoll from '@react-native-camera-roll/camera-roll'
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import ImageEditor from "@react-native-community/image-editor";
 import Cropper from 'react-native-image-cropview';
-import { StatusBarBlurBackground } from '../../components/StatusBar/StatusBarBlurBackgound';
-
-const requestSavePermission = async (): Promise<boolean> => {
-  if (Platform.OS !== 'android') return true;
-
-  const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
-  if (permission == null) return false;
-  let hasPermission = await PermissionsAndroid.check(permission);
-  if (!hasPermission) {
-    const permissionRequestResult = await PermissionsAndroid.request(permission);
-    hasPermission = permissionRequestResult === 'granted';
-  }
-  return hasPermission;
-};
+import { getImageSize } from '../../utils/Helper';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { StackScreenProps } from '@react-navigation/stack';
+import ImageEditor from "@react-native-community/image-editor";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.Element => {
   const { path, type } = route.params;
-  const [croppedImage, setCroppedImage] = useState<string | null>(null);
-  const [hasMediaLoaded, setHasMediaLoaded] = useState(false);
-  const isForeground = useIsForeground();
-  const isScreenFocused = useIsFocused();
-  const [savingState, setSavingState] = useState<'none' | 'saving' | 'saved'>('none');
-  const [cropData, setCropData] = useState(null);
+  const cropperRef = useRef(null);
   const [isCropMode, setIsCropMode] = useState(false);
+  const [croppedImage, setCroppedImage] = useState<string | undefined>(undefined);
 
   const onMediaLoad = useCallback((event: any | NativeSyntheticEvent<ImageLoadEventData>) => {
     console.log(`Image loaded. Size: ${event.nativeEvent.source.width}x${event.nativeEvent.source.height}`);
@@ -59,12 +30,9 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
 
   const onMediaLoadEnd = useCallback(() => {
     console.log('media has loaded.');
-    setHasMediaLoaded(true);
   }, []);
 
   const source = useMemo(() => ({ uri: `file://${path}` }), [path]);
-
-  // const screenStyle = useMemo(() => ({ opacity: hasMediaLoaded ? 1 : 0 }), [hasMediaLoaded]);
 
   const onCropDone = (layout: LayoutRectangle) => {
     const cropData = {
@@ -73,23 +41,49 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
     };
 
     ImageEditor.cropImage(source.uri, cropData).then(url => {
+      // console.log('Cropped image uri', url)
       setCroppedImage(url);
+      navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: url });
     });
   }
 
   const onCropCancel = () => {
-    setCroppedImage(null);
+    setCroppedImage(undefined);
   }
 
   useEffect(() => {
     StatusBar.setHidden(true);
   }, []);
 
-  const renderHeader = useCallback(() => {
+  const handleCropData = () => {
+    // @ts-ignore
+    const image = cropperRef?.current?.done();
+  }
+
+  const renderFooterDefaultMode = useCallback(() => {
     return (
-      <View style={styles.row}>
-        <TouchableOpacity onPress={() => { navigation.goBack(); }}>
-          <Ionicons name='arrow-back-outline' size={24} color={Colors.primary} />
+      <View style={styles.bottomBarBtn}>
+        <TouchableOpacity onPress={() => { }} style={styles.button}>
+          <Ionicons name="close" size={26} color={Colors.white} style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setIsCropMode(true)} style={styles.button}>
+          <MaterialCommunityIcons name="crop-free" size={26} color={Colors.white} style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleCropData} style={styles.button}>
+          <Ionicons name="checkmark-outline" size={26} color={Colors.white} style={styles.icon} />
+        </TouchableOpacity>
+      </View>
+    );
+  }, []);
+
+  const renderFooterCropMode = useCallback(() => {
+    return (
+      <View style={styles.bottomBarBtn}>
+        <TouchableOpacity onPress={() => setIsCropMode(false)} style={styles.button}>
+          <MaterialCommunityIcons name="close" size={26} color={Colors.white} style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleCropData} style={styles.button}>
+          <Ionicons name="checkmark-outline" size={26} color={Colors.white} style={styles.icon} />
         </TouchableOpacity>
       </View>
     );
@@ -97,13 +91,10 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={Layout.header}>
-        {renderHeader()}
-      </View>
-
-      <View style={{ flex: 1 }}>
+      <View style={[{ flex: 1 }, isCropMode && { marginTop: Spacing.safePaddingTop, marginBottom: 100 }]}>
         {isCropMode ?
           <Cropper
+            ref={cropperRef}
             uri={source.uri}
             onDone={onCropDone}
             onCancel={onCropCancel}
@@ -119,21 +110,7 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
             onLoadEnd={onMediaLoadEnd}
           />}
       </View>
-
-      <View style={styles.bottomBar}>
-        <TouchableOpacity
-          style={styles.bottomBarBtn}
-          onPress={() => { }}
-        >
-          <Ionicons name="save" size={35} color={Colors.primary} style={styles.icon} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.bottomBarBtn}
-          onPress={() => setIsCropMode(true)}
-        >
-          <Ionicons name="crop" size={35} color={Colors.primary} style={styles.icon} />
-        </TouchableOpacity>
-      </View>
+      {isCropMode ? renderFooterCropMode() : renderFooterDefaultMode()}
     </View>
   );
 };
@@ -175,20 +152,33 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     textShadowRadius: 1,
   },
   bottomBar: {
+    gap: Spacing.S,
     width: '100%',
-    height: 64,
+    // height: 64,
     backgroundColor: Colors.background,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 20,
+    paddingTop: Spacing.M,
+    paddingBottom: Spacing.SAFE_BOTTOM
   },
   bottomBarBtn: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    gap: Spacing.L,
+    position: 'absolute',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    bottom: Spacing.SAFE_BOTTOM,
   },
+  button: {
+    marginBottom: Spacing.L,
+    width: 44,
+    height: 44,
+    borderRadius: 44 / 2,
+    backgroundColor: 'rgba(140, 140, 140, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 export default Media;
