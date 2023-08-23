@@ -1,6 +1,9 @@
 export type Routes = {
   Login: undefined;
   Register: undefined;
+  Agreement: {
+    type: 'terms' | 'privacy';
+  },
   Lens: undefined;
   Media: {
     type: 'photo' | 'video';

@@ -44,8 +44,7 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
     });
   }
 
-  const onCropCancel = () => {
-  }
+  const onCropCancel = () => { }
 
   useEffect(() => {
     StatusBar.setHidden(true);

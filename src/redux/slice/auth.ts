@@ -1,6 +1,7 @@
 import { SLICE_NAME } from '../sliceNames';
 import { createSlice } from '@reduxjs/toolkit';
 import Storage from '../../storage';
+import Strigs from '../../localization'
 
 const initialStateAuth = {
   isLogin: Storage.getBoolean('state.isLogin') || false,

@@ -12,6 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
+import { setLanguage } from '../../redux/slice/auth';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
@@ -19,12 +20,12 @@ import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../compon
 const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const dispatch = useDispatch();
   const [key, setKey] = useState<string>('');
+  const { language } = useSelector((state: any) => state.auth);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [keyErrorText, setKeyErrorText] = useState<string>('');
   const actionSheetRef = React.useRef<ActionSheetRef>(null);
   const { openaiKey } = useSelector((state: any) => state.account);
-  const [language, setLanguage] = useState<string>(Strings.getLanguage());
   const [email, setEmail] = useState<string>('');
 
   const handleLogout = () => {
@@ -95,12 +96,12 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
     {
       label: 'English',
       value: 'en',
-      onPress: () => { setLanguage('en'); Strings.setLanguage('en'); }
+      onPress: () => { dispatch(setLanguage('en')); }
     },
     {
       label: 'Tiếng Việt',
       value: 'vi',
-      onPress: () => { setLanguage('vi'); Strings.setLanguage('vi'); }
+      onPress: () => { dispatch(setLanguage('vi')); }
     }
   ];
 

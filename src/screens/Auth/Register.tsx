@@ -153,11 +153,11 @@ const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): 
       <View style={styles.disclaimer}>
         <Text style={{ ...Typography.description, textAlign: 'center' }}>{Strings.register.disclaimer}</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={() => { }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Agreement', { type: 'terms' })}>
             <Text style={{ ...Typography.description, textAlign: 'center', color: Colors.primary }}>{Strings.register.terms}</Text>
           </TouchableOpacity>
           <Text style={{ ...Typography.description, textAlign: 'center' }}> {Strings.register.and} </Text>
-          <TouchableOpacity onPress={() => { }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Agreement', { type: 'privacy' })}>
             <Text style={{ ...Typography.description, textAlign: 'center', color: Colors.primary }}>{Strings.register.privacy}</Text>
           </TouchableOpacity>
         </View>

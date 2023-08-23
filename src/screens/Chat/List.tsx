@@ -1,4 +1,5 @@
 import Strings from '../../localization';
+import { useSelector } from 'react-redux';
 import { Routes } from '../../types/navigation';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Keyboard, LayoutAnimation, View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert } from 'react-native';
@@ -13,6 +14,7 @@ import { IChatBox, IMessageCollection } from '../../types/chat';
 
 const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) => {
   const realm = useRealm();
+  const { language } = useSelector((state: any) => state.auth);
   const listRef = useRef<FlashList<IChatBox> | null>(null);
   const listOfChats = useQuery<IChatBox>('ChatBox').sorted('lastMessageAt', true);
   const actionSheetRef = useRef<ActionSheetRef>(null);
@@ -118,7 +120,7 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
         </TouchableOpacity>
       </>
     );
-  }, []);
+  }, [language]);
 
   const renderSelectedHeader = useCallback(() => {
     return (
@@ -135,7 +137,7 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
         </TouchableOpacity>
       </View>
     );
-  }, [isSelectedAll, selectedBox]);
+  }, [isSelectedAll, selectedBox, language]);
 
   let header = renderDefaultHeader();
   if (isSelectedMode) {

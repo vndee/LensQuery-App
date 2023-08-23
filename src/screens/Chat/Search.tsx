@@ -20,7 +20,7 @@ const ChatSearch = ({ navigation, route }: StackScreenProps<Routes, 'ChatSearch'
     return (
       <View style={styles.row}>
         <TouchableOpacity onPress={() => { setSearchText(''); Keyboard.dismiss(); navigation.goBack(); }}>
-          <Ionicons name='arrow-back-outline' size={24} color={Colors.primary} />
+          <Ionicons name='close-outline' size={24} color={Colors.primary} />
         </TouchableOpacity>
         <TextInput
           style={[Typography.body, { flex: 1 }]}
