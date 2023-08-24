@@ -6,6 +6,7 @@ import { Routes } from '../../types/navigation'; 123456
 import Animated from 'react-native-reanimated';
 import EventSource from '../../services/sse';
 import { FlashList } from '@shopify/flash-list';
+import Toast from 'react-native-toast-message';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Alert, Platform, Keyboard, ActivityIndicator } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -35,6 +36,7 @@ const chatEngine: IChatEngine[] = [
 const API_KEY = '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'
 
 const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => {
+  let failedCount: number = 0;
   const realm = useRealm();
   let es: EventSource | null = null;
   const isKeyboardVisible = useKeyboardVisible();
@@ -50,7 +52,6 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const chatCollection = useObject<IMessageCollection>('MessageCollection', chatBox?.collectionId ? chatBox.collectionId : '');
 
   const [searchText, setSearchText] = useState<string>('');
-  const [failedCount, setFailedCount] = useState<number>(0);
   const [isSearchBarVisible, setIsSearchBarVisible] = useState<boolean>(false);
 
   const handleGetOCRResult = async (imageUri: string): Promise<string> => {
@@ -60,6 +61,14 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
     }
     return '';
   };
+
+  const handleUnknowError = useCallback(() => {
+    Toast.show({
+      type: 'error',
+      text2: Strings.common.unknownError,
+      autoHide: true,
+    });
+  }, []);
 
   const pushMessage = useCallback((text: string, type: 'user' | 'bot', engineId: string, isInterupted: boolean = false) => {
     if (!chatCollection?.id || !chatBox) return;
@@ -106,9 +115,10 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       console.log('error', failedCount + 1, event);
       if (failedCount + 1 > 3) {
         es?.close();
+        handleUnknowError();
         return;
       }
-      setFailedCount((failedCount) => failedCount + 1);
+      failedCount++;
       es?.open();
     } else if (event.type === 'done') {
       if (!chatCollection?.id || !chatBox) return;
@@ -127,7 +137,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
   const sendMessage = (text: string) => {
     Keyboard.dismiss();
-    setFailedCount(0);
+    failedCount = 0;
     if (text.length > 0) {
       // copy last message with CHAT_WINDOW_SIZE
       let context: Array<IMessage> = [];
@@ -381,7 +391,10 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-
+      <Toast
+        position='top'
+        bottomOffset={20}
+      />
       <BottomActionSheet actionRef={actionSheetRef} actions={actionItem} />
     </View >
   );
