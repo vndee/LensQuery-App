@@ -279,6 +279,9 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
         <TouchableOpacity style={styles.button} onPress={selectImage}>
           <MaterialCommunityIcon name="file-image-plus-outline" color="white" size={24} />
         </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ChatList')}>
+          <Ionicons name="chatbubbles-outline" color="white" size={24} />
+        </TouchableOpacity>
       </View>
     </View>
   );

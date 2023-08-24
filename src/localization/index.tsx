@@ -115,6 +115,7 @@ export default new LocalizedStrings({
       optionSearch: 'Search in this chatbox',
       optionClear: 'Clear all messages',
       searchPlaceholder: 'Search...',
+      cannotRecognizeMessage: 'Cannot recognize the text',
     },
 
     // Setting
@@ -263,6 +264,7 @@ export default new LocalizedStrings({
       optionSearch: 'Tìm kiếm trong tin nhắn',
       optionClear: 'Xóa tất cả tin nhắn',
       searchPlaceholder: 'Tìm kiếm...',
+      cannotRecognizeMessage: 'Không thể nhận diện văn bản',
     },
 
     // Setting

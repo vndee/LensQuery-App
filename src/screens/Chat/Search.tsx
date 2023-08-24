@@ -6,7 +6,7 @@ import { useQuery } from '../../storage/realm';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { IChatBox } from '../../types/chat';
 import BoxCard from '../../components/Chat/BoxCard';
-import { View, Text, TouchableOpacity, StyleSheet, Keyboard, TextInput } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Keyboard, TextInput } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
 

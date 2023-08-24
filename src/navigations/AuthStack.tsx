@@ -13,11 +13,11 @@ const Stack = createStackNavigator<Routes>();
 const AuthStack = (): JSX.Element => {
   return (
     <NavigationContainer>
-      <StatusBar
+      {/* <StatusBar
         translucent={true}
         backgroundColor={'transparent'}
         barStyle="dark-content"
-      />
+      /> */}
       <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />

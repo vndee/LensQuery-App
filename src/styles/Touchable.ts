@@ -4,7 +4,9 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   dark: {
-    backgroundColor: Colors.black_two,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    backgroundColor: Colors.btnColor,
     borderRadius: Spacing.XS,
     paddingVertical: Spacing.buttonVerticalPadding,
     paddingHorizontal: Spacing.L,

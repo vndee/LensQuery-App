@@ -6,7 +6,7 @@ import { Routes } from '../../types/navigation'; 123456
 import Animated from 'react-native-reanimated';
 import EventSource from '../../services/sse';
 import { FlashList } from '@shopify/flash-list';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Alert, Platform, Keyboard, ActivityIndicator } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -81,7 +81,6 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       chatBox.lastMessageAt! = message.createAt;
     });
 
-    console.log('checkpoint 2');
     setMessages((messages) => [message, ...messages]);
     if (messages.length > CHAT_HISTORY_LOAD_LENGTH) {
       setMessages((messages) => messages.slice(0, CHAT_HISTORY_CACHE_LENGTH));
@@ -200,6 +199,20 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
     console.debug('results', results);
   }
 
+  const alertCannotRecognizeText = () => {
+    Alert.alert(
+      Strings.common.alertTitle,
+      Strings.chatBox.cannotRecognizeMessage,
+      [
+        {
+          text: Strings.common.ok,
+          onPress: () => navigation.goBack(),
+          style: 'destructive'
+        },
+      ]
+    );
+  }
+
   useEffect(() => {
     const initData = async () => {
       if (chatBoxId === undefined) {
@@ -211,6 +224,10 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           const message = constructMessage(collectionId, imageUri, 'image', false, engine.id);
           setMessages((messages) => [message, ...messages]);
           text = await handleGetOCRResult(imageUri)
+          if (text === undefined || text === '') {
+            alertCannotRecognizeText();
+            return;
+          }
         }
 
         // create new chat box in realm
@@ -354,7 +371,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           <TextInput
             style={styles.messageInput}
             placeholder={Strings.chatBox.placeholder}
-            placeholderTextColor={Colors.borders}
+            placeholderTextColor={Colors.hint}
             value={inputMessage}
             onChangeText={setInputMessage}
             onSubmitEditing={() => sendMessage(inputMessage)}

@@ -1,7 +1,9 @@
 export default {
-  primary: '#ce393e',
-  light_primary: '#f6a9bb',
-  background: '#ffffff',
+  primary: '#0000ff',
+  light_primary: '#60A5FA',
+  background: '#FFFFFF',
+  btnColor: '#0000ff',
+  secondary: '#10B981',
 
   link: '#188aeb',
   placeholder: '#ced0d4',
@@ -9,7 +11,7 @@ export default {
   disabled: '#bec4cf',
   danger: '#e82956',
   very_light_pink: '#f0f0f0',
-  borders: '#c7c7cd',
+  borders: '#e1e5f2',
 
   white: '#ffffff',
   white_two: '#f4f4f4',
@@ -113,7 +115,7 @@ export default {
   custom_keyboard_center_message: '#96959a',
 
   text_color_header: '#222222',
-  text_color: '#4D4D4D',
+  text_color: '#000814',
   second_text_color: '#8F8E94',
   third_text_color: '#C8C7CC',
   text_color_link: '#77ade6',

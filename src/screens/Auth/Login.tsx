@@ -1,22 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Colors, Spacing, Typography, Layout } from '../../styles/index';
+import { isEmpty } from 'lodash';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import Storage from '../../storage';
 import Strings from '../../localization';
 import Button from '../../components/Button';
-import Checkbox from '../../components/Checkbox';
-import TextInputWithIcon from '../../components/Input/TextInputWithIcon';
-import { clearAuthInformation } from '../../storage';
-import { setLogin, setLanguage } from '../../redux/slice/auth';
-import { setAccountCreds } from '../../redux/slice/account';
-import firebaseAuth from '../../services/firebase'
-import { FirebaseSignInResponse } from '../../types/firebase';
-import { isEmpty } from 'lodash';
-import { checkEmailValid } from '../../utils/Helper';
 import { Routes } from '../../types/navigation'
+import Checkbox from '../../components/Checkbox';
+import firebaseAuth from '../../services/firebase'
+import { clearAuthInformation } from '../../storage';
+import { setLanguage } from '../../redux/slice/auth';
+import { checkEmailValid } from '../../utils/Helper';
+import { useDispatch, useSelector } from 'react-redux';
 import { StackScreenProps } from '@react-navigation/stack';
-
+import { FirebaseSignInResponse } from '../../types/firebase';
+import TextInputWithIcon from '../../components/Input/TextInputWithIcon';
+import { Colors, Spacing, Typography, Layout } from '../../styles/index';
 
 const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.Element => {
   const dispatch = useDispatch();
@@ -69,7 +67,6 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
 
     firebaseAuth.signInWithEmailAndPassword(email, password).then((userCredential) => {
       console.debug('creds', userCredential);
-      // setAccountCreds(userCredential);
     }).catch((error) => {
       switch (error.code) {
         case FirebaseSignInResponse.WRONG_PASSWORD:
@@ -154,7 +151,7 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
         </View>
         <Button label={isLoading ? `${Strings.login.loginBtn}...` : Strings.login.loginBtn} onPress={handleLogin} />
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-          <Text style={{ ...Typography.body, color: Colors.disabled }}>{Strings.login.dontHaveAccount} </Text>
+          <Text style={{ ...Typography.body, color: Colors.hint }}>{Strings.login.dontHaveAccount} </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>
             <Text style={{ ...Typography.body, color: Colors.primary }}>{Strings.login.register}</Text>
           </TouchableOpacity>
@@ -163,7 +160,7 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
           <TouchableOpacity onPress={() => handleLanguageChange('en')} style={styles.language}>
             <Text style={[Typography.body, language === 'en' ? styles.languageChoice : styles.languageOption]}>English</Text>
           </TouchableOpacity>
-          <Text style={{ ...Typography.body, color: Colors.disabled }}> | </Text>
+          <Text style={{ ...Typography.body, color: Colors.hint }}> | </Text>
           <TouchableOpacity onPress={() => handleLanguageChange('vi')} style={styles.language}>
             <Text style={[Typography.body, language === 'vi' ? styles.languageChoice : styles.languageOption]}>Tiếng Việt</Text>
           </TouchableOpacity>
@@ -182,7 +179,7 @@ const styles = StyleSheet.create({
   appTitle: {
     ...Typography.H1,
     alignSelf: 'center',
-    color: Colors.primary
+    color: Colors.btnColor
   },
   changeLanguageContainer: {
     alignSelf: 'center',
@@ -199,7 +196,7 @@ const styles = StyleSheet.create({
     gap: Spacing.XS
   },
   languageOption: {
-    color: Colors.disabled
+    color: Colors.hint
   },
   languageChoice: {
     color: Colors.primary,

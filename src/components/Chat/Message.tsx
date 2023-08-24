@@ -3,7 +3,7 @@ import { IMessage } from '../../types/chat';
 import { unixToTime } from '../../utils/Helper';
 import { getImageSize } from '../../utils/Helper';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Typography, Spacing, Colors } from '../../styles';
+import { Typography, Spacing, Colors, Layout } from '../../styles';
 import { TypingAnimation } from 'react-native-typing-animation';
 
 type Props = {
@@ -67,6 +67,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   messageContainer: {
     padding: Spacing.M,
     marginBottom: Spacing.M,
+    ...Layout.shadow
   },
   userBubble: {
     alignSelf: 'flex-end',

@@ -116,13 +116,13 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   }, []);
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={[Layout.header, { paddingHorizontal: Spacing.XS }]}>
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
+      <View style={[Layout.header, { paddingHorizontal: Spacing.horizontalPadding }]}>
         <View style={Layout.row}>
           <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
             <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
           </TouchableOpacity>
-          <Text style={Typography.H3}>{Strings.setting.title}</Text>
+          <Text style={[Typography.H3, { marginLeft: Spacing.XS }]}>{Strings.setting.title}</Text>
         </View>
         <TouchableOpacity style={styles.moreIcon} onPress={() => actionSheetRef.current?.show()} disabled={isEditing}>
           <Feather name="more-vertical" size={20} color={Colors.text_color} />
@@ -171,7 +171,8 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       </ScrollView>
 
       {isEditing &&
-        <View style={{ paddingHorizontal: Spacing.horizontalPadding }}>
+        <View style={styles.footer}>
+          <Button label={Strings.common.cancel} onPress={() => setIsEditing(false)} style={styles.btnBottom} outline={true} />
           <Button label={Strings.onboardingSetup.saveBtn} onPress={handleSaveKey} style={styles.btnBottom} />
         </View>}
 
@@ -203,10 +204,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
+  footer: {
+    gap: Spacing.M,
+    flexDirection: 'row',
+    marginBottom: Spacing.M,
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.horizontalPadding,
+  },
   btnBottom: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
+    flex: 1,
     alignSelf: 'center',
     marginBottom: Spacing.SAFE_BOTTOM,
   },

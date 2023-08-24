@@ -23,6 +23,7 @@ const TextEdit = ({ label, value, onChange, placeholder, errorText, isEdit, icon
         <TextInput
           style={styles.textInput}
           placeholder={placeholder || ''}
+          placeholderTextColor={Colors.hint}
           onChangeText={onChange}
           value={value}
           editable={isEdit}
@@ -32,7 +33,7 @@ const TextEdit = ({ label, value, onChange, placeholder, errorText, isEdit, icon
           // @ts-ignore
           name={icon}
           size={24}
-          color={!isEmpty(errorText) ? Colors.primary : Colors.borders}
+          color={!isEmpty(errorText) ? Colors.primary : Colors.hint}
           style={styles.icon}
         />}
       </View>

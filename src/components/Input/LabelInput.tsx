@@ -38,7 +38,7 @@ const LabelInput = ({ label, icon, placeholder, value, onChangeText, secureTextE
           value={value}
           ref={inputRef}
           placeholder={placeholder}
-          placeholderTextColor={!isEmpty(errorText) ? Colors.primary : Colors.disabled}
+          placeholderTextColor={!isEmpty(errorText) ? Colors.primary : Colors.hint}
           onChangeText={onChangeText}
           secureTextEntry={isVisible}
           // @ts-ignore
@@ -52,7 +52,7 @@ const LabelInput = ({ label, icon, placeholder, value, onChangeText, secureTextE
           // @ts-ignore
           name={secureTextEntry ? (isVisible ? iconView : icon) : icon}
           size={24}
-          color={!isEmpty(errorText) ? Colors.primary : Colors.borders}
+          color={!isEmpty(errorText) ? Colors.primary : Colors.hint}
           style={styles.icon}
           onPress={secureTextEntry ? () => setIsVisible(!isVisible) : undefined}
         />}

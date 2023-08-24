@@ -19,7 +19,7 @@ type Props = {
 
 const BottomActionSheet = ({ actionRef, actions }: Props) => {
   return (
-    <ActionSheet ref={actionRef}>
+    <ActionSheet ref={actionRef} containerStyle={{}}>
       <View style={styles.draggleBar} />
       <FlatList
         data={actions}

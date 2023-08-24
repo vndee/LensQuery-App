@@ -20,7 +20,7 @@ const ChangePassword = ({ navigation, route }: StackScreenProps<Routes, 'ChangeP
   const [currentPasswordErrorText, setCurrentPasswordErrorText] = useState<string>('');
   const [newPasswordErrorText, setNewPasswordErrorText] = useState<string>('');
   const [confirmNewPasswordErrorText, setConfirmNewPasswordErrorText] = useState<string>('');
-  const [erorText, setErrorText] = useState<string>(Strings.common.unknownError);
+  const [erorText, setErrorText] = useState<string>('');
 
   const handleSavePassword = async () => {
     if (newPassword !== confirmNewPassword) {
@@ -61,7 +61,7 @@ const ChangePassword = ({ navigation, route }: StackScreenProps<Routes, 'ChangeP
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.background }}>
-      <View style={[Layout.header, { paddingHorizontal: Spacing.XS }]}>
+      <View style={[Layout.header, { paddingHorizontal: Spacing.horizontalPadding }]}>
         <View style={Layout.row}>
           <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
             <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
@@ -157,7 +157,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     alignSelf: 'center',
-    marginBottom: Spacing.SAFE_BOTTOM,
+    marginBottom: Spacing.M,
     marginHorizontal: Spacing.horizontalPadding,
   },
 });

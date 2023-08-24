@@ -77,7 +77,7 @@ const getOCRResult = async (image: string): Promise<OCRResultResponse> => {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+      console.log(resp);
       return { status: resp.status, data: resp.data.text };
     } else {
       console.debug('OCR token expired, get new token')
