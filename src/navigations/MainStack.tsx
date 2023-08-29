@@ -17,11 +17,6 @@ const Stack = createStackNavigator<Routes>();
 const MainStack = (): JSX.Element => {
   return (
     <>
-      {/* <StatusBar
-        translucent={true}
-        backgroundColor={'transparent'}
-        barStyle="dark-content"
-      /> */}
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ title: undefined }} initialRouteName="Lens">
           <Stack.Screen name="Lens" component={Lens} options={{ headerShown: false }} />
@@ -29,7 +24,7 @@ const MainStack = (): JSX.Element => {
           <Stack.Screen name="ChatList" component={ChatList} options={{ headerShown: false }} />
           <Stack.Screen name="ChatBox" component={ChatBox} options={{ headerShown: false }} />
           <Stack.Screen name="ChatSearch" component={ChatSearch} options={{ headerShown: false, ...TransitionPresets.FadeFromBottomAndroid }} />
-          <Stack.Screen name="Settings" component={Settings} options={{ headerShown: false }} />
+          <Stack.Screen name="Settings" component={Settings} options={{ headerShown: false, ...TransitionPresets.FadeFromBottomAndroid }} />
           <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>

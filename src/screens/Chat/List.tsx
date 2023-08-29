@@ -92,7 +92,7 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
     {
       icon: 'trash-outline',
       label: Strings.chatList.deleteOption,
-      color: Colors.text_color,
+      color: Colors.danger,
       onPress: () => {
         Alert.alert(
           Strings.common.alertTitle,

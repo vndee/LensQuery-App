@@ -216,7 +216,13 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       [
         {
           text: Strings.common.ok,
-          onPress: () => navigation.goBack(),
+          onPress: () => {
+            realm.write(() => {
+              if (chatBox) realm.delete(chatBox);
+              if (chatCollection) realm.delete(chatCollection);
+            })
+            navigation.goBack()
+          },
           style: 'destructive'
         },
       ]
