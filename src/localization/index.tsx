@@ -23,6 +23,8 @@ export default new LocalizedStrings({
       clickHere: 'Click here',
       unknownError: 'An error occurred, please try again later!',
       alertTitle: 'Alert',
+      terms: 'Terms of Use',
+      privacy: 'Privacy Policy',
     },
 
     timeDiff: {
@@ -175,6 +177,8 @@ export default new LocalizedStrings({
       clickHere: 'Xem tại đây',
       unknownError: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
       alertTitle: 'Thông báo',
+      terms: 'Điều khoản sử dụng',
+      privacy: 'Chính sách bảo mật',
     },
 
     timeDiff: {

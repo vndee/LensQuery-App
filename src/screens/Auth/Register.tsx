@@ -71,9 +71,9 @@ const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): 
   const handleRegister = () => {
     Keyboard.dismiss();
     setIsLoading(true);
-    // if (!isFormValid()) {
-    //   return;
-    // }
+    if (!isFormValid()) {
+      return;
+    }
 
     navigation.navigate('OnboardingSetup', { email, password });
     setIsLoading(false);

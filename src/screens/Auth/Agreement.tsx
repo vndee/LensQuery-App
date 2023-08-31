@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Strings from '../../localization';
+import Header from '../../components/Header';
 import { Routes } from '../../types/navigation';
 import { Colors, Spacing } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -10,9 +12,14 @@ const Agreement = ({ navigation, route }: StackScreenProps<Routes, 'Agreement'>)
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   return (
-    <View style={styles.container}>
-      <Text>{type}</Text>
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
+      <Header title={type === 'terms' ? Strings.common.terms : Strings.common.privacy} />
+
+      <View style={styles.container}>
+        <Text>{type}</Text>
+      </View>
     </View>
+
   );
 };
 
