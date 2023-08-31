@@ -116,6 +116,9 @@ export default new LocalizedStrings({
       optionClear: 'Clear all messages',
       searchPlaceholder: 'Search...',
       cannotRecognizeMessage: 'Cannot recognize the text',
+      notFoundKeyModalTitle: 'OpenAI key not found',
+      notFoundKeyModalDescription: 'Please go to Settings to add your OpenAI key',
+      notFoundKeyModalAction: 'Go to Settings',
     },
 
     // Setting
@@ -265,6 +268,9 @@ export default new LocalizedStrings({
       optionClear: 'Xóa tất cả tin nhắn',
       searchPlaceholder: 'Tìm kiếm...',
       cannotRecognizeMessage: 'Không thể nhận diện văn bản',
+      notFoundKeyModalTitle: 'OpenAI key không tồn tại',
+      notFoundKeyModalDescription: 'Vui lòng vào Cài đặt để thêm OpenAI key của bạn',
+      notFoundKeyModalAction: 'Đến cài đặt',
     },
 
     // Setting

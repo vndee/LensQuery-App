@@ -17,6 +17,10 @@ export const SCREEN_HEIGHT = Platform.select<number>({
 // Capture Button
 export const CAPTURE_BUTTON_SIZE = 78;
 
-export const OPENAI_HOST = 'https://api.openai.com/v1/chat/completions';
+export const OPENAI_HOST = 'https://api.openai.com/v1';
+export const OPENAI_API_KEY = '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'
 export const MATHPIX_HOST = 'https://api.mathpix.com/v3/text';
 export const MATHPIX_APP_ID = 'vndee_huynh_gmail_com_fc337d';
+export const PROMPTLY_HOST = 'https://trypromptly.com/api/apps/81d7a9af-0efa-4866-9e1c-7b3253b2fac1/run';
+export const PROMPTLY_TOKEN = 'ea238c544409d32a7d8d1c4c637d8cd7921cc7f5';
+

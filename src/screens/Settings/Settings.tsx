@@ -13,6 +13,8 @@ import Feather from 'react-native-vector-icons/Feather';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
 import { setLanguage } from '../../redux/slice/auth';
+import { maskApiKey } from '../../utils/Helper';
+import { checkValidApiKey } from '../../services/openai';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
@@ -42,10 +44,16 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
     }
   }, [openaiKey]);
 
-  const handleSaveKey = () => {
+  const handleSaveKey = async () => {
     setIsLoading(true);
     if (isEmpty(key)) {
       setKeyErrorText(Strings.onboardingSetup.keyEmptyError);
+      return;
+    }
+
+    const isValidKey = await checkValidApiKey(key);
+    if (!isValidKey) {
+      setKeyErrorText(Strings.onboardingSetup.keyInvalidError);
       return;
     }
 
@@ -137,7 +145,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             isEdit={isEditing}
           />
           <TextEdit
-            value={key}
+            value={isEditing ? key : maskApiKey(key)}
             label={Strings.onboardingSetup.labelInputKey}
             placeholder={Strings.onboardingSetup.pleasePasteOpenAIKey}
             onChange={(text) => {

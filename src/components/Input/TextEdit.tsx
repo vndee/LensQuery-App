@@ -19,7 +19,7 @@ const TextEdit = ({ label, value, onChange, placeholder, errorText, isEdit, icon
   return (
     <View>
       <Text style={{ ...Typography.body, fontWeight: '500', marginBottom: Spacing.XS }}>{label}</Text>
-      <View style={[styles.container, !isEmpty(errorText) && { borderColor: Colors.primary }]}>
+      <View style={[styles.container, !isEmpty(errorText) && { borderColor: Colors.danger }]}>
         <TextInput
           style={styles.textInput}
           placeholder={placeholder || ''}
@@ -33,12 +33,12 @@ const TextEdit = ({ label, value, onChange, placeholder, errorText, isEdit, icon
           // @ts-ignore
           name={icon}
           size={24}
-          color={!isEmpty(errorText) ? Colors.primary : Colors.hint}
+          color={!isEmpty(errorText) ? Colors.danger : Colors.hint}
           style={styles.icon}
         />}
       </View>
       <View style={{ height: Spacing.XL, justifyContent: 'center' }}>
-        {!isEmpty(errorText) && !isEmpty(errorText) && <Text style={{ ...Typography.description, color: Colors.primary }}>{errorText}</Text>}
+        {!isEmpty(errorText) && !isEmpty(errorText) && <Text style={{ ...Typography.description, color: Colors.danger }}>{errorText}</Text>}
       </View>
     </View>
   )

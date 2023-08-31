@@ -31,12 +31,12 @@ const TextInputWithIcon = ({ icon, placeholder, value, onChangeText, secureTextE
 
   return (
     <View>
-      <View style={[styles.container, !isEmpty(errorText) && { borderColor: Colors.primary }]}>
+      <View style={[styles.container, !isEmpty(errorText) && { borderColor: Colors.danger }]}>
         <TextInput
           value={value}
           ref={inputRef}
           placeholder={placeholder}
-          placeholderTextColor={!isEmpty(errorText) ? Colors.primary : Colors.hint}
+          placeholderTextColor={!isEmpty(errorText) ? Colors.danger : Colors.hint}
           onChangeText={onChangeText}
           secureTextEntry={isVisible}
           // @ts-ignore
@@ -50,13 +50,13 @@ const TextInputWithIcon = ({ icon, placeholder, value, onChangeText, secureTextE
           // @ts-ignore
           name={secureTextEntry ? (isVisible ? iconView : icon) : icon}
           size={24}
-          color={!isEmpty(errorText) ? Colors.primary : Colors.hint}
+          color={!isEmpty(errorText) ? Colors.danger : Colors.hint}
           style={styles.icon}
           onPress={secureTextEntry ? () => setIsVisible(!isVisible) : undefined}
         />
       </View>
       <View style={{ height: Spacing.XL, justifyContent: 'center' }}>
-        {!isEmpty(errorText) && !isEmpty(errorText) && <Text style={{ ...Typography.description, color: Colors.primary }}>{errorText}</Text>}
+        {!isEmpty(errorText) && !isEmpty(errorText) && <Text style={{ ...Typography.description, color: Colors.danger }}>{errorText}</Text>}
       </View>
     </View>
   );

@@ -62,3 +62,13 @@ export const getImageSize = async (uri: string): Promise<{ width: number; height
     height
   }
 }
+
+export const maskApiKey = (text: string) => {
+  const parts = text.split('-');
+
+  if (parts.length !== 2) {
+    return text;
+  }
+
+  return `${parts[0]}-${'*'.repeat(parts[1].length)}`;
+}

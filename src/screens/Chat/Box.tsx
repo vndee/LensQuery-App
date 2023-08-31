@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import 'react-native-get-random-values'
 import Realm from 'realm';
+import { isEmpty } from 'lodash';
 import Strings from '../../localization';
+import { useSelector } from 'react-redux';
 import { Routes } from '../../types/navigation'; 123456
-import Animated from 'react-native-reanimated';
 import EventSource from '../../services/sse';
 import { FlashList } from '@shopify/flash-list';
 import Toast from 'react-native-toast-message';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Alert, Platform, Keyboard, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Alert, Platform, Keyboard, ActivityIndicator, Modal } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -18,6 +19,7 @@ import Message from '../../components/Chat/Message';
 import { constructMessage } from '../../utils/Helper';
 import { getOCRResult } from '../../services/api'
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
+import { checkValidApiKey } from '../../services/openai';
 import { IChatEngine, IMessage, IChatBox, IMessageCollection } from '../../types/chat';
 import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE } from '../../utils/Constants';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
@@ -33,8 +35,6 @@ const chatEngine: IChatEngine[] = [
   }
 ];
 
-const API_KEY = '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'
-
 const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => {
   let failedCount: number = 0;
   const realm = useRealm();
@@ -42,10 +42,10 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const isKeyboardVisible = useKeyboardVisible();
   const { chatBoxId, imageUri } = route.params;
   const actionSheetRef = useRef<ActionSheetRef>(null);
-  const listRef = useRef<FlashList<string> | null>(null);
   const [inputMessage, setInputMessage] = useState<string>('');
   const [messages, setMessages] = useState<Array<IMessage>>([]);
   const [engine, setEngine] = useState<IChatEngine>(chatEngine[0]);
+  const { openaiKey } = useSelector((state: any) => state.account);
   const [chatBoxIdCopy, setChatBoxIdCopy] = useState<string>(chatBoxId ? chatBoxId : '');
   const chatBox = useObject<IChatBox>('ChatBox', chatBoxIdCopy);
   const [isFetchingHistory, setIsFetchingHistory] = useState<boolean>(false);
@@ -53,6 +53,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
   const [searchText, setSearchText] = useState<string>('');
   const [isSearchBarVisible, setIsSearchBarVisible] = useState<boolean>(false);
+  const [isNotFoundKeyModalVisible, setIsNotFoundKeyModalVisible] = useState<boolean>(isEmpty(openaiKey));
 
   const handleGetOCRResult = async (imageUri: string): Promise<string> => {
     const { status, data } = await getOCRResult(imageUri);
@@ -137,6 +138,12 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
   const sendMessage = (text: string) => {
     Keyboard.dismiss();
+
+    if (!checkValidApiKey(openaiKey)) {
+      setIsNotFoundKeyModalVisible(true);
+      return;
+    }
+
     failedCount = 0;
     if (text.length > 0) {
       // copy last message with CHAT_WINDOW_SIZE
@@ -170,7 +177,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${API_KEY}`,
+          Authorization: `Bearer ${openaiKey}`,
         },
         body: JSON.stringify(requestBody),
         debug: false,
@@ -402,6 +409,25 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         bottomOffset={20}
       />
       <BottomActionSheet actionRef={actionSheetRef} actions={actionItem} />
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isNotFoundKeyModalVisible}
+        onRequestClose={() => {
+          setIsNotFoundKeyModalVisible(false);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={Typography.body}>{Strings.chatBox.notFoundKeyModalTitle}</Text>
+            <Text style={Typography.description}>{Strings.chatBox.notFoundKeyModalDescription}</Text>
+            <TouchableOpacity onPress={() => { setIsNotFoundKeyModalVisible(false); navigation.navigate('Settings') }}>
+              <Text style={[Typography.description, { color: Colors.primary }]}>{Strings.chatBox.notFoundKeyModalAction}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View >
   );
 };
@@ -489,7 +515,29 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   searchBar: {
     ...Typography.body,
     flex: 1,
-  }
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    gap: Spacing.S,
+  },
 });
 
 export default ChatBox;
