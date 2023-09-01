@@ -14,6 +14,7 @@ export type IChatBox = {
   lastMessageAt: number; // unix timestamp
   createAt: number; // unix timestamp
   updateAt: number; // unix timestamp
+  userToken: string; // specific user token
 }
 
 export type IMessage = {
@@ -25,6 +26,7 @@ export type IMessage = {
   engineId: string;
   createAt: number; // unix timestamp
   updateAt: number; // unix timestamp
+  userToken: string; // specific user token
 }
 
 export type IMessageCollection = {
@@ -34,4 +36,5 @@ export type IMessageCollection = {
   engineId: string;
   createAt: number; // unix timestamp
   updateAt: number; // unix timestamp
+  userToken: string; // specific user token
 }

@@ -17,6 +17,7 @@ import LabelSwitch from '../../components/Switch/LabelSwitch';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
 import Message from '../../components/Chat/Message';
 import { constructMessage } from '../../utils/Helper';
+import { IAppConfig } from '../../types/config';
 import { getOCRResult } from '../../services/api'
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
 import { checkValidApiKey } from '../../services/openai';
@@ -39,13 +40,14 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   let failedCount: number = 0;
   const realm = useRealm();
   let es: EventSource | null = null;
+  const { userToken } = useSelector((state: any) => state.auth);
   const isKeyboardVisible = useKeyboardVisible();
   const { chatBoxId, imageUri } = route.params;
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const [inputMessage, setInputMessage] = useState<string>('');
   const [messages, setMessages] = useState<Array<IMessage>>([]);
   const [engine, setEngine] = useState<IChatEngine>(chatEngine[0]);
-  const { openaiKey } = useSelector((state: any) => state.account);
+  const openaiKey = useObject<IAppConfig>('AppConfig', userToken)?.openaiKey || '';
   const [chatBoxIdCopy, setChatBoxIdCopy] = useState<string>(chatBoxId ? chatBoxId : '');
   const chatBox = useObject<IChatBox>('ChatBox', chatBoxIdCopy);
   const [isFetchingHistory, setIsFetchingHistory] = useState<boolean>(false);
@@ -83,6 +85,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       engineId: engineId,
       createAt: new Date().getTime(),
       updateAt: new Date().getTime(),
+      userToken: userToken,
     };
 
     realm.write(() => {
@@ -110,7 +113,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       console.log('open sse:', event)
     } else if (event.type === 'message') {
       if (!event.data || !chatCollection?.id) return;
-      const message = constructMessage(chatCollection?.id, event.data, 'bot', true, engine.id);
+      const message = constructMessage(chatCollection?.id, event.data, 'bot', true, engine.id, userToken);
       setFirstMessageState(message);
     } else if (event.type === 'error') {
       console.log('error', failedCount + 1, event);
@@ -123,7 +126,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       es?.open();
     } else if (event.type === 'done') {
       if (!chatCollection?.id || !chatBox) return;
-      const message = constructMessage(chatCollection?.id, event.data, 'bot', false, engine.id);
+      const message = constructMessage(chatCollection?.id, event.data, 'bot', false, engine.id, userToken);
       setFirstMessageState(message);
       realm.write(() => {
         if (chatCollection?.messages?.length > 0) {
@@ -173,7 +176,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       };
 
       setInputMessage('');
-      es = new EventSource(OPENAI_HOST, {
+      es = new EventSource(`${OPENAI_HOST}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -244,7 +247,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         const collectionId = new Realm.BSON.ObjectId().toHexString();
 
         if (imageUri !== undefined) {
-          const message = constructMessage(collectionId, imageUri, 'image', false, engine.id);
+          const message = constructMessage(collectionId, imageUri, 'image', false, engine.id, userToken);
           setMessages((messages) => [message, ...messages]);
           text = await handleGetOCRResult(imageUri)
           if (text === undefined || text === '') {
@@ -254,7 +257,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         }
 
         // create new chat box in realm
-        const ocrMessage = constructMessage(collectionId, text, 'bot', false, engine.id);
+        const ocrMessage = constructMessage(collectionId, text, 'bot', false, engine.id, userToken);
         setMessages((messages) => [ocrMessage, ...messages]);
         const updatedTime = new Date().getTime();
         realm.write(() => {
@@ -267,6 +270,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
             lastMessageAt: updatedTime,
             createAt: updatedTime,
             updateAt: updatedTime,
+            userToken: userToken,
           });
 
           // create new collection for this chat box
@@ -276,6 +280,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
             messages: [ocrMessage],
             createAt: updatedTime,
             updateAt: updatedTime,
+            userToken: userToken,
           });
         });
         setChatBoxIdCopy(boxId);

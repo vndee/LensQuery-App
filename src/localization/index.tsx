@@ -78,6 +78,7 @@ export default new LocalizedStrings({
       emailAlreadyInUse: 'Email already in use',
       weakPassword: 'Password should be at least 6 characters',
       unknownError: 'An error occurred, please try again later!',
+      emailAlreadyInUseError: 'Email already in use',
     },
 
     // Onboarding setup
@@ -232,6 +233,7 @@ export default new LocalizedStrings({
       emailAlreadyInUse: 'Email đã được sử dụng',
       weakPassword: 'Mật khẩu phải có ít nhất 6 ký tự',
       unknownError: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+      emailAlreadyInUseError: 'Email đã được sử dụng',
     },
 
     // Onboarding setup

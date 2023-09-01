@@ -5,9 +5,7 @@ import auth from '@react-native-firebase/auth';
 import Strings from '../../localization';
 import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearStorageKeepAuth } from '../../storage';
 import TextEdit from '../../components/Input/TextEdit';
-import { setOpenaiKey } from '../../redux/slice/account';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
@@ -15,34 +13,36 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { setLanguage } from '../../redux/slice/auth';
 import { maskApiKey } from '../../utils/Helper';
 import { checkValidApiKey } from '../../services/openai';
+import Storage, { clearStorageAuthCreds } from '../../storage/index'
+import { useRealm, useObject } from '../../storage/realm';
+import { IAppConfig } from '../../types/config';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
 const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
+  const realm = useRealm();
   const dispatch = useDispatch();
   const [key, setKey] = useState<string>('');
-  const { language } = useSelector((state: any) => state.auth);
+  const { userToken, language } = useSelector((state: any) => state.auth);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [keyErrorText, setKeyErrorText] = useState<string>('');
   const actionSheetRef = React.useRef<ActionSheetRef>(null);
-  const { openaiKey } = useSelector((state: any) => state.account);
+  const openaiKeyObj = useObject<IAppConfig>('AppConfig', userToken);
   const [email, setEmail] = useState<string>('');
 
   const handleLogout = () => {
-    console.log('~ handleClearAll');
-    clearStorageKeepAuth();
     auth()
       .signOut()
       .then(() => console.log('User signed out!'));
   };
 
   useEffect(() => {
-    if (openaiKey) {
-      setKey(openaiKey);
+    if (openaiKeyObj) {
+      setKey(openaiKeyObj.openaiKey || '');
     }
-  }, [openaiKey]);
+  }, [openaiKeyObj]);
 
   const handleSaveKey = async () => {
     setIsLoading(true);
@@ -57,7 +57,16 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       return;
     }
 
-    dispatch(setOpenaiKey(key));
+    realm.write(() => {
+      if (!openaiKeyObj) {
+        realm.create('AppConfig', {
+          userToken,
+          openaiKey: key,
+        });
+      } else {
+        openaiKeyObj.openaiKey = key;
+      }
+    })
     setIsEditing(false);
     setIsLoading(false);
   };

@@ -1,13 +1,12 @@
 import { isEmpty } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
-import Storage from '../../storage';
 import Strings from '../../localization';
+import appStorage from '../../storage';
 import Button from '../../components/Button';
 import { Routes } from '../../types/navigation'
 import Checkbox from '../../components/Checkbox';
 import firebaseAuth from '../../services/firebase'
-import { clearAuthInformation } from '../../storage';
 import { setLanguage } from '../../redux/slice/auth';
 import { checkEmailValid } from '../../utils/Helper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,8 +17,8 @@ import { Colors, Spacing, Typography, Layout } from '../../styles/index';
 
 const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.Element => {
   const dispatch = useDispatch();
-  const { isLogin, language } = useSelector((state: any) => state.auth);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { language } = useSelector((state: any) => state.auth);
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -58,15 +57,15 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
 
     setIsLoading(true);
 
-    if (isRememberMe) {
-      Storage.set('auth.email', email);
-      Storage.set('auth.password', password);
-    } else {
-      clearAuthInformation();
-    }
-
     firebaseAuth.signInWithEmailAndPassword(email, password).then((userCredential) => {
-      console.debug('creds', userCredential);
+      console.log('creds', userCredential);
+      if (isRememberMe) {
+        appStorage.set('auth.email', email);
+        appStorage.set('auth.password', password);
+      } else {
+        appStorage.delete('auth.email');
+        appStorage.delete('auth.password');
+      }
     }).catch((error) => {
       switch (error.code) {
         case FirebaseSignInResponse.WRONG_PASSWORD:
@@ -97,9 +96,9 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
   };
 
   useEffect(() => {
-    if (Storage.contains('auth.email') && Storage.contains('auth.password')) {
-      const email = Storage.getString('auth.email')
-      const password = Storage.getString('auth.password')
+    if (appStorage.contains('auth.email') && appStorage.contains('auth.password')) {
+      const email = appStorage.getString('auth.email')
+      const password = appStorage.getString('auth.password')
 
       if (email && password) {
         setEmail(email);

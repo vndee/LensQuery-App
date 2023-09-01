@@ -4,10 +4,12 @@ import Header from '../../components/Header';
 import { Colors, Spacing, Layout, Typography, Touchable } from '../../styles';
 import Button from '../../components/Button';
 import { Routes } from '../../types/navigation';
+import firebaseAuth from '../../services/firebase'
 import { isEmpty } from 'lodash';
 import { checkEmailValid } from '../../utils/Helper';
 import LabelInput from '../../components/Input/LabelInput';
 import { StackScreenProps } from '@react-navigation/stack';
+import { FirebaseSignUpResponse } from '../../types/firebase';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, ScrollView, TouchableOpacity } from 'react-native';
 
 const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): JSX.Element => {
@@ -74,6 +76,28 @@ const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): 
     if (!isFormValid()) {
       return;
     }
+
+    firebaseAuth.createUserWithEmailAndPassword(email, password).then(() => {
+      firebaseAuth.currentUser?.updateProfile({ displayName: name });
+      console.debug('Created user successfully and login!', firebaseAuth.currentUser);
+    }).catch((error) => {
+      switch (error.code) {
+        case FirebaseSignUpResponse.EMAIL_ALREADY_IN_USE:
+          setEmailError(Strings.register.emailAlreadyInUseError);
+          break;
+        case FirebaseSignUpResponse.INVALID_EMAIL:
+          setEmailError(Strings.register.emailInvalidError);
+          break;
+        case FirebaseSignUpResponse.WEAK_PASSWORD:
+          setPasswordError(Strings.register.weakPassword);
+          break;
+        default:
+          setEmailError(Strings.register.unknownError);
+          break;
+      }
+
+      console.debug('error', error);
+    });
 
     navigation.navigate('OnboardingSetup', { email, password });
     setIsLoading(false);

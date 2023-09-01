@@ -450,6 +450,8 @@ PODS:
   - react-native-mmkv (2.10.1):
     - MMKV (>= 1.2.13)
     - React-Core
+  - react-native-render-html (6.3.4):
+    - React-Core
   - react-native-safe-area-context (4.7.1):
     - React-Core
   - React-NativeModulesApple (0.72.3):
@@ -662,6 +664,7 @@ DEPENDENCIES:
   - "react-native-image-editor (from `../node_modules/@react-native-community/image-editor`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-mmkv (from `../node_modules/react-native-mmkv`)
+  - react-native-render-html (from `../node_modules/react-native-render-html`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -772,6 +775,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-picker"
   react-native-mmkv:
     :path: "../node_modules/react-native-mmkv"
+  react-native-render-html:
+    :path: "../node_modules/react-native-render-html"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   React-NativeModulesApple:
@@ -878,6 +883,7 @@ SPEC CHECKSUMS:
   react-native-image-editor: 9361a215c3991cafbe5e7f28cbbad6e72c9c2705
   react-native-image-picker: 5fcac5a5ffcb3737837f0617d43fd767249290de
   react-native-mmkv: dea675cf9697ad35940f1687e98e133e1358ef9f
+  react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe
   react-native-safe-area-context: 9697629f7b2cda43cf52169bb7e0767d330648c2
   React-NativeModulesApple: c57f3efe0df288a6532b726ad2d0322a9bf38472
   React-perflogger: 6bd153e776e6beed54c56b0847e1220a3ff92ba5

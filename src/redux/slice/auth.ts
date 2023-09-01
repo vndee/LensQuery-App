@@ -1,11 +1,11 @@
+import appStorage from '../../storage';
 import { SLICE_NAME } from '../sliceNames';
 import { createSlice } from '@reduxjs/toolkit';
-import Storage from '../../storage';
-import Strigs from '../../localization'
 
 const initialStateAuth = {
-  isLogin: Storage.getBoolean('state.isLogin') || false,
-  language: Storage.getString('auth.language') || 'en',
+  isLogin: appStorage.getBoolean('auth.isLogin') || false,
+  language: appStorage.getString('auth.language') || 'en',
+  userToken: appStorage.getString('auth.userToken') || '',
 };
 
 const authSlice = createSlice({
@@ -14,15 +14,19 @@ const authSlice = createSlice({
   reducers: {
     setLogin: (state, action) => {
       state.isLogin = action.payload;
-      Storage.set('state.isLogin', action.payload);
+      appStorage.set('auth.isLogin', action.payload);
     },
     setLanguage: (state, action) => {
       state.language = action.payload;
-      Storage.set('auth.language', action.payload);
+      appStorage.set('auth.language', action.payload);
+    },
+    setUserToken: (state, action) => {
+      state.userToken = action.payload;
+      appStorage.set('auth.userToken', action.payload);
     }
   }
 });
 
-export const { setLogin, setLanguage } = authSlice.actions;
+export const { setLogin, setLanguage, setUserToken } = authSlice.actions;
 
 export default authSlice.reducer;

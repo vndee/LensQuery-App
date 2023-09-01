@@ -35,8 +35,6 @@ Reanimated.addWhitelistedNativeProps({
 const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Element => {
   const dispatch = useDispatch();
   const cameraRef = useRef<Camera>(null);
-  const { accountCreds } = useSelector((state: any) => state.account);
-  console.log('user', accountCreds);
 
   const zoom = useSharedValue(0);
   const camera = useRef<Camera>(null);

@@ -15,8 +15,9 @@ import { IChatBox, IMessageCollection } from '../../types/chat';
 const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) => {
   const realm = useRealm();
   const { language } = useSelector((state: any) => state.auth);
+  const { userToken } = useSelector((state: any) => state.auth);
   const listRef = useRef<FlashList<IChatBox> | null>(null);
-  const listOfChats = useQuery<IChatBox>('ChatBox').sorted('lastMessageAt', true);
+  const listOfChats = useQuery<IChatBox>('ChatBox').filtered('userToken == $0', userToken).sorted('lastMessageAt', true);
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const [isSelectedMode, setIsSelectedMode] = useState<boolean>(false);
   const [selectedBox, setSelectedBox] = useState<Set<string>>(new Set());

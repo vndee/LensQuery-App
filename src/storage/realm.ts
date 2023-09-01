@@ -3,6 +3,20 @@ import { IChatBox, IMessage } from "../types/chat";
 import { createRealmContext } from "@realm/react";
 
 // Models
+class AppConfig extends Realm.Object {
+  userToken!: string;
+  openaiKey!: string;
+
+  static schema: Realm.ObjectSchema = {
+    name: "AppConfig",
+    primaryKey: "userToken",
+    properties: {
+      userToken: "string",
+      openaiKey: "string",
+    }
+  }
+}
+
 class ChatBox extends Realm.Object<IChatBox> {
   id!: string;
   name!: string;
@@ -12,6 +26,7 @@ class ChatBox extends Realm.Object<IChatBox> {
   lastMessageAt!: number; // unix timestamp
   createAt!: number; // unix timestamp
   updateAt!: number; // unix timestamp
+  userToken!: string; // specific user token
 
   static schema: Realm.ObjectSchema = {
     name: "ChatBox",
@@ -25,6 +40,7 @@ class ChatBox extends Realm.Object<IChatBox> {
       lastMessageAt: "int",
       createAt: "int",
       updateAt: "int",
+      userToken: "string",
     },
   };
 };
@@ -38,6 +54,7 @@ class Message extends Realm.Object<IMessage> {
   engineId!: string;
   createAt!: number; // unix timestamp
   updateAt!: number; // unix timestamp
+  userToken!: string; // specific user token
 
   static schema: Realm.ObjectSchema = {
     name: "Message",
@@ -51,6 +68,7 @@ class Message extends Realm.Object<IMessage> {
       engineId: "string",
       createAt: "int",
       updateAt: "int",
+      userToken: "string",
     },
   };
 };
@@ -61,6 +79,7 @@ class MessageCollection extends Realm.Object<MessageCollection> {
   messages!: Realm.List<Message>;
   createAt!: number; // unix timestamp
   updateAt!: number; // unix timestamp
+  userToken!: string; // specific user token
 
   static schema: Realm.ObjectSchema = {
     name: "MessageCollection",
@@ -71,14 +90,17 @@ class MessageCollection extends Realm.Object<MessageCollection> {
       messages: "Message[]",
       createAt: "int",
       updateAt: "int",
+      userToken: "string",
     },
   };
 };
 
 const realmConfig = {
-  schema: [ChatBox, Message, MessageCollection],
+  path: "lensquery.realm",
+  schema: [AppConfig, ChatBox, Message, MessageCollection],
   schemaVersion: 14,
-  deleteRealmIfMigrationNeeded: true
+  encryptionKey: new Int8Array(64),
+  deleteRealmIfMigrationNeeded: true,
 };
 
 export const { RealmProvider, useRealm, useObject, useQuery } = createRealmContext(realmConfig);

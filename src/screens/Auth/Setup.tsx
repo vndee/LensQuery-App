@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Routes } from '../../types/navigation';
 import Strings from '../../localization';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
@@ -6,13 +6,15 @@ import LabelInput from '../../components/Input/LabelInput';
 import Button from '../../components/Button';
 import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
-import firebaseAuth from '../../services/firebase'
-import { setOpenaiKey } from '../../redux/slice/account';
+import { useRealm } from '../../storage/realm';
+import { IAppConfig } from '../../types/config';
+import firebaseAuth from '../../services/firebase';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Spacing, Typography, Layout, Colors } from '../../styles';
 
 
 const OnboardingSetup = ({ navigation, route }: StackScreenProps<Routes, 'OnboardingSetup'>): JSX.Element => {
+  const realm = useRealm();
   const dispatch = useDispatch();
   const { email, password } = route.params;
 
@@ -27,7 +29,14 @@ const OnboardingSetup = ({ navigation, route }: StackScreenProps<Routes, 'Onboar
       return;
     }
 
-    dispatch(setOpenaiKey(key));
+    realm.write(() => {
+      const appConf: IAppConfig = {
+        userToken: firebaseAuth.currentUser?.uid || '',
+        openaiKey: key,
+      };
+      realm.create('AppConfig', appConf);
+    });
+
     firebaseAuth.signInWithEmailAndPassword(email, password).then((userCredential) => {
       console.debug('creds', userCredential);
       navigation.navigate('Lens');
