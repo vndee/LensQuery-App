@@ -89,4 +89,24 @@ const getOCRResult = async (image: string): Promise<OCRResultResponse> => {
   };
 };
 
-export { healthCheck, getOCRAccessToken, getOCRResult };
+const getTermsOfUse = async (): Promise<string> => {
+  try {
+    const resp = await queryBackend.get('/terms');
+    return resp.data;
+  } catch (error: any) {
+    console.error('getTermsOfUse error:', error?.response?.data);
+    return '';
+  }
+};
+
+const getPrivacyPolicy = async (): Promise<string> => {
+  try {
+    const resp = await queryBackend.get('/privacy');
+    return resp.data;
+  } catch (error: any) {
+    console.error('getPrivacyPolicy error:', error?.response?.data);
+    return '';
+  }
+}
+
+export { healthCheck, getOCRAccessToken, getOCRResult, getTermsOfUse, getPrivacyPolicy };
