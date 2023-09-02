@@ -1,6 +1,6 @@
 {
   "name": "LensQuery",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -10,7 +10,8 @@
     "test": "jest",
     "pod": "cd ios && pod install && cd ..",
     "watchman:clean": "watchman watch-del-all",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "version": "react-native-version"
   },
   "dependencies": {
     "@react-native-camera-roll/camera-roll": "^5.7.2",
@@ -67,6 +68,7 @@
     "metro-react-native-babel-preset": "0.76.7",
     "patch-package": "^8.0.0",
     "prettier": "^2.4.1",
+    "react-native-version": "^4.0.0",
     "react-test-renderer": "18.2.0",
     "typescript": "4.8.4"
   },
