@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, LayoutAnimation } from 'react-native';
-import { Layout, Typography, Spacing, Colors } from '../../styles';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Typography, Spacing, Colors } from '../../styles';
 import { IChatBox } from '../../types/chat';
 import { formatTimeDiff } from '../../utils/Helper';
-import Checkbox from '../Checkbox';
 
 type IChatBoxProps = {
   item: IChatBox,
@@ -25,13 +24,13 @@ const BoxCard = ({ item, isSelected, selectedMode, onPress, onLongPress }: IChat
       {selectedMode && <View style={[styles.checkBox, isSelected && { backgroundColor: Colors.primary, borderWidth: 0 }]} />}
       <View style={styles.col}>
         <View style={styles.row}>
-          <Text style={[Typography.title, { flex: 1 }]}>This is the chat name</Text>
-          <View style={{ alignSelf: 'center' }}>
+          <Text style={[Typography.title, { flex: 1 }]} numberOfLines={1} ellipsizeMode='tail'>{name}</Text>
+          <View style={{ alignSelf: 'center', marginLeft: Spacing.L }}>
             <Text style={styles.timePassed}>{formatTimeDiff(lastMessageAt)}</Text>
           </View>
         </View>
         <Text style={Typography.body} numberOfLines={1} ellipsizeMode='tail'>
-          {lastMessage}
+          {lastMessage.replace(/\n/g, ' ')}
         </Text>
       </View>
     </TouchableOpacity>

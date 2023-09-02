@@ -273,7 +273,8 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
         if (imageUri !== undefined) {
           const message = constructMessage(collectionId, imageUri, 'image', false, engine.id, userToken);
-          setMessages((messages) => [message, ...messages]);
+          const typingMessage = constructMessage(collectionId, '...', 'bot', true, engine.id, userToken);
+          setMessages((messages) => [typingMessage, message, ...messages]);
           realm.write(() => {
             // @ts-ignore
             _messageCollection.messages = [message];
@@ -289,13 +290,20 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
           // create new chat box in realm
           const ocrMessage = constructMessage(collectionId, text, 'bot', false, engine.id, userToken);
-          setMessages((messages) => [ocrMessage, ...messages]);
+          setFirstMessageState(ocrMessage);
+
           const updatedTime = new Date().getTime();
           realm.write(() => {
             // @ts-ignore
             _messageCollection.messages = [message, ocrMessage];
             // @ts-ignore
             _messageCollection.updateAt = updatedTime;
+
+            let _chatName = text.length > 50 ? text.slice(0, 50) + '...' : text;
+            _chatName = _chatName.replace(/\n/g, ' ');
+
+            // @ts-ignore
+            _chatBox.name = _chatName;
             // @ts-ignore
             _chatBox.lastMessage = ocrMessage.content;
             // @ts-ignore
@@ -308,8 +316,6 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       }
     };
 
-    // console.log('chatBoxId', chatBoxId);
-    // console.log('imageUri', imageUri);
     initData();
   }, [chatBoxId]);
 

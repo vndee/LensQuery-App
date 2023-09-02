@@ -131,7 +131,7 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
         </TouchableOpacity>
         <Text style={[Typography.title, { flex: 1 }]}>{isSelectedAll ? listOfChats.length : selectedBox.size} {Strings.chatList.selected}</Text>
         <TouchableOpacity style={{ marginLeft: 'auto', marginRight: Spacing.S }} onPress={alertDeleteBactch}>
-          <Ionicons name='trash-outline' size={20} color={Colors.primary} />
+          <Ionicons name='trash-outline' size={20} color={Colors.danger} />
         </TouchableOpacity>
         <TouchableOpacity style={{ marginLeft: 'auto' }} onPress={() => { setIsSelectedMode(false); setSelectedBox(new Set()); }}>
           <Ionicons name='close-outline' size={24} color={Colors.primary} />

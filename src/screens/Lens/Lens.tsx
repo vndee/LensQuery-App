@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Spacing, Colors, Typography } from '../../styles';
-import { View, Platform, PermissionsAndroid, StyleSheet, TouchableOpacity, StatusBar, Text } from 'react-native';
+import { Spacing, Colors } from '../../styles';
+import { View, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import {
   Camera,
   CameraDeviceFormat,
