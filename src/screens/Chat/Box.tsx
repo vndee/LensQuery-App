@@ -367,7 +367,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           <>
             <View style={styles.row}>
               <Pressable onPress={() => navigation.navigate('ChatList')} style={getPressableStyle} hitSlop={20}>
-                <Ionicons name="chevron-back" size={20} color={Colors.white} />
+                <Ionicons name="arrow-back" size={20} color={Colors.white} />
               </Pressable>
               <Text style={[Typography.H3, { color: Colors.white }]}>{Strings.chatBox.title}</Text>
             </View>
@@ -390,7 +390,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           </>) : (
           <>
             <Pressable onPress={() => setIsSearchBarVisible(false)} style={getPressableStyle} hitSlop={20}>
-              <Ionicons name="chevron-back" size={20} color={Colors.white} />
+              <Ionicons name="arrow-back" size={20} color={Colors.white} />
             </Pressable>
             <View style={styles.searchContainer}>
               <TextInput

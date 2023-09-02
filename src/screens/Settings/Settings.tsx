@@ -137,7 +137,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       <View style={[Layout.header, { paddingHorizontal: Spacing.horizontalPadding }]}>
         <View style={Layout.row}>
           <Pressable onPress={navigation.goBack} style={getPressableStyle} hitSlop={20}>
-            <Ionicons name="chevron-back" size={20} color={Colors.white} />
+            <Ionicons name="arrow-back" size={20} color={Colors.white} />
           </Pressable>
           <Text style={[Typography.H3, { marginLeft: Spacing.XS, color: Colors.white }]}>{Strings.setting.title}</Text>
         </View>
