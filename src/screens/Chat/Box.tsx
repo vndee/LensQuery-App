@@ -22,6 +22,7 @@ import { IAppConfig } from '../../types/config';
 import { getOCRResult } from '../../services/api'
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
 import { checkValidApiKey } from '../../services/openai';
+import ProgressCircle from 'react-native-progress/CircleSnail';
 import { IChatEngine, IMessage, IChatBox, IMessageCollection } from '../../types/chat';
 import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE } from '../../utils/Constants';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
@@ -426,7 +427,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           estimatedItemSize={100}
           onEndReached={handleFetchMore}
           onEndReachedThreshold={0}
-          ListFooterComponent={isFetchingHistory ? <ActivityIndicator size="small" color={Colors.primary} /> : null}
+          ListFooterComponent={isFetchingHistory ? <ProgressCircle size={20} color={Colors.primary} thickness={2} /> : null}
         />
       </View>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
