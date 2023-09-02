@@ -73,34 +73,39 @@ const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): 
   const handleRegister = () => {
     Keyboard.dismiss();
     setIsLoading(true);
+
     if (!isFormValid()) {
+      setIsLoading(false);
       return;
     }
 
-    firebaseAuth.createUserWithEmailAndPassword(email, password).then(() => {
-      firebaseAuth.currentUser?.updateProfile({ displayName: name });
-      console.debug('Created user successfully and login!', firebaseAuth.currentUser);
-    }).catch((error) => {
-      switch (error.code) {
-        case FirebaseSignUpResponse.EMAIL_ALREADY_IN_USE:
-          setEmailError(Strings.register.emailAlreadyInUseError);
-          break;
-        case FirebaseSignUpResponse.INVALID_EMAIL:
-          setEmailError(Strings.register.emailInvalidError);
-          break;
-        case FirebaseSignUpResponse.WEAK_PASSWORD:
-          setPasswordError(Strings.register.weakPassword);
-          break;
-        default:
-          setEmailError(Strings.register.unknownError);
-          break;
-      }
+    firebaseAuth.createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        setIsLoading(false);
+        firebaseAuth.currentUser?.updateProfile({ displayName: name });
+        console.debug('Created user successfully and login!', firebaseAuth.currentUser);
+      }).catch((error) => {
+        setIsLoading(false);
+        switch (error.code) {
+          case FirebaseSignUpResponse.EMAIL_ALREADY_IN_USE:
+            setEmailError(Strings.register.emailAlreadyInUseError);
+            break;
+          case FirebaseSignUpResponse.INVALID_EMAIL:
+            setEmailError(Strings.register.emailInvalidError);
+            break;
+          case FirebaseSignUpResponse.WEAK_PASSWORD:
+            setPasswordError(Strings.register.weakPassword);
+            break;
+          default:
+            setEmailError(Strings.register.unknownError);
+            break;
+        }
 
-      console.debug('error', error);
-    });
-
-    navigation.navigate('OnboardingSetup', { email, password });
-    setIsLoading(false);
+        console.debug('error', error);
+      }).finally(() => {
+        setIsLoading(false);
+        navigation.navigate('OnboardingSetup', { email, password });
+      });
   };
 
   return (
@@ -186,7 +191,7 @@ const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): 
           </TouchableOpacity>
         </View>
       </View>
-      <Button label={Strings.register.registerBtn} onPress={handleRegister} style={styles.btn} />
+      <Button label={Strings.register.registerBtn} onPress={handleRegister} style={styles.btn} isLoading={isLoading} />
     </View>
   );
 };

@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, Image, ActivityIndicator } from 'react-native';
 import Strings from '../../localization';
 import appStorage from '../../storage';
 import Button from '../../components/Button';
@@ -28,6 +28,8 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
   const [passwordErrorText, setPasswordErrorText] = useState<string>('');
 
   const handleLogin = async () => {
+    setIsLoading(true);
+
     if (emailErrorText && !isEmpty(email)) {
       setEmailErrorText('');
     }
@@ -55,38 +57,40 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
       return;
     }
 
-    setIsLoading(true);
+    firebaseAuth.signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        console.log('creds', userCredential);
+        if (isRememberMe) {
+          appStorage.set('auth.email', email);
+          appStorage.set('auth.password', password);
+        } else {
+          appStorage.delete('auth.email');
+          appStorage.delete('auth.password');
+        }
 
-    firebaseAuth.signInWithEmailAndPassword(email, password).then((userCredential) => {
-      console.log('creds', userCredential);
-      if (isRememberMe) {
-        appStorage.set('auth.email', email);
-        appStorage.set('auth.password', password);
-      } else {
-        appStorage.delete('auth.email');
-        appStorage.delete('auth.password');
-      }
-    }).catch((error) => {
-      switch (error.code) {
-        case FirebaseSignInResponse.WRONG_PASSWORD:
-          setPasswordErrorText(Strings.login.wrongPassword);
-          break;
-        case FirebaseSignInResponse.USER_NOT_FOUND:
-          setEmailErrorText(Strings.login.emailNotFound);
-          break;
-        case FirebaseSignInResponse.USER_DISABLED:
-          setEmailErrorText(Strings.login.userDisabled);
-          break;
-        case FirebaseSignInResponse.TOO_MANY_REQUESTS:
-          setEmailErrorText(Strings.login.tooManyRequests);
-          break;
-        default:
-          setEmailErrorText(Strings.login.unknownError);
-          break;
-      }
-    });
-
-    setIsLoading(false);
+        setIsLoading(false);
+      }).catch((error) => {
+        setIsLoading(false);
+        switch (error.code) {
+          case FirebaseSignInResponse.WRONG_PASSWORD:
+            setPasswordErrorText(Strings.login.wrongPassword);
+            break;
+          case FirebaseSignInResponse.USER_NOT_FOUND:
+            setEmailErrorText(Strings.login.emailNotFound);
+            break;
+          case FirebaseSignInResponse.USER_DISABLED:
+            setEmailErrorText(Strings.login.userDisabled);
+            break;
+          case FirebaseSignInResponse.TOO_MANY_REQUESTS:
+            setEmailErrorText(Strings.login.tooManyRequests);
+            break;
+          default:
+            setEmailErrorText(Strings.login.unknownError);
+            break;
+        }
+      }).finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleLanguageChange = (language: string) => {
@@ -152,7 +156,7 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
             </TouchableOpacity>
           </View>
         </View>
-        <Button label={isLoading ? `${Strings.login.loginBtn}...` : Strings.login.loginBtn} onPress={handleLogin} />
+        <Button label={Strings.login.loginBtn} onPress={handleLogin} isLoading={isLoading} />
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           <Text style={{ ...Typography.body, color: Colors.hint }}>{Strings.login.dontHaveAccount} </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>

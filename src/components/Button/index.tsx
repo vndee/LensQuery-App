@@ -1,13 +1,15 @@
 import React from 'react';
-import { Colors, Spacing, Typography, Layout, Touchable } from '../../styles/index';
+import ProgressCircle from 'react-native-progress/CircleSnail';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Colors, Spacing, Typography, Layout, Touchable } from '../../styles/index';
 
-const Button = ({ label, onPress, disabled, style, outline }: {
+const Button = ({ label, onPress, disabled, style, outline, isLoading }: {
   label: string,
   onPress: () => void,
   disabled?: boolean,
   style?: object,
-  outline?: boolean
+  outline?: boolean,
+  isLoading?: boolean,
 }): JSX.Element => {
   return (
     <TouchableOpacity
@@ -16,13 +18,20 @@ const Button = ({ label, onPress, disabled, style, outline }: {
       disabled={disabled}
     >
       <Text style={[styles.label, outline && { color: Colors.primary }]}>{label}</Text>
+      {
+        isLoading &&
+        <View style={{ marginLeft: Spacing.S }}>
+          <ProgressCircle size={20} color={Colors.white} thickness={2} />
+        </View>
+      }
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   touchable: {
-    ...Touchable.dark
+    ...Touchable.dark,
+    flexDirection: 'row'
   },
   label: {
     ...Typography.title,
