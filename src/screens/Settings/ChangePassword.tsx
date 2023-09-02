@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Routes } from '../../types/navigation';
-import Strings from '../../localization';
 import { isEmpty } from 'lodash';
+import React, { useState } from 'react';
+import Strings from '../../localization';
 import Button from '../../components/Button';
-import LabelInput from '../../components/Input/LabelInput';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Routes } from '../../types/navigation';
 import firebaseAuth from '../../services/firebase';
 import { firebase } from "@react-native-firebase/auth";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { StackScreenProps } from '@react-navigation/stack';
+import { getPressableStyle } from '../../styles/Touchable';
+import LabelInput from '../../components/Input/LabelInput';
 import { FirebaseSignInResponse } from '../../types/firebase';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
-import { StackScreenProps } from '@react-navigation/stack';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 
 const ChangePassword = ({ navigation, route }: StackScreenProps<Routes, 'ChangePassword'>): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -63,9 +64,9 @@ const ChangePassword = ({ navigation, route }: StackScreenProps<Routes, 'ChangeP
     <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <View style={[Layout.header, { paddingHorizontal: Spacing.horizontalPadding }]}>
         <View style={Layout.row}>
-          <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
+          <Pressable onPress={navigation.goBack} style={getPressableStyle} hitSlop={20}>
             <Ionicons name="chevron-back" size={20} color={Colors.white} />
-          </TouchableOpacity>
+          </Pressable>
           <Text style={[Typography.H3, { marginLeft: Spacing.XS, color: Colors.white }]}>{Strings.changePassword.title}</Text>
         </View>
       </View>
@@ -157,7 +158,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     alignSelf: 'center',
-    marginBottom: Spacing.M,
+    marginBottom: Spacing.XL,
     marginHorizontal: Spacing.horizontalPadding,
   },
 });

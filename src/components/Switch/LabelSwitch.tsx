@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Colors, Spacing, Typography } from '../../styles';
-import Animated, { useSharedValue, withSpring, withTiming, useAnimatedStyle, withDecay } from 'react-native-reanimated';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, TouchableWithoutFeedback, Image, ScrollView, FlatList, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
+import React from 'react';
+import { Spacing, Typography } from '../../styles';
+import Animated, { withTiming, useAnimatedStyle } from 'react-native-reanimated';
+import { StyleSheet, TouchableWithoutFeedback } from 'react-native';
 
 type Item = {
   id: string;

@@ -8,7 +8,8 @@ import { Routes } from '../../types/navigation'; 123456
 import EventSource from '../../services/sse';
 import { FlashList } from '@shopify/flash-list';
 import Toast from 'react-native-toast-message';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Alert, Platform, Keyboard, ActivityIndicator, Modal } from 'react-native';
+import { getPressableStyle } from '../../styles/Touchable';
+import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Alert, Platform, Keyboard, ActivityIndicator, Modal, Pressable } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -216,6 +217,8 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const handleSearchInChatBox = (text: string) => {
     console.debug('search', text);
     const results = realm.objects('Message').filtered(`collectionId == "${chatCollection?.id}" && content CONTAINS[c] "${text}"`);
+    Keyboard.dismiss();
+    setSearchText('');
     console.debug('results', results);
   }
 
@@ -363,9 +366,9 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         {!isSearchBarVisible ? (
           <>
             <View style={styles.row}>
-              <TouchableOpacity onPress={() => navigation.navigate('ChatList')} style={styles.backIcon}>
+              <Pressable onPress={() => navigation.navigate('ChatList')} style={getPressableStyle} hitSlop={20}>
                 <Ionicons name="chevron-back" size={20} color={Colors.white} />
-              </TouchableOpacity>
+              </Pressable>
               <Text style={[Typography.H3, { color: Colors.white }]}>{Strings.chatBox.title}</Text>
             </View>
 
@@ -380,29 +383,33 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
                 labelInActiveColor={Colors.white}
               />
 
-              <TouchableOpacity style={styles.moreIcon} onPress={() => actionSheetRef.current?.show()}>
+              <Pressable style={getPressableStyle} onPress={() => actionSheetRef.current?.show()} hitSlop={20}>
                 <Feather name="more-vertical" size={20} color={Colors.white} />
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </>) : (
           <>
-            <TouchableOpacity onPress={() => setIsSearchBarVisible(false)} style={styles.backIcon}>
-              <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
-            </TouchableOpacity>
+            <Pressable onPress={() => setIsSearchBarVisible(false)} style={getPressableStyle} hitSlop={20}>
+              <Ionicons name="chevron-back" size={20} color={Colors.white} />
+            </Pressable>
             <View style={styles.searchContainer}>
               <TextInput
                 autoFocus
-                style={styles.searchBar}
-                placeholder={Strings.chatBox.searchPlaceholder}
-                placeholderTextColor={Colors.text_color}
+                style={[Typography.body, { flex: 1, color: Colors.white }]}
+                placeholder={Strings.chatList.searchPlaceholder}
+                placeholderTextColor={Colors.white}
                 onChangeText={setSearchText}
+                value={searchText}
               />
-              <TouchableOpacity onPress={() => {
+              <Pressable onPress={() => {
                 setIsSearchBarVisible(false);
                 handleSearchInChatBox(searchText);
-              }}>
-                <Ionicons name="search" size={20} color={Colors.text_color} />
-              </TouchableOpacity>
+              }}
+                style={getPressableStyle}
+                hitSlop={20}
+              >
+                <Ionicons name="search" size={20} color={Colors.white} />
+              </Pressable>
             </View>
           </>
         )}
@@ -432,9 +439,9 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
             onChangeText={setInputMessage}
             onSubmitEditing={() => sendMessage(inputMessage)}
           />
-          <TouchableOpacity onPress={() => sendMessage(inputMessage)} style={styles.sendIcon}>
+          <Pressable onPress={() => sendMessage(inputMessage)} style={({ pressed }) => [styles.sendIcon, getPressableStyle({ pressed })]} hitSlop={20}>
             <Feather name="send" size={28} color={Colors.primary} />
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </KeyboardAvoidingView>
       <Toast
@@ -455,9 +462,9 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           <View style={styles.modalView}>
             <Text style={Typography.body}>{Strings.chatBox.notFoundKeyModalTitle}</Text>
             <Text style={Typography.description}>{Strings.chatBox.notFoundKeyModalDescription}</Text>
-            <TouchableOpacity onPress={() => { setIsNotFoundKeyModalVisible(false); navigation.navigate('Settings') }}>
+            <Pressable onPress={() => { setIsNotFoundKeyModalVisible(false); navigation.navigate('Settings') }} style={getPressableStyle}>
               <Text style={[Typography.description, { color: Colors.primary }]}>{Strings.chatBox.notFoundKeyModalAction}</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </Modal>
@@ -542,7 +549,9 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.white_two,
+    justifyContent: 'center',
+    alignContent: 'center',
+    backgroundColor: 'transparent',
     borderRadius: 8,
     paddingHorizontal: Spacing.M,
     paddingVertical: Spacing.S,

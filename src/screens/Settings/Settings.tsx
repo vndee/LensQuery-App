@@ -13,10 +13,10 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { setLanguage } from '../../redux/slice/auth';
 import { maskApiKey } from '../../utils/Helper';
 import { checkValidApiKey } from '../../services/openai';
-import Storage, { clearStorageAuthCreds } from '../../storage/index'
 import { useRealm, useObject } from '../../storage/realm';
 import { IAppConfig } from '../../types/config';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { getPressableStyle } from '../../styles/Touchable';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
@@ -136,14 +136,14 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
     <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <View style={[Layout.header, { paddingHorizontal: Spacing.horizontalPadding }]}>
         <View style={Layout.row}>
-          <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
+          <Pressable onPress={navigation.goBack} style={getPressableStyle} hitSlop={20}>
             <Ionicons name="chevron-back" size={20} color={Colors.white} />
-          </TouchableOpacity>
+          </Pressable>
           <Text style={[Typography.H3, { marginLeft: Spacing.XS, color: Colors.white }]}>{Strings.setting.title}</Text>
         </View>
-        <TouchableOpacity style={styles.moreIcon} onPress={() => actionSheetRef.current?.show()} disabled={isEditing}>
+        <Pressable style={getPressableStyle} onPress={() => actionSheetRef.current?.show()} disabled={isEditing} hitSlop={20}>
           <Feather name="more-vertical" size={20} color={Colors.white} />
-        </TouchableOpacity>
+        </Pressable>
       </View>
       <ScrollView style={styles.container}>
         <View>
@@ -170,9 +170,9 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
           <View style={{ gap: Spacing.S }}>
             <View style={styles.instruction}>
               <Text style={Typography.description}>{Strings.onboardingSetup.dontKnowHowToGetKey}</Text>
-              <TouchableOpacity onPress={() => { }}>
+              <Pressable onPress={() => { }} style={getPressableStyle} hitSlop={20}>
                 <Text style={[Typography.description, { color: Colors.primary }]}> {Strings.common.clickHere}</Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
             <Text style={Typography.description}>{Strings.onboardingSetup.disclaimer}</Text>
           </View>

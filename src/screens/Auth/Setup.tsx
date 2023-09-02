@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
-import { Routes } from '../../types/navigation';
-import Strings from '../../localization';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import LabelInput from '../../components/Input/LabelInput';
-import Button from '../../components/Button';
 import { isEmpty } from 'lodash';
+import React, { useState } from 'react';
+import Strings from '../../localization';
 import { useDispatch } from 'react-redux';
+import Button from '../../components/Button';
 import { useRealm } from '../../storage/realm';
+import { Routes } from '../../types/navigation';
 import { IAppConfig } from '../../types/config';
 import firebaseAuth from '../../services/firebase';
+import LabelInput from '../../components/Input/LabelInput';
 import { StackScreenProps } from '@react-navigation/stack';
+import { getPressableStyle } from '../../styles/Touchable';
 import { Spacing, Typography, Layout, Colors } from '../../styles';
+import { View, Text, StyleSheet, Alert, Pressable } from 'react-native';
 
 
 const OnboardingSetup = ({ navigation, route }: StackScreenProps<Routes, 'OnboardingSetup'>): JSX.Element => {
@@ -80,9 +81,9 @@ const OnboardingSetup = ({ navigation, route }: StackScreenProps<Routes, 'Onboar
       <View style={{ gap: Spacing.S }}>
         <View style={styles.instruction}>
           <Text style={Typography.description}>{Strings.onboardingSetup.dontKnowHowToGetKey}</Text>
-          <TouchableOpacity onPress={() => { }}>
+          <Pressable onPress={() => { }} style={getPressableStyle}>
             <Text style={[Typography.description, { color: Colors.primary }]}> {Strings.common.clickHere}</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
         <Text style={Typography.description}>{Strings.onboardingSetup.disclaimer}</Text>
       </View>

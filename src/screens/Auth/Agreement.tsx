@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
 import Strings from '../../localization';
 import Header from '../../components/Header';
 import { Colors, Spacing } from '../../styles';
 import { Routes } from '../../types/navigation';
 import RenderHtml from 'react-native-render-html';
 import { useWindowDimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { getTermsOfUse, getPrivacyPolicy } from '../../services/api';
 
 const Agreement = ({ navigation, route }: StackScreenProps<Routes, 'Agreement'>): JSX.Element => {

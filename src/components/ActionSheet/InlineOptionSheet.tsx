@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
-import { Colors, Spacing, Typography, Layout } from '../../styles';
+import { Colors, Spacing, Typography } from '../../styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { getPressableStyle } from '../../styles/Touchable';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 
 type InlineOptionSheetProps = {
   label: string;
@@ -20,10 +21,10 @@ type Props = {
 const InlineOptionSheet = ({ title, options, selectedValue, activeColor = Colors.primary }: Props) => {
   const RenderOption = useCallback(({ item }: { item: InlineOptionSheetProps }) => {
     return (
-      <TouchableOpacity onPress={item.onPress} style={styles.optionContainer}>
+      <Pressable onPress={item.onPress} style={(pressed) => [styles.optionContainer, getPressableStyle(pressed)]}>
         <Ionicons name={selectedValue === item.value ? 'radio-button-on' : 'radio-button-off'} size={16} color={activeColor} />
         <Text style={Typography.body}>{item.label}</Text>
-      </TouchableOpacity>
+      </Pressable>
     )
   }, [options]);
 

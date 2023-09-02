@@ -109,6 +109,7 @@ export default new LocalizedStrings({
       deleteConfirmationNo: 'No',
       selected: 'Selected',
       chatBox: 'chat box',
+      notFound: 'No chat found',
       deleteBatchMessageWarning: 'You have selected {0} chat boxes. Are you sure you want to delete them?',
     },
 
@@ -265,6 +266,7 @@ export default new LocalizedStrings({
       deleteConfirmationNo: 'Không',
       selected: 'Đã chọn',
       chatBox: 'cuộc trò chuyện',
+      notFound: 'Không tìm thấy cuộc trò chuyện nào',
       deleteBatchMessageWarning: 'Bạn đã chọn {0} cuộc trò chuyện. Bạn có chắc chắn muốn xóa chúng?',
     },
 

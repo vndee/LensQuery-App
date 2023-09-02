@@ -14,3 +14,5 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export const getPressableStyle = ({ pressed }: { pressed: boolean }) => [{ opacity: pressed ? 0.4 : 1 }]

@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { isEmpty } from 'lodash';
-import { Colors, Spacing, Typography, Layout } from '../../styles';
+import { Colors, Spacing, Typography } from '../../styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Animated, { withSpring, useSharedValue } from 'react-native-reanimated';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput } from 'react-native';
 
 type Props = {
   label: string;

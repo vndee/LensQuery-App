@@ -3,7 +3,8 @@ import { isEmpty } from 'lodash';
 import { IMessage } from '../../types/chat';
 import { unixToTime } from '../../utils/Helper';
 import { getImageSize } from '../../utils/Helper';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { getPressableStyle } from '../../styles/Touchable';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { Typography, Spacing, Colors, Layout } from '../../styles';
 import { TypingAnimation } from 'react-native-typing-animation';
 
@@ -30,15 +31,15 @@ const Message = ({ item, onLongPress }: Props) => {
     })();
 
     return (
-      <TouchableOpacity style={[styles.messageContainer, styles.userBubble]}>
+      <Pressable style={(pressed) => [styles.messageContainer, styles.userBubble, getPressableStyle(pressed)]}>
         <Image source={{ uri: item.content }} style={{ width: imageWidth, height: imageHeight }} resizeMode="contain" />
-      </TouchableOpacity>
+      </Pressable>
     )
   }
 
   return (
-    <TouchableOpacity
-      style={[styles.messageContainer, isUser ? styles.userBubble : styles.botBubble, isTyping && styles.typingContainer]}
+    <Pressable
+      style={(pressed) => [styles.messageContainer, isUser ? styles.userBubble : styles.botBubble, isTyping && styles.typingContainer, getPressableStyle(pressed)]}
       onPress={setTimeVisible.bind(null, !timeVisible)}
       onLongPress={onLongPress}
     >
@@ -60,7 +61,7 @@ const Message = ({ item, onLongPress }: Props) => {
           </Text>
         )}
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

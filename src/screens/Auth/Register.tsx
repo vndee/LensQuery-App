@@ -1,7 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import Strings from '../../localization';
 import Header from '../../components/Header';
-import { Colors, Spacing, Layout, Typography, Touchable } from '../../styles';
 import Button from '../../components/Button';
 import { Routes } from '../../types/navigation';
 import firebaseAuth from '../../services/firebase'
@@ -10,7 +9,9 @@ import { checkEmailValid } from '../../utils/Helper';
 import LabelInput from '../../components/Input/LabelInput';
 import { StackScreenProps } from '@react-navigation/stack';
 import { FirebaseSignUpResponse } from '../../types/firebase';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, ScrollView, TouchableOpacity } from 'react-native';
+import { getPressableStyle } from '../../styles/Touchable';
+import { Colors, Spacing, Layout, Typography } from '../../styles';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, ScrollView, Pressable } from 'react-native';
 
 const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -182,13 +183,13 @@ const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): 
       <View style={styles.disclaimer}>
         <Text style={{ ...Typography.description, textAlign: 'center' }}>{Strings.register.disclaimer}</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Agreement', { type: 'terms' })}>
+          <Pressable onPress={() => navigation.navigate('Agreement', { type: 'terms' })} style={getPressableStyle} hitSlop={20}>
             <Text style={{ ...Typography.description, textAlign: 'center', color: Colors.primary }}>{Strings.register.terms}</Text>
-          </TouchableOpacity>
+          </Pressable>
           <Text style={{ ...Typography.description, textAlign: 'center' }}> {Strings.register.and} </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Agreement', { type: 'privacy' })}>
+          <Pressable onPress={() => navigation.navigate('Agreement', { type: 'privacy' })} style={getPressableStyle} hitSlop={20}>
             <Text style={{ ...Typography.description, textAlign: 'center', color: Colors.primary }}>{Strings.register.privacy}</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
       <Button label={Strings.register.registerBtn} onPress={handleRegister} style={styles.btn} isLoading={isLoading} />

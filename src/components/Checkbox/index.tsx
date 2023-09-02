@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Spacing, Colors, Typography } from '../../styles';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, AppState } from 'react-native';
+import { getPressableStyle } from '../../styles/Touchable';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 
 
 const Checkbox = ({ label, value, onPress, ...props }: {
@@ -23,12 +24,12 @@ const Checkbox = ({ label, value, onPress, ...props }: {
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <Pressable style={(pressed) => [styles.container, getPressableStyle(pressed)]} onPress={onPress}>
       <View style={styles.checkbox}>
         {value && <View style={styles.checkboxInner} />}
       </View>
       <Text style={styles.label}>{label}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

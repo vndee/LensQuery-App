@@ -4,9 +4,9 @@ import { Routes } from '../../types/navigation';
 import {
   View,
   Image,
+  Pressable,
   StatusBar,
   StyleSheet,
-  TouchableOpacity,
   LayoutRectangle,
   NativeSyntheticEvent,
   ImageLoadEventData
@@ -14,6 +14,7 @@ import {
 import Cropper from 'react-native-image-cropview';
 import { getImageSize } from '../../utils/Helper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { getPressableStyle } from '../../styles/Touchable';
 import { StackScreenProps } from '@react-navigation/stack';
 import ImageEditor from "@react-native-community/image-editor";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -66,15 +67,15 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
   const renderFooterDefaultMode = useCallback(() => {
     return (
       <View style={styles.bottomBarBtn}>
-        <TouchableOpacity onPress={handleGoBack} style={styles.button}>
+        <Pressable onPress={handleGoBack} style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20}>
           <Ionicons name="close" size={26} color={Colors.white} style={styles.icon} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setIsCropMode(true)} style={styles.button}>
+        </Pressable>
+        <Pressable onPress={() => setIsCropMode(true)} style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20}>
           <MaterialCommunityIcons name="crop-free" size={26} color={Colors.white} style={styles.icon} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: source.uri })} style={styles.button}>
+        </Pressable>
+        <Pressable onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: source.uri })} style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20}>
           <Ionicons name="checkmark-outline" size={26} color={Colors.white} style={styles.icon} />
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }, []);
@@ -82,12 +83,12 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
   const renderFooterCropMode = useCallback(() => {
     return (
       <View style={styles.bottomBarBtn}>
-        <TouchableOpacity onPress={() => setIsCropMode(false)} style={styles.button}>
+        <Pressable onPress={() => setIsCropMode(false)} style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20}>
           <MaterialCommunityIcons name="close" size={26} color={Colors.white} style={styles.icon} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleCropData} style={styles.button}>
+        </Pressable>
+        <Pressable onPress={handleCropData} style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20}>
           <Ionicons name="checkmark-outline" size={26} color={Colors.white} style={styles.icon} />
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }, []);

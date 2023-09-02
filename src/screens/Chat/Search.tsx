@@ -4,13 +4,13 @@ import Strings from '../../localization';
 import { useSelector } from 'react-redux';
 import { FlashList } from '@shopify/flash-list';
 import { useQuery } from '../../storage/realm';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { IChatBox } from '../../types/chat';
 import BoxCard from '../../components/Chat/BoxCard';
-import { View, TouchableOpacity, StyleSheet, Keyboard, TextInput } from 'react-native';
-import { Colors, Spacing, Typography, Layout } from '../../styles';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { getPressableStyle } from '../../styles/Touchable';
 import { StackScreenProps } from '@react-navigation/stack';
-
+import { Colors, Spacing, Typography, Layout } from '../../styles';
+import { View, StyleSheet, Keyboard, TextInput, Pressable } from 'react-native';
 
 const ChatSearch = ({ navigation, route }: StackScreenProps<Routes, 'ChatSearch'>) => {
   const [searchText, setSearchText] = useState<string>('');
@@ -21,9 +21,9 @@ const ChatSearch = ({ navigation, route }: StackScreenProps<Routes, 'ChatSearch'
   const renderSearchHeader = useCallback(() => {
     return (
       <View style={styles.row}>
-        <TouchableOpacity onPress={() => { setSearchText(''); Keyboard.dismiss(); navigation.goBack(); }}>
+        <Pressable onPress={() => { setSearchText(''); Keyboard.dismiss(); navigation.goBack(); }} style={getPressableStyle}>
           <Ionicons name='close-outline' size={24} color={Colors.white} />
-        </TouchableOpacity>
+        </Pressable>
         <TextInput
           style={[Typography.body, { flex: 1, color: Colors.white }]}
           placeholder={Strings.chatList.searchPlaceholder}

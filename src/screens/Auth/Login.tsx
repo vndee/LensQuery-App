@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, Image, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Image, Pressable } from 'react-native';
 import Strings from '../../localization';
 import appStorage from '../../storage';
 import Button from '../../components/Button';
@@ -12,6 +12,7 @@ import { checkEmailValid } from '../../utils/Helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { StackScreenProps } from '@react-navigation/stack';
 import { FirebaseSignInResponse } from '../../types/firebase';
+import { getPressableStyle } from '../../styles/Touchable';
 import TextInputWithIcon from '../../components/Input/TextInputWithIcon';
 import { Colors, Spacing, Typography, Layout } from '../../styles/index';
 
@@ -151,26 +152,26 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
           />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Checkbox label={Strings.login.rememberMe} value={isRememberMe} onPress={() => setIsRememberMe(!isRememberMe)} />
-            <TouchableOpacity>
+            <Pressable style={getPressableStyle} hitSlop={20}>
               <Text style={{ ...Typography.body, color: Colors.primary }}>{Strings.login.forgotPassword}</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
         <Button label={Strings.login.loginBtn} onPress={handleLogin} isLoading={isLoading} />
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           <Text style={{ ...Typography.body, color: Colors.hint }}>{Strings.login.dontHaveAccount} </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Pressable onPress={() => navigation.navigate('Register')} style={getPressableStyle} hitSlop={20}>
             <Text style={{ ...Typography.body, color: Colors.primary }}>{Strings.login.register}</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
         <View style={styles.changeLanguageContainer}>
-          <TouchableOpacity onPress={() => handleLanguageChange('en')} style={styles.language}>
+          <Pressable onPress={() => handleLanguageChange('en')} style={getPressableStyle}>
             <Text style={[Typography.body, language === 'en' ? styles.languageChoice : styles.languageOption]}>English</Text>
-          </TouchableOpacity>
+          </Pressable>
           <Text style={{ ...Typography.body, color: Colors.hint }}> | </Text>
-          <TouchableOpacity onPress={() => handleLanguageChange('vi')} style={styles.language}>
+          <Pressable onPress={() => handleLanguageChange('vi')} style={getPressableStyle}>
             <Text style={[Typography.body, language === 'vi' ? styles.languageChoice : styles.languageOption]}>Tiếng Việt</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

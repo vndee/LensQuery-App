@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { getPressableStyle } from '../../styles/Touchable';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Typography, Spacing, Colors } from '../../styles';
 import { IChatBox } from '../../types/chat';
 import { formatTimeDiff } from '../../utils/Helper';
@@ -16,8 +17,8 @@ const BoxCard = ({ item, isSelected, selectedMode, onPress, onLongPress }: IChat
   const { id, name, engineId, lastMessageAt, lastMessage, createAt, updateAt } = item;
 
   return (
-    <TouchableOpacity
-      style={styles.container}
+    <Pressable
+      style={(pressed) => [styles.container, getPressableStyle(pressed)]}
       onPress={onPress}
       onLongPress={onLongPress}
     >
@@ -33,7 +34,7 @@ const BoxCard = ({ item, isSelected, selectedMode, onPress, onLongPress }: IChat
           {lastMessage.replace(/\n/g, ' ')}
         </Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   )
 };
 

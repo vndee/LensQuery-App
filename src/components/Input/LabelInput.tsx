@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { isEmpty } from 'lodash';
 
 const LabelInput = ({ label, icon, placeholder, value, onChangeText, secureTextEntry, keyboardType, iconView, errorText, ...props }: {

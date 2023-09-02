@@ -1,18 +1,19 @@
 import Strings from '../../localization';
 import { useSelector } from 'react-redux';
+import { SvgXml } from 'react-native-svg';
 import { Routes } from '../../types/navigation';
-import React, { useState, useRef, useCallback } from 'react';
-import { LayoutAnimation, View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { Colors, Spacing, Typography, Layout } from '../../styles';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FlashList } from '@shopify/flash-list';
 import BoxCard from '../../components/Chat/BoxCard';
-import { useRealm, useQuery, useObject } from '../../storage/realm';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { getPressableStyle } from '../../styles/Touchable';
 import { StackScreenProps } from '@react-navigation/stack';
-import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
+import React, { useState, useRef, useCallback } from 'react';
 import { IChatBox, IMessageCollection } from '../../types/chat';
-import { SvgXml } from 'react-native-svg';
 import { NotFoundXML } from '../../components/Illustrations/NotFound';
+import { Colors, Spacing, Typography, Layout } from '../../styles';
+import { useRealm, useQuery, useObject } from '../../storage/realm';
+import { LayoutAnimation, View, Text, StyleSheet, Alert, Pressable } from 'react-native';
+import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
 const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) => {
   const realm = useRealm();
@@ -112,15 +113,15 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
   const renderDefaultHeader = useCallback(() => {
     return (
       <>
-        <TouchableOpacity onPress={() => navigation.navigate('ChatSearch')} style={{ marginRight: Spacing.S }}>
+        <Pressable onPress={() => navigation.navigate('ChatSearch')} style={getPressableStyle} hitSlop={20}>
           <Ionicons name='search-outline' size={24} color={Colors.white} />
-        </TouchableOpacity>
-        <View style={{ flex: 1 }}>
+        </Pressable>
+        <View style={{ flex: 1, marginLeft: Spacing.S }}>
           <Text style={[Typography.H3, { color: Colors.white }]}>{Strings.chatList.title}</Text>
         </View>
-        <TouchableOpacity style={styles.settingIcon} onPress={() => navigation.navigate('Settings')}>
+        <Pressable style={getPressableStyle} onPress={() => navigation.navigate('Settings')} hitSlop={20}>
           <Ionicons name='settings-outline' size={24} color={Colors.white} />
-        </TouchableOpacity>
+        </Pressable>
       </>
     );
   }, [language]);
@@ -128,19 +129,30 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
   const renderSelectedHeader = useCallback(() => {
     return (
       <View style={styles.row}>
-        <TouchableOpacity onPress={() => { setIsSelectedAll(!isSelectedAll); setSelectedBox(new Set()) }}>
+        <Pressable onPress={() => { setIsSelectedAll(!isSelectedAll); setSelectedBox(new Set()) }} style={getPressableStyle} hitSlop={20}>
           <View style={[styles.checkBox, isSelectedAll && { backgroundColor: Colors.white, borderWidth: 0 }]} />
-        </TouchableOpacity>
+        </Pressable>
         <Text style={[Typography.title, { flex: 1, color: Colors.white }]}>{isSelectedAll ? listOfChats.length : selectedBox.size} {Strings.chatList.selected}</Text>
-        <TouchableOpacity style={{ marginLeft: 'auto', marginRight: Spacing.S }} onPress={alertDeleteBactch}>
-          <Ionicons name='trash-outline' size={20} color={Colors.white} />
-        </TouchableOpacity>
-        <TouchableOpacity style={{ marginLeft: 'auto' }} onPress={() => { setIsSelectedMode(false); setSelectedBox(new Set()); }}>
-          <Ionicons name='close-outline' size={24} color={Colors.white} />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', gap: Spacing.M, alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+          <Pressable style={getPressableStyle} hitSlop={5} onPress={alertDeleteBactch}>
+            <Ionicons name='trash-outline' size={20} color={Colors.white} />
+          </Pressable>
+          <Pressable style={getPressableStyle} hitSlop={5} onPress={() => { setIsSelectedMode(false); setSelectedBox(new Set()); }}>
+            <Ionicons name='close-outline' size={24} color={Colors.white} />
+          </Pressable>
+        </View>
       </View>
     );
   }, [isSelectedAll, selectedBox, language]);
+
+  const renderEmptyComponent = useCallback(() => {
+    return (
+      <View style={styles.svgIllus}>
+        <SvgXml xml={NotFoundXML} width="100%" height="100%" />
+        <Text style={[styles.body, { marginTop: Spacing.L }]}>{Strings.chatList.notFound}</Text>
+      </View>
+    );
+  }, [language]);
 
   let header = renderDefaultHeader();
   if (isSelectedMode) {
@@ -152,29 +164,30 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
       <View style={Layout.header}>
         {header}
       </View>
-      <View style={{ flex: 1 }}>
-        {listOfChats.length > 0 ? <FlashList
-          ref={listRef}
-          data={listOfChats}
-          renderItem={({ item }: { item: IChatBox }) => <BoxCard
-            item={item}
-            isSelected={selectedBox.has(item?.id) || isSelectedAll}
-            selectedMode={isSelectedMode}
-            onPress={() => !isSelectedMode ? navigation.navigate('ChatBox', { chatBoxId: item.id, imageUri: undefined }) : setSelectedBox((prev) => { prev.has(item?.id) ? prev.delete(item?.id) : prev.add(item?.id); return new Set(prev); })}
-            onLongPress={() => { setSelectedChatBoxId(item?.id); actionSheetRef?.current?.show(); }}
-          />}
-          keyExtractor={(item, index) => index.toString()}
-          showsVerticalScrollIndicator={false}
-          estimatedItemSize={100}
-          ItemSeparatorComponent={() => <View style={{ height: 0.5, backgroundColor: Colors.borders }} />}
-        /> :
-          <View style={styles.svgIllus}>
-            <SvgXml xml={NotFoundXML} width="100%" height="100%" />
-          </View>}
+      <View style={[{ flex: 1 }, listOfChats.length === 0 && { justifyContent: 'center' }]}>
+        {
+          listOfChats.length > 0 ?
+            <FlashList
+              ref={listRef}
+              data={listOfChats}
+              renderItem={({ item }: { item: IChatBox }) => <BoxCard
+                item={item}
+                isSelected={selectedBox.has(item?.id) || isSelectedAll}
+                selectedMode={isSelectedMode}
+                onPress={() => !isSelectedMode ? navigation.navigate('ChatBox', { chatBoxId: item.id, imageUri: undefined }) : setSelectedBox((prev) => { prev.has(item?.id) ? prev.delete(item?.id) : prev.add(item?.id); return new Set(prev); })}
+                onLongPress={() => { setSelectedChatBoxId(item?.id); actionSheetRef?.current?.show(); }}
+              />}
+              keyExtractor={(item, index) => index.toString()}
+              showsVerticalScrollIndicator={false}
+              estimatedItemSize={100}
+              ItemSeparatorComponent={() => <View style={{ height: 0.5, backgroundColor: Colors.borders }} />}
+            /> :
+            renderEmptyComponent()
+        }
       </View>
-      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('Lens')}>
+      <Pressable style={({ pressed }) => [styles.fab, { opacity: pressed ? 0.4 : 1 }]} onPress={() => navigation.navigate('Lens')}>
         <Ionicons name='add' size={24} color={Colors.white} />
-      </TouchableOpacity>
+      </Pressable>
 
       <BottomActionSheet actionRef={actionSheetRef} actions={actionItem} />
     </View>
@@ -188,9 +201,8 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     gap: Spacing.XS
   },
   svgIllus: {
-    flex: 1,
+    width: 300,
     height: 200,
-    width: 200,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',

@@ -1,6 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Spacing, Colors } from '../../styles';
-import { View, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import {
   Camera,
   CameraDeviceFormat,
@@ -11,20 +9,23 @@ import {
   VideoFile,
   frameRateIncluded
 } from 'react-native-vision-camera';
+import Button from '../../components/Button';
+import { Routes } from '../../types/navigation';
 import { MediaType } from 'react-native-image-picker';
 import { useIsFocused } from '@react-navigation/core';
+import * as ImagePicker from 'react-native-image-picker';
+import { StackScreenProps } from '@react-navigation/stack';
+import { getPressableStyle } from '../../styles/Touchable';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useIsForeground } from '../../hooks/useIsForeground';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import { View, StyleSheet, StatusBar, Pressable } from 'react-native';
+import { CaptureButton } from '../../components/Button/CaptureButton';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { LENS_MAX_ZOOM_FACTOR, LENS_SCALE_FULL_ZOOM } from '../../utils/Constants';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PinchGestureHandler, PinchGestureHandlerGestureEvent, TapGestureHandler } from 'react-native-gesture-handler';
 import Reanimated, { Extrapolate, interpolate, useAnimatedGestureHandler, useAnimatedProps, useSharedValue } from 'react-native-reanimated';
-import { useIsForeground } from '../../hooks/useIsForeground';
-import { Routes } from '../../types/navigation';
-import Button from '../../components/Button';
-import * as ImagePicker from 'react-native-image-picker';
-import { CaptureButton } from '../../components/Button/CaptureButton';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { StackScreenProps } from '@react-navigation/stack';
-import { LENS_MAX_ZOOM_FACTOR, LENS_SCALE_FULL_ZOOM } from '../../utils/Constants';
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({
@@ -249,31 +250,31 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
 
       <View style={styles.rightButtonRow}>
         {supportsCameraFlipping && (
-          <TouchableOpacity style={styles.button} onPress={onFlipCameraPressed}>
+          <Pressable style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20} onPress={onFlipCameraPressed}>
             <Ionicons name="camera-reverse" color="white" size={24} />
-          </TouchableOpacity>
+          </Pressable>
         )}
         {supportsFlash && (
-          <TouchableOpacity style={styles.button} onPress={onFlashPressed}>
+          <Pressable style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20} onPress={onFlashPressed}>
             <Ionicons name={flash === 'on' ? 'flash' : 'flash-off'} color="white" size={24} />
-          </TouchableOpacity>
+          </Pressable>
         )}
         {supportsHdr && (
-          <TouchableOpacity style={styles.button} onPress={() => setEnableHdr((h) => !h)}>
+          <Pressable style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20} onPress={() => setEnableHdr((h) => !h)}>
             <MaterialIcon name={enableHdr ? 'hdr' : 'hdr-off'} color="white" size={24} />
-          </TouchableOpacity>
+          </Pressable>
         )}
         {canToggleNightMode && (
-          <TouchableOpacity style={styles.button} onPress={() => setEnableNightMode(!enableNightMode)}>
+          <Pressable style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20} onPress={() => setEnableNightMode(!enableNightMode)}>
             <Ionicons name={enableNightMode ? 'moon' : 'moon-outline'} color="white" size={24} />
-          </TouchableOpacity>
+          </Pressable>
         )}
-        <TouchableOpacity style={styles.button} onPress={selectImage}>
+        <Pressable style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20} onPress={selectImage}>
           <MaterialCommunityIcon name="file-image-plus-outline" color="white" size={24} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ChatList')}>
+        </Pressable>
+        <Pressable style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20} onPress={() => navigation.navigate('ChatList')}>
           <Ionicons name="chatbubbles-outline" color="white" size={24} />
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
