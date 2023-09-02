@@ -1,6 +1,5 @@
 import { isEmpty } from 'lodash';
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Image, Pressable } from 'react-native';
 import Strings from '../../localization';
 import appStorage from '../../storage';
 import Button from '../../components/Button';
@@ -15,6 +14,7 @@ import { FirebaseSignInResponse } from '../../types/firebase';
 import { getPressableStyle } from '../../styles/Touchable';
 import TextInputWithIcon from '../../components/Input/TextInputWithIcon';
 import { Colors, Spacing, Typography, Layout } from '../../styles/index';
+import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Image, Pressable } from 'react-native';
 
 const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.Element => {
   const dispatch = useDispatch();
@@ -216,7 +216,14 @@ const styles = StyleSheet.create({
   languageChoice: {
     color: Colors.primary,
     fontWeight: '600'
-  }
+  },
+  absolute: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
 });
 
 export default Login;

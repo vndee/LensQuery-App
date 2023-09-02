@@ -4,7 +4,7 @@ import Realm from 'realm';
 import { isEmpty } from 'lodash';
 import Strings from '../../localization';
 import { useSelector } from 'react-redux';
-import { Routes } from '../../types/navigation'; 123456
+import { Routes } from '../../types/navigation';
 import EventSource from '../../services/sse';
 import { FlashList } from '@shopify/flash-list';
 import Toast from 'react-native-toast-message';
@@ -361,7 +361,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <View style={Layout.header}>
         {!isSearchBarVisible ? (
           <>
@@ -519,6 +519,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     borderTopColor: Colors.borders,
     backgroundColor: Colors.background,
     paddingHorizontal: Spacing.horizontalPadding,
+    ...Layout.shadow
   },
   messageInput: {
     ...Typography.body,

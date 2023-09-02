@@ -185,7 +185,7 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
             renderEmptyComponent()
         }
       </View>
-      <Pressable style={({ pressed }) => [styles.fab, { opacity: pressed ? 0.4 : 1 }]} onPress={() => navigation.navigate('Lens')}>
+      <Pressable style={({ pressed }) => [styles.fab, { opacity: pressed ? 0.4 : 1 }]} onPress={() => navigation.navigate('Lens')} hitSlop={20}>
         <Ionicons name='add' size={24} color={Colors.white} />
       </Pressable>
 
