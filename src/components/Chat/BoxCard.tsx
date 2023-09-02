@@ -40,17 +40,17 @@ const BoxCard = ({ item, isSelected, selectedMode, onPress, onLongPress }: IChat
 const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    paddingHorizontal: Spacing.horizontalPadding,
+    paddingHorizontal: Spacing.L,
     paddingVertical: Spacing.M,
-    borderBottomWidth: 0.25,
-    borderBottomColor: Colors.borders,
+    // borderBottomWidth: 0.25,
+    // borderBottomColor: Colors.borders,
   },
   checkBox: {
     width: 20,
     height: 20,
     borderRadius: 4,
-    borderWidth: 1,
-    borderColor: Colors.borders,
+    borderWidth: 0.4,
+    borderColor: Colors.primary,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',

@@ -137,12 +137,12 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       <View style={[Layout.header, { paddingHorizontal: Spacing.horizontalPadding }]}>
         <View style={Layout.row}>
           <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
-            <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
+            <Ionicons name="chevron-back" size={20} color={Colors.white} />
           </TouchableOpacity>
-          <Text style={[Typography.H3, { marginLeft: Spacing.XS }]}>{Strings.setting.title}</Text>
+          <Text style={[Typography.H3, { marginLeft: Spacing.XS, color: Colors.white }]}>{Strings.setting.title}</Text>
         </View>
         <TouchableOpacity style={styles.moreIcon} onPress={() => actionSheetRef.current?.show()} disabled={isEditing}>
-          <Feather name="more-vertical" size={20} color={Colors.text_color} />
+          <Feather name="more-vertical" size={20} color={Colors.white} />
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.container}>
@@ -204,6 +204,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 const styles = StyleSheet.create({
   container: {
     ...Layout.content,
+    marginTop: Spacing.L,
     gap: Spacing.XL,
   },
   backIcon: {

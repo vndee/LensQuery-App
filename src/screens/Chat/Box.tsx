@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import 'react-native-get-random-values'
 import Realm from 'realm';
 import { isEmpty } from 'lodash';
@@ -14,7 +14,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import LabelSwitch from '../../components/Switch/LabelSwitch';
-import { useRealm, useQuery, useObject } from '../../storage/realm';
+import { useRealm, useObject } from '../../storage/realm';
 import Message from '../../components/Chat/Message';
 import { constructMessage } from '../../utils/Helper';
 import { IAppConfig } from '../../types/config';
@@ -57,13 +57,13 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const [isSearchBarVisible, setIsSearchBarVisible] = useState<boolean>(false);
   const [isNotFoundKeyModalVisible, setIsNotFoundKeyModalVisible] = useState<boolean>(isEmpty(openaiKey));
 
-  const handleGetOCRResult = async (imageUri: string): Promise<string> => {
+  const handleGetOCRResult = useCallback(async (imageUri: string): Promise<string> => {
     const { status, data } = await getOCRResult(imageUri);
     if (status === 200) {
       return data;
     }
     return '';
-  };
+  }, []);
 
   const handleUnknowError = useCallback(() => {
     Toast.show({
@@ -364,10 +364,11 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           <>
             <View style={styles.row}>
               <TouchableOpacity onPress={() => navigation.navigate('ChatList')} style={styles.backIcon}>
-                <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
+                <Ionicons name="chevron-back" size={20} color={Colors.white} />
               </TouchableOpacity>
-              <Text style={Typography.H3}>Chat</Text>
+              <Text style={[Typography.H3, { color: Colors.white }]}>{Strings.chatBox.title}</Text>
             </View>
+
             <View style={styles.headerRight}>
               <LabelSwitch
                 data={chatEngine}
@@ -380,7 +381,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
               />
 
               <TouchableOpacity style={styles.moreIcon} onPress={() => actionSheetRef.current?.show()}>
-                <Feather name="more-vertical" size={20} color={Colors.text_color} />
+                <Feather name="more-vertical" size={20} color={Colors.white} />
               </TouchableOpacity>
             </View>
           </>) : (
@@ -467,7 +468,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   container: {
     ...Layout.content,
-    backgroundColor: Colors.white_two,
+    backgroundColor: Colors.background,
   },
   row: {
     flex: 1,
@@ -507,6 +508,8 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingTop: Spacing.S,
+    borderTopWidth: 0.5,
+    borderTopColor: Colors.borders,
     backgroundColor: Colors.background,
     paddingHorizontal: Spacing.horizontalPadding,
   },
@@ -516,7 +519,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     backgroundColor: Colors.white_two,
     paddingVertical: Spacing.M,
     paddingHorizontal: Spacing.M,
-    borderRadius: 8,
+    borderRadius: Spacing.M,
   },
   sendIcon: {
     width: 44,

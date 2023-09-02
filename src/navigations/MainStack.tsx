@@ -19,13 +19,13 @@ const MainStack = (): JSX.Element => {
     <>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ title: undefined }} initialRouteName="ChatList">
-          <Stack.Screen name="Lens" component={Lens} options={{ headerShown: false }} />
-          <Stack.Screen name="Media" component={Media} options={{ headerShown: false }} />
-          <Stack.Screen name="ChatList" component={ChatList} options={{ headerShown: false }} />
-          <Stack.Screen name="ChatBox" component={ChatBox} options={{ headerShown: false }} />
-          <Stack.Screen name="ChatSearch" component={ChatSearch} options={{ headerShown: false, ...TransitionPresets.FadeFromBottomAndroid }} />
-          <Stack.Screen name="Settings" component={Settings} options={{ headerShown: false, ...TransitionPresets.FadeFromBottomAndroid }} />
-          <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />
+          <Stack.Screen name="Lens" component={Lens} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="Media" component={Media} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="ChatList" component={ChatList} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="ChatBox" component={ChatBox} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="ChatSearch" component={ChatSearch} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="Settings" component={Settings} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

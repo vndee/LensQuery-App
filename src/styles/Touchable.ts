@@ -7,7 +7,7 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.primary,
     backgroundColor: Colors.btnColor,
-    borderRadius: Spacing.XS,
+    borderRadius: Spacing.M,
     paddingVertical: Spacing.buttonVerticalPadding,
     paddingHorizontal: Spacing.L,
     alignItems: 'center',

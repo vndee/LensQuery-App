@@ -1,8 +1,8 @@
 import Strings from '../../localization';
 import { useSelector } from 'react-redux';
 import { Routes } from '../../types/navigation';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Keyboard, LayoutAnimation, View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import React, { useState, useRef, useCallback } from 'react';
+import { LayoutAnimation, View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FlashList } from '@shopify/flash-list';
@@ -111,13 +111,13 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
     return (
       <>
         <TouchableOpacity onPress={() => navigation.navigate('ChatSearch')} style={{ marginRight: Spacing.S }}>
-          <Ionicons name='search-outline' size={24} color={Colors.text_color} />
+          <Ionicons name='search-outline' size={24} color={Colors.white} />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <Text style={Typography.H3}>{Strings.chatList.title}</Text>
+          <Text style={[Typography.H3, { color: Colors.white }]}>{Strings.chatList.title}</Text>
         </View>
         <TouchableOpacity style={styles.settingIcon} onPress={() => navigation.navigate('Settings')}>
-          <Ionicons name='settings-outline' size={24} color={Colors.primary} />
+          <Ionicons name='settings-outline' size={24} color={Colors.white} />
         </TouchableOpacity>
       </>
     );
@@ -127,14 +127,14 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
     return (
       <View style={styles.row}>
         <TouchableOpacity onPress={() => { setIsSelectedAll(!isSelectedAll); setSelectedBox(new Set()) }}>
-          <View style={[styles.checkBox, isSelectedAll && { backgroundColor: Colors.primary, borderWidth: 0 }]} />
+          <View style={[styles.checkBox, isSelectedAll && { backgroundColor: Colors.white, borderWidth: 0 }]} />
         </TouchableOpacity>
-        <Text style={[Typography.title, { flex: 1 }]}>{isSelectedAll ? listOfChats.length : selectedBox.size} {Strings.chatList.selected}</Text>
+        <Text style={[Typography.title, { flex: 1, color: Colors.white }]}>{isSelectedAll ? listOfChats.length : selectedBox.size} {Strings.chatList.selected}</Text>
         <TouchableOpacity style={{ marginLeft: 'auto', marginRight: Spacing.S }} onPress={alertDeleteBactch}>
-          <Ionicons name='trash-outline' size={20} color={Colors.danger} />
+          <Ionicons name='trash-outline' size={20} color={Colors.white} />
         </TouchableOpacity>
         <TouchableOpacity style={{ marginLeft: 'auto' }} onPress={() => { setIsSelectedMode(false); setSelectedBox(new Set()); }}>
-          <Ionicons name='close-outline' size={24} color={Colors.primary} />
+          <Ionicons name='close-outline' size={24} color={Colors.white} />
         </TouchableOpacity>
       </View>
     );
@@ -146,7 +146,7 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <View style={Layout.header}>
         {header}
       </View>
@@ -164,6 +164,7 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
           keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           estimatedItemSize={100}
+          ItemSeparatorComponent={() => <View style={{ height: 0.5, backgroundColor: Colors.borders }} />}
         />
       </View>
       <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('Lens')}>
@@ -182,15 +183,15 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     gap: Spacing.XS
   },
   fab: {
-    position: 'absolute',
-    bottom: Spacing.XL,
-    right: Spacing.XL,
     width: 44,
     height: 44,
     borderRadius: 28,
-    backgroundColor: Colors.primary,
+    position: 'absolute',
+    bottom: Spacing.XL,
+    right: Spacing.XL,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: Colors.primary,
 
     shadowColor: Colors.primary,
     shadowOffset: {

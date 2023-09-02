@@ -1,6 +1,6 @@
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { Routes } from '../types/navigation';
 // screens
 import Login from '../screens/Auth/Login';
@@ -13,16 +13,11 @@ const Stack = createStackNavigator<Routes>();
 const AuthStack = (): JSX.Element => {
   return (
     <NavigationContainer>
-      {/* <StatusBar
-        translucent={true}
-        backgroundColor={'transparent'}
-        barStyle="dark-content"
-      /> */}
       <Stack.Navigator initialRouteName='Login'>
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-        <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
-        <Stack.Screen name="Agreement" component={Agreement} options={{ headerShown: false }} />
-        <Stack.Screen name="OnboardingSetup" component={OnboardingSetup} options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+        <Stack.Screen name="Register" component={Register} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+        <Stack.Screen name="Agreement" component={Agreement} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+        <Stack.Screen name="OnboardingSetup" component={OnboardingSetup} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

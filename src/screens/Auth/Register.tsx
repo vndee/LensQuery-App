@@ -194,8 +194,10 @@ const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): 
 const styles = StyleSheet.create({
   container: {
     ...Layout.content,
+    gap: Spacing.XL,
+    marginTop: Spacing.XL,
     justifyContent: 'center',
-    gap: Spacing.XL
+    backgroundColor: Colors.background
   },
   content: {
     width: '100%',

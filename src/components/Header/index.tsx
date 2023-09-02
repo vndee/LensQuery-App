@@ -14,8 +14,8 @@ const Header = ({ title }: Props): JSX.Element => {
   return (
     <View style={Layout.header}>
       <View style={styles.row}>
-        <Ionicons name="arrow-back" size={20} color={Colors.text_color} onPress={navigation.goBack} />
-        <Text style={Typography.H3}>{title}</Text>
+        <Ionicons name="arrow-back" size={20} color={Colors.white} onPress={navigation.goBack} />
+        <Text style={[Typography.H3, { marginLeft: Spacing.XS, color: Colors.white }]}>{title}</Text>
       </View>
     </View>
   );

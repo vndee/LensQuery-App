@@ -26,7 +26,7 @@ export default StyleSheet.create({
     color: Colors.text_color,
   },
   H3: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: 'bold',
     color: Colors.text_color,
   },

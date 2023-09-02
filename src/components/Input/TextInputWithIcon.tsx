@@ -67,7 +67,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: Spacing.XS,
+    borderRadius: Spacing.M,
     borderColor: Colors.borders,
     paddingHorizontal: Spacing.XS,
   },

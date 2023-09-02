@@ -114,6 +114,7 @@ export default new LocalizedStrings({
 
     // Chat box
     chatBox: {
+      title: 'Chat',
       placeholder: 'Type a message...',
       optionSearch: 'Search in this chatbox',
       optionClear: 'Clear all messages',
@@ -269,6 +270,7 @@ export default new LocalizedStrings({
 
     // Chat box
     chatBox: {
+      title: 'Trò chuyện',
       placeholder: 'Nhập tin nhắn...',
       optionSearch: 'Tìm kiếm trong tin nhắn',
       optionClear: 'Xóa tất cả tin nhắn',

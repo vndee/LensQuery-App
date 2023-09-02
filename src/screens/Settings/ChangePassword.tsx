@@ -64,9 +64,9 @@ const ChangePassword = ({ navigation, route }: StackScreenProps<Routes, 'ChangeP
       <View style={[Layout.header, { paddingHorizontal: Spacing.horizontalPadding }]}>
         <View style={Layout.row}>
           <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
-            <Ionicons name="chevron-back" size={20} color={Colors.text_color} />
+            <Ionicons name="chevron-back" size={20} color={Colors.white} />
           </TouchableOpacity>
-          <Text style={Typography.H3}>{Strings.changePassword.title}</Text>
+          <Text style={[Typography.H3, { marginLeft: Spacing.XS, color: Colors.white }]}>{Strings.changePassword.title}</Text>
         </View>
       </View>
       <ScrollView style={{ flex: 1, backgroundColor: Colors.background }}>

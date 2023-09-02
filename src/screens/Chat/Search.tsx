@@ -22,12 +22,12 @@ const ChatSearch = ({ navigation, route }: StackScreenProps<Routes, 'ChatSearch'
     return (
       <View style={styles.row}>
         <TouchableOpacity onPress={() => { setSearchText(''); Keyboard.dismiss(); navigation.goBack(); }}>
-          <Ionicons name='close-outline' size={24} color={Colors.primary} />
+          <Ionicons name='close-outline' size={24} color={Colors.white} />
         </TouchableOpacity>
         <TextInput
-          style={[Typography.body, { flex: 1 }]}
+          style={[Typography.body, { flex: 1, color: Colors.white }]}
           placeholder={Strings.chatList.searchPlaceholder}
-          placeholderTextColor={Colors.text_color}
+          placeholderTextColor={Colors.white}
           onChangeText={(text) => setSearchText(text)}
           value={searchText}
         />
@@ -36,7 +36,7 @@ const ChatSearch = ({ navigation, route }: StackScreenProps<Routes, 'ChatSearch'
   }, [searchText]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <View style={Layout.header}>
         {renderSearchHeader()}
       </View>
@@ -54,6 +54,7 @@ const ChatSearch = ({ navigation, route }: StackScreenProps<Routes, 'ChatSearch'
           keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           estimatedItemSize={100}
+          ItemSeparatorComponent={() => <View style={{ height: 0.5, backgroundColor: Colors.borders }} />}
         />
       </View>
     </View>

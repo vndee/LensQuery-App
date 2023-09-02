@@ -50,7 +50,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     paddingHorizontal: Spacing.XS,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: Spacing.XS,
+    borderRadius: Spacing.M,
     borderColor: Colors.borders
   },
   textInput: {

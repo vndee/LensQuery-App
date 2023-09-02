@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, Image } from 'react-native';
 import Strings from '../../localization';
 import appStorage from '../../storage';
 import Button from '../../components/Button';
@@ -114,7 +114,11 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
       behavior={Platform.OS == 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.appTitle}>LensQuery</Text>
+        <View>
+          <Image source={require('../../assets/logo.png')} style={styles.logoBtn} />
+          <Text style={[styles.appTitle, { marginTop: Spacing.M }]}>LensQuery</Text>
+        </View>
+
         <View>
           <TextInputWithIcon
             icon="mail-outline"
@@ -170,10 +174,17 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
 };
 
 const styles = StyleSheet.create({
+  logoBtn: {
+    width: 100,
+    height: 100,
+    alignSelf: 'center',
+    borderRadius: Spacing.M,
+  },
   container: {
     ...Layout.content,
     justifyContent: 'center',
-    gap: Spacing.XL
+    gap: Spacing.XL,
+    backgroundColor: Colors.background
   },
   appTitle: {
     ...Typography.H1,

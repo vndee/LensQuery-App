@@ -6,18 +6,29 @@ import { getStatusBarHeight } from "../utils/Device";
 export default StyleSheet.create({
   content: {
     flex: 1,
-    backgroundColor: Colors.background,
     paddingHorizontal: Spacing.horizontalPadding,
   },
   header: {
-    height: getStatusBarHeight(false) + 52,
+    height: 52,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    alignContent: 'flex-end',
+    alignItems: 'center',
+    alignContent: 'center',
+    borderRadius: Spacing.M,
     paddingVertical: Spacing.verticalPadding,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.primary,
     paddingHorizontal: Spacing.horizontalPadding,
+    marginHorizontal: Spacing.horizontalPadding,
+    marginTop: getStatusBarHeight(false) + Spacing.verticalPadding,
+
+    shadowColor: Colors.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
   row: {
     flexDirection: 'row',
