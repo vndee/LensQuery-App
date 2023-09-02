@@ -11,6 +11,8 @@ import { useRealm, useQuery, useObject } from '../../storage/realm';
 import { StackScreenProps } from '@react-navigation/stack';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 import { IChatBox, IMessageCollection } from '../../types/chat';
+import { SvgXml } from 'react-native-svg';
+import { NotFoundXML } from '../../components/Illustrations/NotFound';
 
 const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) => {
   const realm = useRealm();
@@ -151,7 +153,7 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
         {header}
       </View>
       <View style={{ flex: 1 }}>
-        <FlashList
+        {listOfChats.length > 0 ? <FlashList
           ref={listRef}
           data={listOfChats}
           renderItem={({ item }: { item: IChatBox }) => <BoxCard
@@ -165,7 +167,10 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
           showsVerticalScrollIndicator={false}
           estimatedItemSize={100}
           ItemSeparatorComponent={() => <View style={{ height: 0.5, backgroundColor: Colors.borders }} />}
-        />
+        /> :
+          <View style={styles.svgIllus}>
+            <SvgXml xml={NotFoundXML} width="100%" height="100%" />
+          </View>}
       </View>
       <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('Lens')}>
         <Ionicons name='add' size={24} color={Colors.white} />
@@ -181,6 +186,14 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.XS
+  },
+  svgIllus: {
+    flex: 1,
+    height: 200,
+    width: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   fab: {
     width: 44,
