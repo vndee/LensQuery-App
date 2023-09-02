@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { isEmpty } from 'lodash';
 import { IMessage } from '../../types/chat';
 import { unixToTime } from '../../utils/Helper';
 import { getImageSize } from '../../utils/Helper';
@@ -19,7 +20,7 @@ const Message = ({ item, onLongPress }: Props) => {
   const [imageWidth, setImageWidth] = useState<number>(0);
   const [imageHeight, setImageHeight] = useState<number>(0);
 
-  if (item.type === 'image') {
+  if (item.type === 'image' && !isEmpty(item.content)) {
     (async () => {
       const size = await getImageSize(item.content);
       const { width, height } = size;

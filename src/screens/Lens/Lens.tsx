@@ -33,14 +33,9 @@ Reanimated.addWhitelistedNativeProps({
 });
 
 const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Element => {
-  const dispatch = useDispatch();
-  const cameraRef = useRef<Camera>(null);
-
   const zoom = useSharedValue(0);
   const camera = useRef<Camera>(null);
-  const [imageSource, setImageSource] = useState<string | undefined>();
   const [isCameraInitialized, setIsCameraInitialized] = useState(false);
-  const [hasMicrophonePermission, setHasMicrophonePermission] = useState(false);
   const isPressingButton = useSharedValue(false);
 
   // check if camera page is active
@@ -204,10 +199,10 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
     };
 
     const onSelect = (selected: any) => {
-      // navigation.navigate('ChatBox', {
-      //   imageUri: selected?.assets?.[0]?.uri,
-      //   chatBoxId: undefined,
-      // });
+      if (selected.didCancel) {
+        console.log('User cancelled image picker');
+        return;
+      }
       navigation.navigate('Media', {
         path: selected?.assets?.[0]?.uri,
         type: 'photo',
