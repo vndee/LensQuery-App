@@ -18,7 +18,7 @@ const MainStack = (): JSX.Element => {
   return (
     <>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ title: undefined }} initialRouteName="Lens">
+        <Stack.Navigator screenOptions={{ title: undefined }} initialRouteName="ChatList">
           <Stack.Screen name="Lens" component={Lens} options={{ headerShown: false }} />
           <Stack.Screen name="Media" component={Media} options={{ headerShown: false }} />
           <Stack.Screen name="ChatList" component={ChatList} options={{ headerShown: false }} />

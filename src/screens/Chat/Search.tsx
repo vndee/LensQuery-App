@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Routes } from '../../types/navigation';
 import Strings from '../../localization';
+import { useSelector } from 'react-redux';
 import { FlashList } from '@shopify/flash-list';
 import { useQuery } from '../../storage/realm';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -14,7 +15,8 @@ import { StackScreenProps } from '@react-navigation/stack';
 const ChatSearch = ({ navigation, route }: StackScreenProps<Routes, 'ChatSearch'>) => {
   const [searchText, setSearchText] = useState<string>('');
   const listRef = useRef<FlashList<IChatBox> | null>(null);
-  const listOfChats = useQuery<IChatBox>('ChatBox').sorted('lastMessageAt', true).filtered(`name CONTAINS[c] "${searchText}"`);
+  const { userToken } = useSelector((state: any) => state.auth);
+  const listOfChats = useQuery<IChatBox>('ChatBox').filtered('userToken == $0', userToken).sorted('lastMessageAt', true).filtered(`name CONTAINS[c] "${searchText}"`);
 
   const renderSearchHeader = useCallback(() => {
     return (

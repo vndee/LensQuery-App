@@ -76,5 +76,7 @@
 	<string>$(PRODUCT_NAME) needs access to your Photo Library to save photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>$(PRODUCT_NAME) needs access to your Photo Library to save photos.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>

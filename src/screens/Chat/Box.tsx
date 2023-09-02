@@ -219,7 +219,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
     console.debug('results', results);
   }
 
-  const alertCannotRecognizeText = () => {
+  const alertCannotRecognizeText = (_chatBox: Realm.Object<IChatBox>, _messageCollection: Realm.Object<IMessageCollection>) => {
     Alert.alert(
       Strings.common.alertTitle,
       Strings.chatBox.cannotRecognizeMessage,
@@ -228,12 +228,12 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           text: Strings.common.ok,
           onPress: () => {
             realm.write(() => {
-              if (chatBox) realm.delete(chatBox);
-              if (chatCollection) realm.delete(chatCollection);
+              if (_chatBox) realm.delete(_chatBox);
+              if (_messageCollection) realm.delete(_messageCollection);
             })
             navigation.goBack()
           },
-          style: 'destructive'
+          style: 'default'
         },
       ]
     );
@@ -245,50 +245,71 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         let text: string = '';
         const boxId = new Realm.BSON.ObjectId().toHexString();
         const collectionId = new Realm.BSON.ObjectId().toHexString();
-
-        if (imageUri !== undefined) {
-          const message = constructMessage(collectionId, imageUri, 'image', false, engine.id, userToken);
-          setMessages((messages) => [message, ...messages]);
-          text = await handleGetOCRResult(imageUri)
-          if (text === undefined || text === '') {
-            alertCannotRecognizeText();
-            return;
-          }
-        }
-
-        // create new chat box in realm
-        const ocrMessage = constructMessage(collectionId, text, 'bot', false, engine.id, userToken);
-        setMessages((messages) => [ocrMessage, ...messages]);
-        const updatedTime = new Date().getTime();
-        realm.write(() => {
-          const chatBox = realm.create('ChatBox', {
+        const { _chatBox, _messageCollection } = realm.write(() => {
+          const _chatBox: Realm.Object<IChatBox> = realm.create('ChatBox', {
             id: boxId,
             name: '',
             engineId: engine.id,
             collectionId: collectionId,
-            lastMessage: text,
-            lastMessageAt: updatedTime,
-            createAt: updatedTime,
-            updateAt: updatedTime,
+            lastMessage: '',
+            lastMessageAt: new Date().getTime(),
+            createAt: new Date().getTime(),
+            updateAt: new Date().getTime(),
             userToken: userToken,
           });
 
           // create new collection for this chat box
-          realm.create('MessageCollection', {
+          const _messageCollection: Realm.Object<IMessageCollection> = realm.create('MessageCollection', {
             id: collectionId,
             chatBox: chatBox,
-            messages: [ocrMessage],
-            createAt: updatedTime,
-            updateAt: updatedTime,
+            messages: [],
+            createAt: new Date().getTime(),
+            updateAt: new Date().getTime(),
             userToken: userToken,
           });
-        });
-        setChatBoxIdCopy(boxId);
+
+          return { _chatBox, _messageCollection }
+        })
+
+        if (imageUri !== undefined) {
+          const message = constructMessage(collectionId, imageUri, 'image', false, engine.id, userToken);
+          setMessages((messages) => [message, ...messages]);
+          realm.write(() => {
+            // @ts-ignore
+            _messageCollection.messages = [message];
+            // @ts-ignore
+            _messageCollection.updateAt = new Date().getTime();
+          });
+
+          text = await handleGetOCRResult(imageUri)
+          if (text === undefined || text === '') {
+            alertCannotRecognizeText(_chatBox, _messageCollection);
+            return;
+          }
+
+          // create new chat box in realm
+          const ocrMessage = constructMessage(collectionId, text, 'bot', false, engine.id, userToken);
+          setMessages((messages) => [ocrMessage, ...messages]);
+          const updatedTime = new Date().getTime();
+          realm.write(() => {
+            // @ts-ignore
+            _messageCollection.messages = [message, ocrMessage];
+            // @ts-ignore
+            _messageCollection.updateAt = updatedTime;
+            // @ts-ignore
+            _chatBox.lastMessage = ocrMessage.content;
+            // @ts-ignore
+            _chatBox.lastMessageAt = updatedTime;
+            // @ts-ignore
+            _chatBox.updateAt = updatedTime;
+          });
+          setChatBoxIdCopy(boxId);
+        }
       }
     };
 
-    console.log('chatBoxId', chatBoxId);
-    console.log('imageUri', imageUri);
+    // console.log('chatBoxId', chatBoxId);
+    // console.log('imageUri', imageUri);
     initData();
   }, [chatBoxId]);
 
