@@ -9,7 +9,7 @@ import EventSource from '../../services/sse';
 import { FlashList } from '@shopify/flash-list';
 import Toast from 'react-native-toast-message';
 import { getPressableStyle } from '../../styles/Touchable';
-import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Alert, Platform, Keyboard, ActivityIndicator, Modal, Pressable } from 'react-native';
+import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Alert, Platform, Keyboard, Modal, Pressable } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';

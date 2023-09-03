@@ -7,7 +7,6 @@ import {
   sortFormats,
   useCameraDevices,
   VideoFile,
-  frameRateIncluded
 } from 'react-native-vision-camera';
 import Button from '../../components/Button';
 import { Routes } from '../../types/navigation';
@@ -66,13 +65,13 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
       return 30;
     }
 
-    const supportsHdrAt60Fps = formats.some((f) => f.supportsVideoHDR && f.frameRateRanges.some((r) => frameRateIncluded(r, 60)));
+    const supportsHdrAt60Fps = formats.some((f) => f.supportsVideoHDR && f.maxFps >= 60);
     if (enableHdr && !supportsHdrAt60Fps) {
       // User has enabled HDR, but HDR is not supported at 60 FPS.
       return 30;
     }
 
-    const supports60Fps = formats.some((f) => f.frameRateRanges.some((r) => frameRateIncluded(r, 60)));
+    const supports60Fps = formats.some((f) => f.maxFps >= 60);
     if (!supports60Fps) {
       // 60 FPS is not supported by any format.
       return 30;
@@ -99,7 +98,7 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
     }
 
     // find the first format that includes the given FPS
-    return result.find((f) => f.frameRateRanges.some((r) => frameRateIncluded(r, fps)));
+    return result.find((f) => f.maxFps >= fps);
   }, [formats, fps, enableHdr]);
 
   //#region Animated Zoom

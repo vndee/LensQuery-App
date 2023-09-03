@@ -44,7 +44,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     height: 16,
     borderWidth: 1,
     borderColor: Colors.borders,
-    borderRadius: Spacing.XS,
+    borderRadius: Spacing.S,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -52,7 +52,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     width: 12,
     height: 12,
     backgroundColor: Colors.primary,
-    borderRadius: Spacing.XS,
+    borderRadius: Spacing.S,
   },
   label: {
     ...Typography.body,

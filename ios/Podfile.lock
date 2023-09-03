@@ -1,7 +1,5 @@
 PODS:
   - boost (1.76.0)
-  - BVLinearGradient (2.8.2):
-    - React-Core
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.72.3)
   - FBReactNativeSpec (0.72.3):
@@ -628,7 +626,7 @@ PODS:
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
   - SocketRocket (0.6.1)
-  - VisionCamera (2.15.6):
+  - VisionCamera (3.0.0):
     - React
     - React-callinvoker
     - React-Core
@@ -636,7 +634,6 @@ PODS:
 
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
-  - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -728,8 +725,6 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   boost:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
-  BVLinearGradient:
-    :path: "../node_modules/react-native-linear-gradient"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
@@ -850,7 +845,6 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
-  BVLinearGradient: 916632041121a658c704df89d99f04acb038de0f
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 4cce221dd782d3ff7c4172167bba09d58af67ccb
   FBReactNativeSpec: c6bd9e179757b3c0ecf815864fae8032377903ef
@@ -927,7 +921,7 @@ SPEC CHECKSUMS:
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  VisionCamera: 3443b55e018be345be1dcf1bfb2c0291872aad92
+  VisionCamera: c4f239ef0ce8fb13937966b814f57925560f5596
   Yoga: 8796b55dba14d7004f980b54bcc9833ee45b28ce
 
 PODFILE CHECKSUM: c615cb884b8618405d61aa84f5cd0363ea5f3f0c

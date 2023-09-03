@@ -49,7 +49,7 @@
     "react-native-toast-message": "^2.1.6",
     "react-native-typing-animation": "^0.1.7",
     "react-native-vector-icons": "^10.0.0",
-    "react-native-vision-camera": "^2.15.6",
+    "react-native-vision-camera": "^3.0.0",
     "react-redux": "^8.1.2",
     "realm": "^11.10.2"
   },
