@@ -7,7 +7,7 @@ import firebaseAuth from '../../services/firebase';
 import { firebase } from "@react-native-firebase/auth";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { StackScreenProps } from '@react-navigation/stack';
-import { getPressableStyle } from '../../styles/Touchable';
+import Touchable, { getPressableStyle } from '../../styles/Touchable';
 import LabelInput from '../../components/Input/LabelInput';
 import { FirebaseSignInResponse } from '../../types/firebase';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
@@ -137,7 +137,7 @@ const ChangePassword = ({ navigation, route }: StackScreenProps<Routes, 'ChangeP
           />
         </View>
       </ScrollView>
-      <View style={[styles.btnBottom, { paddingHorizontal: Spacing.horizontalPadding }]}>
+      <View style={Touchable.btnBottom}>
         {erorText !== '' && <Text style={[Typography.error, { alignSelf: 'center', marginBottom: Spacing.S }]}>{erorText}</Text>}
         <Button label={Strings.changePassword.saveBtn} onPress={handleSavePassword} />
       </View>

@@ -13,6 +13,15 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  btnBottom: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    alignSelf: 'center',
+    marginBottom: Spacing.XL,
+    marginHorizontal: Spacing.horizontalPadding,
+    paddingHorizontal: Spacing.horizontalPadding
+  },
 });
 
 export const getPressableStyle = ({ pressed }: { pressed: boolean }) => [{ opacity: pressed ? 0.4 : 1 }]

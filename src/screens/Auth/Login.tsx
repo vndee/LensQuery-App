@@ -152,7 +152,7 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
           />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Checkbox label={Strings.login.rememberMe} value={isRememberMe} onPress={() => setIsRememberMe(!isRememberMe)} />
-            <Pressable style={getPressableStyle} hitSlop={20}>
+            <Pressable style={getPressableStyle} hitSlop={20} onPress={() => navigation.navigate('ResetPassword')}>
               <Text style={{ ...Typography.body, color: Colors.primary }}>{Strings.login.forgotPassword}</Text>
             </Pressable>
           </View>

@@ -97,6 +97,19 @@ export default new LocalizedStrings({
       alertErrorRetry: 'Retry',
     },
 
+    // Reset password
+    resetPassword: {
+      title: 'Reset password',
+      recoveryEmailPlaceholder: 'Enter your email',
+      recoveryEmailHelper: 'Please enter your email to receive the reset password code',
+      sendBtn: 'Send',
+      verifyBtn: 'Verify',
+      resetSuccessBtn: 'Reset success',
+      emailRequired: 'Email is required',
+      emailInvalid: 'Email is invalid',
+      emailNotFound: 'Email not found',
+    },
+
     // Chat listing
     chatList: {
       title: 'Recent chats',
@@ -252,6 +265,19 @@ export default new LocalizedStrings({
       alertErrorMessage: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
       alertErrorClose: 'Đóng',
       alertErrorRetry: 'Thử lại',
+    },
+
+    // Reset password
+    resetPassword: {
+      title: 'Đặt lại mật khẩu',
+      recoveryEmailPlaceholder: 'Nhập email của bạn',
+      recoveryEmailHelper: 'Vui lòng nhập email của bạn để nhận mã đặt lại mật khẩu',
+      sendBtn: 'Gửi',
+      verifyBtn: 'Xác nhận',
+      resetSuccessBtn: 'Đặt lại thành công',
+      emailRequired: 'Email không được để trống',
+      emailInvalid: 'Email không hợp lệ',
+      emailNotFound: 'Email không tồn tại',
     },
 
     // Chat listing

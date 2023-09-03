@@ -5,19 +5,21 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 
 type Props = {
-  label: string;
+  label?: string;
   value: string;
   onChange: (text: string) => void;
   placeholder?: string;
   errorText?: string;
   isEdit?: boolean;
   icon?: string;
+  onSubmit?: () => void;
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
 }
 
-const TextEdit = ({ label, value, onChange, placeholder, errorText, isEdit, icon }: Props) => {
+const TextEdit = ({ label, value, onChange, placeholder, errorText, isEdit, icon, onSubmit, autoCapitalize }: Props) => {
   return (
     <View>
-      <Text style={{ ...Typography.body, fontWeight: '500', marginBottom: Spacing.XS }}>{label}</Text>
+      {label && <Text style={{ ...Typography.body, fontWeight: '500', marginBottom: Spacing.XS }}>{label}</Text>}
       <View style={[styles.container, !isEmpty(errorText) && { borderColor: Colors.danger }]}>
         <TextInput
           style={styles.textInput}
@@ -26,6 +28,8 @@ const TextEdit = ({ label, value, onChange, placeholder, errorText, isEdit, icon
           onChangeText={onChange}
           value={value}
           editable={isEdit}
+          onSubmitEditing={onSubmit}
+          autoCapitalize={autoCapitalize || 'none'}
         />
 
         {icon && <Ionicons

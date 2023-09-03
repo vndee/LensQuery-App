@@ -3,7 +3,8 @@ export type Routes = {
   Register: undefined;
   Agreement: {
     type: 'terms' | 'privacy';
-  },
+  };
+  ResetPassword: undefined;
   Lens: undefined;
   Media: {
     type: 'photo' | 'video';
@@ -12,7 +13,7 @@ export type Routes = {
   OnboardingSetup: {
     email: string;
     password: string;
-  },
+  };
   ChatBox: {
     chatBoxId: string | undefined;
     imageUri: string | undefined;
