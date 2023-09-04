@@ -11,6 +11,7 @@ import ChatList from '../screens/Chat/List';
 import ChatSearch from '../screens/Chat/Search';
 import Settings from '../screens/Settings/Settings';
 import ChangePassword from '../screens/Settings/ChangePassword';
+import ModelSelection from '../screens/Settings/ModelSelection';
 
 const Stack = createStackNavigator<Routes>();
 
@@ -26,6 +27,7 @@ const MainStack = (): JSX.Element => {
           <Stack.Screen name="ChatSearch" component={ChatSearch} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
           <Stack.Screen name="Settings" component={Settings} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
           <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="ModelSelection" component={ModelSelection} options={{ headerShown: false, ...TransitionPresets.ModalPresentationIOS }} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

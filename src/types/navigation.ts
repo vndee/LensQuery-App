@@ -22,4 +22,5 @@ export type Routes = {
   ChatSearch: undefined;
   Settings: undefined;
   ChangePassword: undefined;
+  ModelSelection: undefined;
 }

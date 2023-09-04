@@ -182,6 +182,15 @@ export default new LocalizedStrings({
       wrongPassword: 'Wrong password',
       unknownError: 'An error occurred, please try again later!',
     },
+
+    // Model selection
+    modelSelection: {
+      title: 'Model selection',
+      searchPlaceholder: "openai/gpt-3.5-turbo",
+      promptCost: "Prompt cost",
+      completionCost: "Completion cost",
+      contextLength: "Context length",
+    }
   },
   // Vietnamese
   vi: {
@@ -364,5 +373,14 @@ export default new LocalizedStrings({
       wrongPassword: 'Mật khẩu không đúng',
       unknownError: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
     },
+
+    // Model selection
+    modelSelection: {
+      title: 'Chọn mô hình',
+      searchPlaceholder: "openai/gpt-3.5-turbo",
+      promptCost: "Prompt cost",
+      completionCost: "Completion cost",
+      contextLength: "Context length",
+    }
   },
 });

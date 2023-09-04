@@ -4,7 +4,6 @@ import Button from '../../components/Button';
 import auth from '@react-native-firebase/auth';
 import Strings from '../../localization';
 import { isEmpty } from 'lodash';
-import { FlashList } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
 import TextEdit from '../../components/Input/TextEdit';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -17,7 +16,6 @@ import { checkValidApiKey } from '../../services/openai';
 import { useRealm, useObject } from '../../storage/realm';
 import { IAppConfig } from '../../types/config';
 import { getPressableStyle } from '../../styles/Touchable';
-import ModelRow from '../../components/Information/ModelRow';
 import LineData from '../../components/Information/LineData';
 import { getKeyLimit, getModelProperties } from '../../services/openrouter';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
@@ -66,7 +64,6 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const [selectedProvider, setSelectedProvider] = useState<string>(appConf?.llmProvider || 'OpenAI');
   const [openRouterKeyInfo, setOpenRouterKeyInfo] = useState<TGetKeyLimitResponse | null>(null);
   const [selectedDefaultModel, setSelectedDefaultModel] = useState<TGetModelPropertiesResponse | null>(null);
-  const [openRouterModelProperties, setOpenRouterModelProperties] = useState<Array<TGetModelPropertiesResponse> | null>([]);
 
   const handleLogout = () => {
     auth()
@@ -228,13 +225,6 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
           const { status, data } = await getKeyLimit(appConf?.apiKey)
           if (status === 200) {
             setOpenRouterKeyInfo(data);
-
-            // Get model properties
-            const resp = await getModelProperties();
-            if (resp.status === 200) {
-              // console.log(resp.data);
-              setOpenRouterModelProperties(resp.data);
-            }
           }
         }
 
@@ -322,8 +312,12 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         {selectedDefaultModel?.id &&
           <View style={styles.row}>
             <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.defaultModel}</Text>
-            <Pressable style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]} disabled={!isEditing}>
-              <Text style={[Typography.body]}>{selectedDefaultModel.id}</Text>
+            <Pressable
+              disabled={!isEditing}
+              onPress={() => navigation.navigate('ModelSelection')}
+              style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
+            >
+              <Text style={[Typography.description]}>{selectedDefaultModel.id}</Text>
             </Pressable>
           </View>
         }
@@ -343,17 +337,6 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         )}
 
         <View style={{ height: Spacing.L }} />
-        {/* {openRouterModelProperties && openRouterModelProperties?.length > 0 && (
-          <View style={styles.keyInfo}>
-            <FlashList
-              data={openRouterModelProperties}
-              estimatedItemSize={100}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => <ModelRow data={item} />}
-              ItemSeparatorComponent={() => <View style={{ height: Spacing.M }} />}
-            />
-          </View>
-        )} */}
       </>)
   };
 
