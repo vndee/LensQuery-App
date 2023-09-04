@@ -76,10 +76,20 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       if (appConf.defaultProvider === 'OpenAI') {
         setKey(appConf?.openAI?.apiKey || '');
       } else if (appConf.defaultProvider === 'OpenRouter') {
-        setKey(appConf?.openRouter.apiKey || '');
+        setKey(appConf?.openRouter?.apiKey || '');
       }
     }
   }, [appConf]);
+
+  useEffect(() => {
+    if (appConf) {
+      if (selectedProvider === 'OpenAI') {
+        setKey(appConf?.openAI?.apiKey || '');
+      } else {
+        setKey(appConf?.openRouter?.apiKey || '');
+      }
+    }
+  }, [selectedProvider]);
 
   const handleSaveOpenAIKey = async (key: string) => {
     const isValidKey = await checkValidApiKey(key);
@@ -106,6 +116,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       } else {
         if (appConf.openAI) {
           appConf.openAI.apiKey = key;
+          appConf.defaultProvider = 'OpenAI';
           appConf.openAI.defaultModel = JSON.stringify(defaultOpenAIModel);
         }
       }
@@ -118,6 +129,8 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       setKeyErrorText(Strings.onboardingSetup.keyInvalidError);
       return;
     }
+
+    setOpenRouterKeyInfo(data);
 
     realm.write(() => {
       if (!appConf) {
@@ -137,6 +150,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       } else {
         if (appConf.openRouter) {
           appConf.openRouter.apiKey = key;
+          appConf.defaultProvider = 'OpenRouter';
           appConf.openRouter.defaultModel = JSON.stringify(defaultOpenRouterModel);
         }
       }
