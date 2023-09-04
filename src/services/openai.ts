@@ -40,6 +40,23 @@ const checkValidApiKey = async (apiKey: string): Promise<boolean> => {
     console.log(error);
     return false;
   }
-}
+};
 
-export { getOpenAIResponse, checkValidApiKey };
+const getOpenAIModelProperties = async (apiKey: string): Promise<any> => {
+  if (isEmpty(apiKey)) return null;
+
+  try {
+    const response = await openai.get('/models', { headers: { Authorization: `Bearer ${apiKey}` } });
+    console.log(response.data);
+    if (response.status === 200) {
+      return response.data.data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export { getOpenAIResponse, checkValidApiKey, getOpenAIModelProperties };

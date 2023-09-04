@@ -25,4 +25,3 @@ export const PROMPTLY_HOST = 'https://trypromptly.com/api/apps/81d7a9af-0efa-486
 export const PROMPTLY_TOKEN = 'ea238c544409d32a7d8d1c4c637d8cd7921cc7f5';
 export const OPENROUTER_HOST = 'https://openrouter.ai/api/v1'
 export const OPENROUTER_KEY = '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';
-

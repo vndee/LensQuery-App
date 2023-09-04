@@ -25,6 +25,8 @@ export type Routes = {
   Settings: undefined;
   ChangePassword: undefined;
   ModelSelection: {
+    provider: string | undefined;
     callback: (item: TGetModelPropertiesResponse) => void;
+    key: string | undefined;
   };
 }

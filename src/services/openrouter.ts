@@ -23,7 +23,7 @@ const getKeyLimit = async (key: string): Promise<{ status: number, data: TGetKey
   }
 };
 
-const getModelProperties = async (): Promise<{ status: number, data: Array<TGetModelPropertiesResponse> | null }> => {
+const getOpenRouterModelProperties = async (): Promise<{ status: number, data: Array<TGetModelPropertiesResponse> | null }> => {
   try {
     const response = await openrouterApi.get('/models');
     const status = get(response, 'status', 0);
@@ -39,4 +39,4 @@ const getModelProperties = async (): Promise<{ status: number, data: Array<TGetM
   }
 };
 
-export { getKeyLimit, getModelProperties };
+export { getKeyLimit, getOpenRouterModelProperties };

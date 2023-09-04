@@ -14,10 +14,10 @@ import { setLanguage } from '../../redux/slice/auth';
 import { maskApiKey } from '../../utils/Helper';
 import { checkValidApiKey } from '../../services/openai';
 import { useRealm, useObject } from '../../storage/realm';
-import { IAppConfig } from '../../types/config';
+import { IAppConfig } from '../../types/chat';
 import { getPressableStyle } from '../../styles/Touchable';
 import LineData from '../../components/Information/LineData';
-import { getKeyLimit, getModelProperties } from '../../services/openrouter';
+import { getKeyLimit } from '../../services/openrouter';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { TGetKeyLimitResponse, TGetModelPropertiesResponse } from '../../types/openrouter';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
@@ -61,7 +61,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const providerActionSheetRef = React.useRef<ActionSheetRef>(null);
   const appConf = useObject<IAppConfig>('AppConfig', userToken);
   const [email, setEmail] = useState<string>('');
-  const [selectedProvider, setSelectedProvider] = useState<string>(appConf?.llmProvider || 'OpenAI');
+  const [selectedProvider, setSelectedProvider] = useState<string>(appConf?.defaultProvider || 'OpenAI');
   const [openRouterKeyInfo, setOpenRouterKeyInfo] = useState<TGetKeyLimitResponse | null>(null);
   const [selectedDefaultModel, setSelectedDefaultModel] = useState<TGetModelPropertiesResponse | null>(null);
 
@@ -73,7 +73,11 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
   useEffect(() => {
     if (appConf) {
-      setKey(appConf.apiKey || '');
+      if (appConf.defaultProvider === 'OpenAI') {
+        setKey(appConf?.openAI?.apiKey || '');
+      } else if (appConf.defaultProvider === 'OpenRouter') {
+        setKey(appConf?.openRouter.apiKey || '');
+      }
     }
   }, [appConf]);
 
@@ -88,15 +92,22 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       if (!appConf) {
         const newRecord: IAppConfig = {
           userToken: userToken,
-          apiKey: key,
-          llmProvider: 'OpenAI',
-          defaultModel: JSON.stringify(defaultOpenAIModel)
+          defaultProvider: 'OpenAI',
+          openAI: {
+            apiKey: key,
+            defaultModel: JSON.stringify(defaultOpenAIModel)
+          },
+          openRouter: {
+            apiKey: '',
+            defaultModel: ''
+          }
         }
         realm.create('AppConfig', newRecord);
       } else {
-        appConf.apiKey = key;
-        appConf.llmProvider = 'OpenAI';
-        appConf.defaultModel = JSON.stringify(defaultOpenAIModel);
+        if (appConf.openAI) {
+          appConf.openAI.apiKey = key;
+          appConf.openAI.defaultModel = JSON.stringify(defaultOpenAIModel);
+        }
       }
     });
   };
@@ -112,15 +123,22 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       if (!appConf) {
         const newRecord: IAppConfig = {
           userToken: userToken,
-          apiKey: key,
-          llmProvider: 'OpenRouter',
-          defaultModel: JSON.stringify(defaultOpenRouterModel)
+          defaultProvider: 'OpenRouter',
+          openAI: {
+            apiKey: '',
+            defaultModel: ''
+          },
+          openRouter: {
+            apiKey: key,
+            defaultModel: JSON.stringify(defaultOpenRouterModel)
+          },
         }
         realm.create('AppConfig', newRecord);
       } else {
-        appConf.apiKey = key;
-        appConf.llmProvider = 'OpenRouter';
-        appConf.defaultModel = JSON.stringify(defaultOpenRouterModel);
+        if (appConf.openRouter) {
+          appConf.openRouter.apiKey = key;
+          appConf.openRouter.defaultModel = JSON.stringify(defaultOpenRouterModel);
+        }
       }
     });
   }
@@ -220,19 +238,29 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const handleSetKeyProps = async () => {
     if (appConf) {
       console.log('appConf', appConf);
-      try {
-        const defaultModel = JSON.parse(appConf?.defaultModel) as TGetModelPropertiesResponse;
-        setSelectedDefaultModel(defaultModel);
-      } catch (error) {
-        console.debug('~ something went wrong when parsing default model')
-      } finally {
 
-      }
+      if (appConf.defaultProvider === 'OpenRouter') {
+        try {
+          const defaultModel = JSON.parse(appConf?.openRouter.defaultModel) as TGetModelPropertiesResponse;
+          setSelectedDefaultModel(defaultModel);
+        } catch (error) {
+          console.debug('~ something went wrong when parsing default model')
+        } finally {
 
-      if (appConf.llmProvider === 'OpenRouter') {
-        const { status, data } = await getKeyLimit(appConf?.apiKey)
+        }
+
+        const { status, data } = await getKeyLimit(appConf?.openRouter?.apiKey)
         if (status === 200) {
           setOpenRouterKeyInfo(data);
+        }
+      } else if (appConf.defaultProvider === 'OpenAI') {
+        try {
+          const defaultModel = JSON.parse(appConf?.openAI.defaultModel) as TGetModelPropertiesResponse;
+          setSelectedDefaultModel(defaultModel);
+        } catch (error) {
+          console.debug('~ something went wrong when parsing default model')
+        } finally {
+
         }
       }
     }
@@ -314,7 +342,11 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.defaultModel}</Text>
             <Pressable
               disabled={!isEditing}
-              onPress={() => navigation.navigate('ModelSelection', { callback: (model: TGetModelPropertiesResponse) => setSelectedDefaultModel(model) })}
+              onPress={() => navigation.navigate('ModelSelection', {
+                provider: appConf?.defaultProvider,
+                callback: (model: TGetModelPropertiesResponse) => setSelectedDefaultModel(model),
+                key: appConf?.defaultProvider === 'OpenAI' ? appConf?.openAI?.apiKey : appConf?.openRouter?.apiKey
+              })}
               style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
             >
               <Text style={[Typography.description]}>{selectedDefaultModel.id}</Text>

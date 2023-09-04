@@ -1,24 +1,38 @@
 import Realm from "realm";
 import { IAppConfig } from "../types/chat";
 import { createRealmContext } from "@realm/react";
-import { IChatBox, IMessage } from "../types/chat";
+import { IChatBox, IMessage, IProvider } from "../types/chat";
 import { TGetModelPropertiesResponse } from "../types/openrouter";
 
 // Models
+class Provider extends Realm.Object<IProvider> {
+  defaultModel!: string;
+  apiKey!: string;
+
+  static schema: Realm.ObjectSchema = {
+    name: "Provider",
+    embedded: true,
+    properties: {
+      defaultModel: "string",
+      apiKey: "string",
+    },
+  };
+};
+
 class AppConfig extends Realm.Object<IAppConfig> {
   userToken!: string;
-  apiKey!: string;
-  llmProvider!: string;
-  defaultModel!: string;
+  openAI!: Provider;
+  openRouter!: Provider;
+  defaultProvider!: string;
 
   static schema: Realm.ObjectSchema = {
     name: "AppConfig",
     primaryKey: "userToken",
     properties: {
       userToken: "string",
-      apiKey: "string",
-      llmProvider: "string",
-      defaultModel: "string"
+      defaultProvider: "string",
+      openAI: "Provider",
+      openRouter: "Provider",
     }
   }
 }
@@ -103,8 +117,8 @@ class MessageCollection extends Realm.Object<MessageCollection> {
 
 const realmConfig = {
   path: "lensquery.realm",
-  schema: [AppConfig, ChatBox, Message, MessageCollection],
-  schemaVersion: 14,
+  schema: [Provider, AppConfig, ChatBox, Message, MessageCollection],
+  schemaVersion: 17,
   encryptionKey: new Int8Array(64),
   deleteRealmIfMigrationNeeded: true,
 };

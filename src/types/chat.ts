@@ -5,6 +5,11 @@ export type IChatEngine = {
   name: string;
 };
 
+export type IProvider = {
+  defaultModel: string;
+  apiKey: string;
+}
+
 export type IChatBox = {
   id: string;
   name: string;
@@ -41,6 +46,7 @@ export type IMessageCollection = {
 
 export type IAppConfig = {
   userToken: string;
-  apiKey: string;
-  llmProvider: string;
+  openAI: IProvider;
+  openRouter: IProvider;
+  defaultProvider: string;
 }

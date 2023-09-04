@@ -7,20 +7,21 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { StackScreenProps } from '@react-navigation/stack';
 import { getPressableStyle } from '../../styles/Touchable';
 import ModelRow from '../../components/Information/ModelRow';
-import { getModelProperties } from '../../services/openrouter';
+import { getOpenAIModelProperties } from '../../services/openai';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Typography, Layout, Colors, Spacing } from '../../styles';
 import { TGetModelPropertiesResponse } from '../../types/openrouter';
+import { getOpenRouterModelProperties } from '../../services/openrouter';
 
 const ModelSelection = ({ navigation, route }: StackScreenProps<Routes, 'ModelSelection'>) => {
-  const { callback } = route.params;
+  const { provider, callback, key } = route.params;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [openRouterModelProperties, setOpenRouterModelProperties] = useState<Array<TGetModelPropertiesResponse> | null>([]);
 
-  const handleGetModelProperties = async () => {
+  const handleGetOpenRouterModelProperties = async () => {
     try {
       setIsLoading(true);
-      const { status, data } = await getModelProperties();
+      const { status, data } = await getOpenRouterModelProperties();
       if (status === 200) {
         setOpenRouterModelProperties(data);
       } else {
@@ -31,10 +32,21 @@ const ModelSelection = ({ navigation, route }: StackScreenProps<Routes, 'ModelSe
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGetOpenAIModelProperties = async (key: string) => {
+    try {
+      setIsLoading(true);
+      const { status, data } = await getOpenAIModelProperties(key);
+    } catch (error) {
+      console.debug('[error]:', error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {
-    handleGetModelProperties();
+    handleGetOpenRouterModelProperties();
   }, [])
 
   return (
