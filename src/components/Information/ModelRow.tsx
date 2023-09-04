@@ -5,7 +5,7 @@ import { View, StyleSheet, Text, Pressable } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { TGetModelPropertiesResponse } from '../../types/openrouter';
 
-const ModelRow = ({ data }: { data: TGetModelPropertiesResponse }): JSX.Element => {
+const ModelRow = ({ data, callback }: { data: TGetModelPropertiesResponse, callback: (item: TGetModelPropertiesResponse) => void }): JSX.Element => {
   console.log('data row:', data);
 
   const LineData = ({ label, value }: { label: any, value: any }): JSX.Element => {
@@ -22,7 +22,10 @@ const ModelRow = ({ data }: { data: TGetModelPropertiesResponse }): JSX.Element 
   }, []);
 
   return (
-    <Pressable style={(pressed) => [styles.card, getPressableStyle(pressed)]}>
+    <Pressable
+      onPress={() => { callback(data); }}
+      style={(pressed) => [styles.card, getPressableStyle(pressed)]}
+    >
       <View style={styles.row}>
         <View style={styles.modelID}>
           <Text style={[Typography.description]}>{data.id}</Text>

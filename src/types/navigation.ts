@@ -1,3 +1,5 @@
+import { TGetModelPropertiesResponse } from "./openrouter";
+
 export type Routes = {
   Login: undefined;
   Register: undefined;
@@ -22,5 +24,7 @@ export type Routes = {
   ChatSearch: undefined;
   Settings: undefined;
   ChangePassword: undefined;
-  ModelSelection: undefined;
+  ModelSelection: {
+    callback: (item: TGetModelPropertiesResponse) => void;
+  };
 }

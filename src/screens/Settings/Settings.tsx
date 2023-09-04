@@ -217,28 +217,28 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
     }
   ];
 
-  useEffect(() => {
-    const handleSetKeyProps = async () => {
-      if (appConf) {
-        console.log('appConf', appConf);
-        if (appConf.llmProvider === 'OpenRouter') {
-          const { status, data } = await getKeyLimit(appConf?.apiKey)
-          if (status === 200) {
-            setOpenRouterKeyInfo(data);
-          }
-        }
+  const handleSetKeyProps = async () => {
+    if (appConf) {
+      console.log('appConf', appConf);
+      try {
+        const defaultModel = JSON.parse(appConf?.defaultModel) as TGetModelPropertiesResponse;
+        setSelectedDefaultModel(defaultModel);
+      } catch (error) {
+        console.debug('~ something went wrong when parsing default model')
+      } finally {
 
-        try {
-          const defaultModel = JSON.parse(appConf?.defaultModel) as TGetModelPropertiesResponse;
-          setSelectedDefaultModel(defaultModel);
-        } catch (error) {
-          console.debug('~ something went wrong when parsing default model')
-        } finally {
+      }
 
+      if (appConf.llmProvider === 'OpenRouter') {
+        const { status, data } = await getKeyLimit(appConf?.apiKey)
+        if (status === 200) {
+          setOpenRouterKeyInfo(data);
         }
       }
     }
+  }
 
+  useEffect(() => {
     handleSetKeyProps();
   }, [appConf])
 
@@ -314,7 +314,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.defaultModel}</Text>
             <Pressable
               disabled={!isEditing}
-              onPress={() => navigation.navigate('ModelSelection')}
+              onPress={() => navigation.navigate('ModelSelection', { callback: (model: TGetModelPropertiesResponse) => setSelectedDefaultModel(model) })}
               style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
             >
               <Text style={[Typography.description]}>{selectedDefaultModel.id}</Text>
@@ -390,7 +390,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
       {isEditing &&
         <View style={styles.footer}>
-          <Button label={Strings.common.cancel} onPress={() => setIsEditing(false)} style={styles.btnBottom} outline={true} />
+          <Button label={Strings.common.cancel} onPress={() => { setIsEditing(false); handleSetKeyProps(); }} style={styles.btnBottom} outline={true} />
           <Button label={Strings.onboardingSetup.saveBtn} onPress={handleSaveKey} style={styles.btnBottom} isLoading={isLoading} />
         </View>}
 
@@ -461,6 +461,8 @@ const styles = StyleSheet.create({
     padding: Spacing.M,
     borderRadius: Spacing.M,
     backgroundColor: Colors.very_light_green,
+    // ...Layout.shadow,
+    // shadowColor: Colors.kiwi_green
   },
   addCreditBtn: {
     width: '100%',
