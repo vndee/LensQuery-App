@@ -1,18 +1,24 @@
 import Realm from "realm";
-import { IChatBox, IMessage } from "../types/chat";
+import { IAppConfig } from "../types/chat";
 import { createRealmContext } from "@realm/react";
+import { IChatBox, IMessage } from "../types/chat";
+import { TGetModelPropertiesResponse } from "../types/openrouter";
 
 // Models
-class AppConfig extends Realm.Object {
+class AppConfig extends Realm.Object<IAppConfig> {
   userToken!: string;
-  openaiKey!: string;
+  apiKey!: string;
+  llmProvider!: string;
+  defaultModel!: string;
 
   static schema: Realm.ObjectSchema = {
     name: "AppConfig",
     primaryKey: "userToken",
     properties: {
       userToken: "string",
-      openaiKey: "string",
+      apiKey: "string",
+      llmProvider: "string",
+      defaultModel: "string"
     }
   }
 }

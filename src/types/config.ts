@@ -1,4 +1,8 @@
+import { TGetModelPropertiesResponse } from './openrouter';
+
 export type IAppConfig = {
   userToken: string;
-  openaiKey: string;
+  apiKey: string;
+  llmProvider: string;
+  defaultModel: string;
 }

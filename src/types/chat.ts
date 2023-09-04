@@ -38,3 +38,9 @@ export type IMessageCollection = {
   updateAt: number; // unix timestamp
   userToken: string; // specific user token
 }
+
+export type IAppConfig = {
+  userToken: string;
+  apiKey: string;
+  llmProvider: string;
+}

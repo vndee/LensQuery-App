@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import auth from '@react-native-firebase/auth';
 import Strings from '../../localization';
 import { isEmpty } from 'lodash';
+import { FlashList } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
 import TextEdit from '../../components/Input/TextEdit';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -16,9 +17,39 @@ import { checkValidApiKey } from '../../services/openai';
 import { useRealm, useObject } from '../../storage/realm';
 import { IAppConfig } from '../../types/config';
 import { getPressableStyle } from '../../styles/Touchable';
+import ModelRow from '../../components/Information/ModelRow';
+import LineData from '../../components/Information/LineData';
+import { getKeyLimit, getModelProperties } from '../../services/openrouter';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { TGetKeyLimitResponse, TGetModelPropertiesResponse } from '../../types/openrouter';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
+
+const defaultOpenRouterModel: TGetModelPropertiesResponse = {
+  id: "openai/gpt-3.5-turbo",
+  pricing: {
+    prompt: 0.0000015,
+    completion: 0.000002
+  },
+  context_length: 4095,
+  per_request_limits: {
+    prompt_tokens: 2976803,
+    completion_tokens: 2232602
+  }
+};
+
+const defaultOpenAIModel: TGetModelPropertiesResponse = {
+  id: "gpt-3.5-turbo",
+  pricing: {
+    prompt: 0.0000015,
+    completion: 0.000002
+  },
+  context_length: 4095,
+  per_request_limits: {
+    prompt_tokens: 2976803,
+    completion_tokens: 2232602
+  }
+};
 
 const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const realm = useRealm();
@@ -29,8 +60,13 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [keyErrorText, setKeyErrorText] = useState<string>('');
   const actionSheetRef = React.useRef<ActionSheetRef>(null);
-  const openaiKeyObj = useObject<IAppConfig>('AppConfig', userToken);
+  const providerActionSheetRef = React.useRef<ActionSheetRef>(null);
+  const appConf = useObject<IAppConfig>('AppConfig', userToken);
   const [email, setEmail] = useState<string>('');
+  const [selectedProvider, setSelectedProvider] = useState<string>(appConf?.llmProvider || 'OpenAI');
+  const [openRouterKeyInfo, setOpenRouterKeyInfo] = useState<TGetKeyLimitResponse | null>(null);
+  const [selectedDefaultModel, setSelectedDefaultModel] = useState<TGetModelPropertiesResponse | null>(null);
+  const [openRouterModelProperties, setOpenRouterModelProperties] = useState<Array<TGetModelPropertiesResponse> | null>([]);
 
   const handleLogout = () => {
     auth()
@@ -39,10 +75,58 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   };
 
   useEffect(() => {
-    if (openaiKeyObj) {
-      setKey(openaiKeyObj.openaiKey || '');
+    if (appConf) {
+      setKey(appConf.apiKey || '');
     }
-  }, [openaiKeyObj]);
+  }, [appConf]);
+
+  const handleSaveOpenAIKey = async (key: string) => {
+    const isValidKey = await checkValidApiKey(key);
+    if (!isValidKey) {
+      setKeyErrorText(Strings.onboardingSetup.keyInvalidError);
+      return;
+    }
+
+    realm.write(() => {
+      if (!appConf) {
+        const newRecord: IAppConfig = {
+          userToken: userToken,
+          apiKey: key,
+          llmProvider: 'OpenAI',
+          defaultModel: JSON.stringify(defaultOpenAIModel)
+        }
+        realm.create('AppConfig', newRecord);
+      } else {
+        appConf.apiKey = key;
+        appConf.llmProvider = 'OpenAI';
+        appConf.defaultModel = JSON.stringify(defaultOpenAIModel);
+      }
+    });
+  };
+
+  const handleSaveOpenRouterKey = async (key: string) => {
+    const { status, data } = await getKeyLimit(key);
+    if (status !== 200) {
+      setKeyErrorText(Strings.onboardingSetup.keyInvalidError);
+      return;
+    }
+
+    realm.write(() => {
+      if (!appConf) {
+        const newRecord: IAppConfig = {
+          userToken: userToken,
+          apiKey: key,
+          llmProvider: 'OpenRouter',
+          defaultModel: JSON.stringify(defaultOpenRouterModel)
+        }
+        realm.create('AppConfig', newRecord);
+      } else {
+        appConf.apiKey = key;
+        appConf.llmProvider = 'OpenRouter';
+        appConf.defaultModel = JSON.stringify(defaultOpenRouterModel);
+      }
+    });
+  }
 
   const handleSaveKey = async () => {
     setIsLoading(true);
@@ -51,22 +135,17 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       return;
     }
 
-    const isValidKey = await checkValidApiKey(key);
-    if (!isValidKey) {
-      setKeyErrorText(Strings.onboardingSetup.keyInvalidError);
-      return;
+    switch (selectedProvider) {
+      case 'OpenAI':
+        await handleSaveOpenAIKey(key);
+        break;
+      case 'OpenRouter':
+        await handleSaveOpenRouterKey(key);
+        break;
+      default:
+        break;
     }
 
-    realm.write(() => {
-      if (!openaiKeyObj) {
-        realm.create('AppConfig', {
-          userToken,
-          openaiKey: key,
-        });
-      } else {
-        openaiKeyObj.openaiKey = key;
-      }
-    })
     setIsEditing(false);
     setIsLoading(false);
   };
@@ -109,6 +188,25 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
     }
   ];
 
+  const providerOptions: Array<ActionItemProps> = [
+    {
+      label: Strings.setting.openAIProvider,
+      color: Colors.text_color,
+      onPress: () => {
+        setSelectedProvider('OpenAI');
+        providerActionSheetRef.current?.hide();
+      }
+    },
+    {
+      label: Strings.setting.openRouterProvider,
+      color: Colors.text_color,
+      onPress: () => {
+        setSelectedProvider('OpenRouter');
+        providerActionSheetRef.current?.hide();
+      }
+    }
+  ]
+
   const languageOptions: Array<InlineOptionSheetProps> = [
     {
       label: 'English',
@@ -123,6 +221,38 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   ];
 
   useEffect(() => {
+    const handleSetKeyProps = async () => {
+      if (appConf) {
+        console.log('appConf', appConf);
+        if (appConf.llmProvider === 'OpenRouter') {
+          const { status, data } = await getKeyLimit(appConf?.apiKey)
+          if (status === 200) {
+            setOpenRouterKeyInfo(data);
+
+            // Get model properties
+            const resp = await getModelProperties();
+            if (resp.status === 200) {
+              // console.log(resp.data);
+              setOpenRouterModelProperties(resp.data);
+            }
+          }
+        }
+
+        try {
+          const defaultModel = JSON.parse(appConf?.defaultModel) as TGetModelPropertiesResponse;
+          setSelectedDefaultModel(defaultModel);
+        } catch (error) {
+          console.debug('~ something went wrong when parsing default model')
+        } finally {
+
+        }
+      }
+    }
+
+    handleSetKeyProps();
+  }, [appConf])
+
+  useEffect(() => {
     const subscriber = auth().onAuthStateChanged((user) => {
       if (user) {
         setEmail(user.email || '');
@@ -131,6 +261,101 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
     return subscriber;
   }, []);
+
+  const renderOpenAIKeySetup = () => {
+    return (
+      <>
+        <TextEdit
+          value={isEditing ? key : maskApiKey(key)}
+          label={Strings.onboardingSetup.openAILabelInputKey}
+          placeholder={Strings.onboardingSetup.pleasePasteOpenAIKey}
+          onChange={(text) => {
+            setKey(text);
+            if (!isEmpty(keyErrorText) && !isEmpty(text)) {
+              setKeyErrorText('');
+            }
+          }}
+          errorText={keyErrorText}
+          icon="key"
+          isEdit={isEditing}
+        />
+        <View style={{ gap: Spacing.S }}>
+          <View style={styles.instruction}>
+            <Text style={Typography.description}>{Strings.onboardingSetup.dontKnowHowToGetKey}</Text>
+            <Pressable onPress={() => { }} style={getPressableStyle} hitSlop={20}>
+              <Text style={[Typography.description, { color: Colors.primary }]}> {Strings.common.clickHere}</Text>
+            </Pressable>
+          </View>
+          <Text style={Typography.description}>{Strings.onboardingSetup.disclaimer}</Text>
+        </View>
+      </>)
+  };
+
+  const renderOpenRouterKeySetup = () => {
+    return (
+      <>
+        <TextEdit
+          value={isEditing ? key : maskApiKey(key)}
+          label={Strings.onboardingSetup.openRouterLabelInputKey}
+          placeholder={Strings.onboardingSetup.pleasePasteOpenRouterKey}
+          onChange={(text) => {
+            setKey(text);
+            if (!isEmpty(keyErrorText) && !isEmpty(text)) {
+              setKeyErrorText('');
+            }
+          }}
+          errorText={keyErrorText}
+          icon="key"
+          isEdit={isEditing}
+        />
+        <View style={{ gap: Spacing.S }}>
+          <View style={styles.instruction}>
+            <Text style={Typography.description}>{Strings.onboardingSetup.dontKnowHowToGetKey}</Text>
+            <Pressable onPress={() => { }} style={getPressableStyle} hitSlop={20}>
+              <Text style={[Typography.description, { color: Colors.primary }]}> {Strings.common.clickHere}</Text>
+            </Pressable>
+          </View>
+          <Text style={Typography.description}>{Strings.onboardingSetup.disclaimer}</Text>
+        </View>
+
+        <View style={{ height: Spacing.L }} />
+        {selectedDefaultModel?.id &&
+          <View style={styles.row}>
+            <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.defaultModel}</Text>
+            <Pressable style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]} disabled={!isEditing}>
+              <Text style={[Typography.body]}>{selectedDefaultModel.id}</Text>
+            </Pressable>
+          </View>
+        }
+        <View style={{ height: Spacing.L }} />
+
+        {openRouterKeyInfo && (
+          <View style={styles.keyInfo}>
+            <LineData label={Strings.setting.keyLabel} value={openRouterKeyInfo?.data?.label} />
+            <LineData label={Strings.setting.keyCreditUsed} value={openRouterKeyInfo?.data?.usage} />
+            <LineData label={Strings.setting.keyCreditRemaining} value={openRouterKeyInfo?.data?.limit_remaining} />
+            <LineData label={Strings.setting.keyCreditLimit} value={openRouterKeyInfo?.data?.limit} />
+            <LineData label={Strings.setting.keyRateLimit} value={`${openRouterKeyInfo?.data?.rate_limit?.requests} requests per ${openRouterKeyInfo?.data?.rate_limit?.interval}`} />
+            <Pressable style={(pressed) => [styles.addCreditBtn, getPressableStyle(pressed)]}>
+              <Text>{Strings.setting.addCreditBtn}</Text>
+            </Pressable>
+          </View>
+        )}
+
+        <View style={{ height: Spacing.L }} />
+        {/* {openRouterModelProperties && openRouterModelProperties?.length > 0 && (
+          <View style={styles.keyInfo}>
+            <FlashList
+              data={openRouterModelProperties}
+              estimatedItemSize={100}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => <ModelRow data={item} />}
+              ItemSeparatorComponent={() => <View style={{ height: Spacing.M }} />}
+            />
+          </View>
+        )} */}
+      </>)
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.background }}>
@@ -146,6 +371,12 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         </Pressable>
       </View>
       <ScrollView style={styles.container}>
+        <InlineOptionSheet
+          title={Strings.setting.language}
+          options={languageOptions}
+          selectedValue={language}
+        />
+        <View style={{ height: Spacing.M }} />
         <View>
           <TextEdit
             label={Strings.setting.email}
@@ -153,51 +384,42 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             onChange={setEmail}
             isEdit={isEditing}
           />
-          <TextEdit
-            value={isEditing ? key : maskApiKey(key)}
-            label={Strings.onboardingSetup.labelInputKey}
-            placeholder={Strings.onboardingSetup.pleasePasteOpenAIKey}
-            onChange={(text) => {
-              setKey(text);
-              if (!isEmpty(keyErrorText) && !isEmpty(text)) {
-                setKeyErrorText('');
-              }
-            }}
-            errorText={keyErrorText}
-            icon="key"
-            isEdit={isEditing}
-          />
-          <View style={{ gap: Spacing.S }}>
-            <View style={styles.instruction}>
-              <Text style={Typography.description}>{Strings.onboardingSetup.dontKnowHowToGetKey}</Text>
-              <Pressable onPress={() => { }} style={getPressableStyle} hitSlop={20}>
-                <Text style={[Typography.description, { color: Colors.primary }]}> {Strings.common.clickHere}</Text>
-              </Pressable>
-            </View>
-            <Text style={Typography.description}>{Strings.onboardingSetup.disclaimer}</Text>
+
+          <View style={styles.row}>
+            <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.providerLabel}</Text>
+            <Pressable
+              hitSlop={20}
+              disabled={!isEditing}
+              onPress={() => providerActionSheetRef.current?.show()}
+              style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
+            >
+              <Text style={Typography.description}>{selectedProvider}</Text>
+            </Pressable>
           </View>
+
+          <View style={{ height: Spacing.M }} />
+
+          {selectedProvider === 'OpenAI' ? renderOpenAIKeySetup() : renderOpenRouterKeySetup()}
+
         </View>
-
         <View style={{ height: Spacing.XL }} />
-
-        <InlineOptionSheet
-          title={Strings.setting.language}
-          options={languageOptions}
-          selectedValue={language}
-        />
-      </ScrollView>
+      </ScrollView >
 
       {isEditing &&
         <View style={styles.footer}>
           <Button label={Strings.common.cancel} onPress={() => setIsEditing(false)} style={styles.btnBottom} outline={true} />
-          <Button label={Strings.onboardingSetup.saveBtn} onPress={handleSaveKey} style={styles.btnBottom} />
+          <Button label={Strings.onboardingSetup.saveBtn} onPress={handleSaveKey} style={styles.btnBottom} isLoading={isLoading} />
         </View>}
 
       <BottomActionSheet
         actionRef={actionSheetRef}
         actions={actionSheet}
       />
-    </View>
+      <BottomActionSheet
+        actionRef={providerActionSheetRef}
+        actions={providerOptions}
+      />
+    </View >
   );
 };
 
@@ -206,6 +428,7 @@ const styles = StyleSheet.create({
     ...Layout.content,
     marginTop: Spacing.L,
     gap: Spacing.XL,
+    paddingHorizontal: Spacing.horizontalPadding + Spacing.S,
   },
   backIcon: {
     justifyContent: 'center',
@@ -216,6 +439,16 @@ const styles = StyleSheet.create({
     gap: Spacing.XS,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  providerBtn: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderRadius: 8,
+    marginLeft: Spacing.S,
+    backgroundColor: Colors.very_pale_green,
+    paddingHorizontal: Spacing.S,
+    paddingVertical: Spacing.XS,
   },
   instruction: {
     flexDirection: 'row',
@@ -240,6 +473,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
   },
+  keyInfo: {
+    gap: Spacing.XS,
+    padding: Spacing.M,
+    borderRadius: Spacing.M,
+    backgroundColor: Colors.very_light_green,
+  },
+  addCreditBtn: {
+    width: '100%',
+    padding: Spacing.S,
+    marginTop: Spacing.XS,
+    borderRadius: Spacing.S,
+    backgroundColor: Colors.kiwi,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  defaultModel: {
+    padding: Spacing.S,
+    borderRadius: Spacing.S,
+    backgroundColor: Colors.very_light_green
+  }
 });
 
 export default Settings;

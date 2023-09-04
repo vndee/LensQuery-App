@@ -24,8 +24,8 @@ import { useKeyboardVisible } from '../../hooks/useKeyboard';
 import { checkValidApiKey } from '../../services/openai';
 import ProgressCircle from 'react-native-progress/CircleSnail';
 import { IChatEngine, IMessage, IChatBox, IMessageCollection } from '../../types/chat';
-import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE } from '../../utils/Constants';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
+import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE, OPENROUTER_HOST, OPENAI_API_KEY, OPENROUTER_KEY } from '../../utils/Constants';
 
 const chatEngine: IChatEngine[] = [
   {
@@ -49,7 +49,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const [inputMessage, setInputMessage] = useState<string>('');
   const [messages, setMessages] = useState<Array<IMessage>>([]);
   const [engine, setEngine] = useState<IChatEngine>(chatEngine[0]);
-  const openaiKey = useObject<IAppConfig>('AppConfig', userToken)?.openaiKey || '';
+  const apiKey = useObject<IAppConfig>('AppConfig', userToken)?.apiKey || '';
   const [chatBoxIdCopy, setChatBoxIdCopy] = useState<string>(chatBoxId ? chatBoxId : '');
   const chatBox = useObject<IChatBox>('ChatBox', chatBoxIdCopy);
   const [isFetchingHistory, setIsFetchingHistory] = useState<boolean>(false);
@@ -57,7 +57,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
   const [searchText, setSearchText] = useState<string>('');
   const [isSearchBarVisible, setIsSearchBarVisible] = useState<boolean>(false);
-  const [isNotFoundKeyModalVisible, setIsNotFoundKeyModalVisible] = useState<boolean>(isEmpty(openaiKey));
+  const [isNotFoundKeyModalVisible, setIsNotFoundKeyModalVisible] = useState<boolean>(isEmpty(apiKey));
 
   const handleGetOCRResult = useCallback(async (imageUri: string): Promise<string> => {
     const { status, data } = await getOCRResult(imageUri);
@@ -144,7 +144,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const sendMessage = (text: string) => {
     Keyboard.dismiss();
 
-    if (!checkValidApiKey(openaiKey)) {
+    if (!checkValidApiKey(apiKey)) {
       setIsNotFoundKeyModalVisible(true);
       return;
     }
@@ -178,11 +178,11 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       };
 
       setInputMessage('');
-      es = new EventSource(`${OPENAI_HOST}/chat/completions`, {
+      es = new EventSource(`${OPENROUTER_HOST}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${openaiKey}`,
+          Authorization: `Bearer ${OPENROUTER_KEY}`,
         },
         body: JSON.stringify(requestBody),
         debug: false,

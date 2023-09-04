@@ -83,8 +83,10 @@ export default new LocalizedStrings({
 
     // Onboarding setup
     onboardingSetup: {
-      labelInputKey: 'OpenAI API Key',
+      openAILabelInputKey: 'OpenAI API Key',
       pleasePasteOpenAIKey: 'Please paste your OpenAI key here',
+      openRouterLabelInputKey: 'OpenRouter API Key',
+      pleasePasteOpenRouterKey: 'Please paste your OpenRouter key here',
       dontKnowHowToGetKey: 'Don\'t know how to get your key?',
       getYourKeyInstruction: 'Please follow the instruction here',
       disclaimer: 'Your key will be stored locally on your device, we will never send it to our server',
@@ -150,6 +152,16 @@ export default new LocalizedStrings({
       actionChangePassword: 'Change password',
       actionDeleteAccuont: 'Delete account',
       actionLogOut: 'Log out',
+      providerLabel: 'Provider',
+      defaultModel: 'Default model',
+      openAIProvider: 'OpenAI',
+      openRouterProvider: 'OpenRouter',
+      keyLabel: 'Label',
+      keyCreditLimit: 'Credit limit',
+      keyCreditUsed: 'Credit used',
+      keyCreditRemaining: 'Credit remaining',
+      keyRateLimit: 'Rate limit',
+      addCreditBtn: 'Add credit',
     },
 
     // Change password
@@ -253,8 +265,10 @@ export default new LocalizedStrings({
 
     // Onboarding setup
     onboardingSetup: {
-      labelInputKey: 'OpenAI API Key',
+      openAILabelInputKey: 'OpenAI API Key',
       pleasePasteOpenAIKey: 'Vui lòng dán OpenAI key của bạn vào đây',
+      openRouterLabelInputKey: 'OpenRouter API Key',
+      pleasePasteOpenRouterKey: 'Vui lòng dán OpenRouter key của bạn vào đây',
       dontKnowHowToGetKey: 'Chưa biết cách lấy key?',
       getYourKeyInstruction: 'Bạn có thể làm theo hướng dẫn ở đây',
       disclaimer: 'Key sẽ được lưu trữ trên thiết bị của bạn, chúng tôi sẽ không bao giờ gửi nó lên máy chủ của chúng tôi',
@@ -320,6 +334,16 @@ export default new LocalizedStrings({
       actionChangePassword: 'Đổi mật khẩu',
       actionDeleteAccuont: 'Xóa tài khoản',
       actionLogOut: 'Đăng xuất',
+      providerLabel: 'Nhà cung cấp',
+      defaultModel: 'Mô hình mặc định',
+      openAIProvider: 'OpenAI',
+      openRouterProvider: 'OpenRouter',
+      keyLabel: 'Nhãn',
+      keyCreditLimit: 'Giới hạn credit',
+      keyCreditUsed: 'Credit đã dùng',
+      keyCreditRemaining: 'Credit còn lại',
+      keyRateLimit: 'Giới hạn tốc độ',
+      addCreditBtn: 'Thêm credit',
     },
 
     // Change password
