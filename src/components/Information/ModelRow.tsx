@@ -6,8 +6,6 @@ import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { TGetModelPropertiesResponse } from '../../types/openrouter';
 
 const ModelRow = ({ data, callback }: { data: TGetModelPropertiesResponse, callback: (item: TGetModelPropertiesResponse) => void }): JSX.Element => {
-  console.log('data row:', data);
-
   const LineData = ({ label, value }: { label: any, value: any }): JSX.Element => {
     return (
       <View style={styles.row}>

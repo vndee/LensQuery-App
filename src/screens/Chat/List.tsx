@@ -185,9 +185,16 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
             renderEmptyComponent()
         }
       </View>
-      <Pressable style={({ pressed }) => [styles.fab, { opacity: pressed ? 0.4 : 1 }]} onPress={() => navigation.navigate('Lens')} hitSlop={20}>
-        <Ionicons name='add' size={24} color={Colors.white} />
-      </Pressable>
+
+      <View style={styles.fab}>
+        <Pressable style={({ pressed }) => [styles.fabBtn01, { opacity: pressed ? 0.4 : 1 }]} onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: undefined })} hitSlop={20}>
+          <Ionicons name='add' size={24} color={Colors.white} />
+        </Pressable>
+
+        <Pressable style={({ pressed }) => [styles.fabBtn02, { opacity: pressed ? 0.4 : 1 }]} onPress={() => navigation.navigate('Lens')} hitSlop={20}>
+          <Ionicons name='camera' size={20} color={Colors.white} />
+        </Pressable>
+      </View>
 
       <BottomActionSheet actionRef={actionSheetRef} actions={actionItem} />
     </View>
@@ -207,13 +214,68 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
   },
-  fab: {
+  fab_01: {
     width: 44,
     height: 44,
     borderRadius: 28,
     position: 'absolute',
     bottom: Spacing.XL,
     right: Spacing.XL,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
+
+    shadowColor: Colors.primary,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.36,
+    shadowRadius: 6.68,
+
+    elevation: 11,
+  },
+  fab: {
+    width: 44,
+    height: 80,
+    position: 'absolute',
+    bottom: Spacing.safePaddingBottom,
+    right: Spacing.XL,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+
+    shadowColor: Colors.primary,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.36,
+    shadowRadius: 6.68,
+
+    elevation: 11,
+  },
+  fabBtn01: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
+
+    shadowColor: Colors.primary,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.36,
+    shadowRadius: 6.68,
+
+    elevation: 11,
+  },
+  fabBtn02: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.primary,

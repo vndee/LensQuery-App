@@ -9,7 +9,6 @@ import EventSource from '../../services/sse';
 import { FlashList } from '@shopify/flash-list';
 import Toast from 'react-native-toast-message';
 import { getPressableStyle } from '../../styles/Touchable';
-import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Alert, Platform, Keyboard, Modal, Pressable } from 'react-native';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -18,25 +17,17 @@ import LabelSwitch from '../../components/Switch/LabelSwitch';
 import { useRealm, useObject } from '../../storage/realm';
 import Message from '../../components/Chat/Message';
 import { constructMessage } from '../../utils/Helper';
-import { IAppConfig } from '../../types/config';
+import { IAppConfig } from '../../types/chat';
 import { getOCRResult } from '../../services/api'
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
 import { checkValidApiKey } from '../../services/openai';
+import { getKeyLimit } from '../../services/openrouter';
 import ProgressCircle from 'react-native-progress/CircleSnail';
-import { IChatEngine, IMessage, IChatBox, IMessageCollection } from '../../types/chat';
+import { IMessage, IChatBox, IMessageCollection } from '../../types/chat';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
+import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Alert, Platform, Keyboard, Modal, Pressable } from 'react-native';
 import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE, OPENROUTER_HOST, OPENAI_API_KEY, OPENROUTER_KEY } from '../../utils/Constants';
-
-const chatEngine: IChatEngine[] = [
-  {
-    id: 'gpt-3.5-turbo',
-    name: 'GPT-3.5',
-  },
-  {
-    id: 'gpt-4',
-    name: 'GPT-4'
-  }
-];
+import { TGetModelPropertiesResponse } from '../../types/openrouter';
 
 const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => {
   let failedCount: number = 0;
@@ -46,18 +37,20 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const isKeyboardVisible = useKeyboardVisible();
   const { chatBoxId, imageUri } = route.params;
   const actionSheetRef = useRef<ActionSheetRef>(null);
+  const appConf = useObject<IAppConfig>('AppConfig', userToken);
   const [inputMessage, setInputMessage] = useState<string>('');
   const [messages, setMessages] = useState<Array<IMessage>>([]);
-  const [engine, setEngine] = useState<IChatEngine>(chatEngine[0]);
-  const apiKey = useObject<IAppConfig>('AppConfig', userToken)?.apiKey || '';
+  const [selectedModel, setSelectedModel] = useState<string>('');
+  const [selectedProvider, setSelectedProvider] = useState<string>('');
   const [chatBoxIdCopy, setChatBoxIdCopy] = useState<string>(chatBoxId ? chatBoxId : '');
   const chatBox = useObject<IChatBox>('ChatBox', chatBoxIdCopy);
+  const [apiKey, setApiKey] = useState<string>('');
   const [isFetchingHistory, setIsFetchingHistory] = useState<boolean>(false);
   const chatCollection = useObject<IMessageCollection>('MessageCollection', chatBox?.collectionId ? chatBox.collectionId : '');
 
   const [searchText, setSearchText] = useState<string>('');
   const [isSearchBarVisible, setIsSearchBarVisible] = useState<boolean>(false);
-  const [isNotFoundKeyModalVisible, setIsNotFoundKeyModalVisible] = useState<boolean>(isEmpty(apiKey));
+  const [isNotFoundKeyModalVisible, setIsNotFoundKeyModalVisible] = useState<boolean>(false);
 
   const handleGetOCRResult = useCallback(async (imageUri: string): Promise<string> => {
     const { status, data } = await getOCRResult(imageUri);
@@ -73,9 +66,14 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       text2: Strings.common.unknownError,
       autoHide: true,
     });
+
+    if (!chatCollection?.id) return;
+    realm.write(() => {
+      setMessages((messages) => messages.slice(1));
+    });
   }, []);
 
-  const pushMessage = useCallback((text: string, type: 'user' | 'bot', engineId: string, isInterupted: boolean = false) => {
+  const pushMessage = useCallback((text: string, type: 'user' | 'bot', engineId: string, isInterupted: boolean = false, provider: string) => {
     if (!chatCollection?.id || !chatBox) return;
 
     const message: IMessage = {
@@ -88,18 +86,23 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       createAt: new Date().getTime(),
       updateAt: new Date().getTime(),
       userToken: userToken,
+      provider: provider,
     };
+
+    setMessages((messages) => [message, ...messages]);
+    if (messages.length > CHAT_HISTORY_LOAD_LENGTH) {
+      setMessages((messages) => messages.slice(0, CHAT_HISTORY_CACHE_LENGTH));
+    }
+
+    if (type === 'bot' && text === '...') {
+      return;
+    }
 
     realm.write(() => {
       chatCollection.messages.push(message);
       chatBox.lastMessage! = message.content;
       chatBox.lastMessageAt! = message.createAt;
     });
-
-    setMessages((messages) => [message, ...messages]);
-    if (messages.length > CHAT_HISTORY_LOAD_LENGTH) {
-      setMessages((messages) => messages.slice(0, CHAT_HISTORY_CACHE_LENGTH));
-    }
   }, [chatCollection]);
 
   const setFirstMessageState = useCallback((message: IMessage) => {
@@ -112,10 +115,11 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
   const handleEvensourceEvent = (event: any) => {
     if (event.type === 'open') {
-      console.log('open sse:', event)
+      console.log('open sse:', event);
+      console.log(`using model ${selectedModel} from ${selectedProvider}`)
     } else if (event.type === 'message') {
       if (!event.data || !chatCollection?.id) return;
-      const message = constructMessage(chatCollection?.id, event.data, 'bot', true, engine.id, userToken);
+      const message = constructMessage(chatCollection?.id, event.data, 'bot', true, selectedModel, userToken, selectedProvider);
       setFirstMessageState(message);
     } else if (event.type === 'error') {
       console.log('error', failedCount + 1, event);
@@ -128,7 +132,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       es?.open();
     } else if (event.type === 'done') {
       if (!chatCollection?.id || !chatBox) return;
-      const message = constructMessage(chatCollection?.id, event.data, 'bot', false, engine.id, userToken);
+      const message: IMessage = constructMessage(chatCollection?.id, event.data, 'bot', false, selectedModel, userToken, selectedProvider);
       setFirstMessageState(message);
       realm.write(() => {
         if (chatCollection?.messages?.length > 0) {
@@ -144,11 +148,6 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const sendMessage = (text: string) => {
     Keyboard.dismiss();
 
-    if (!checkValidApiKey(apiKey)) {
-      setIsNotFoundKeyModalVisible(true);
-      return;
-    }
-
     failedCount = 0;
     if (text.length > 0) {
       // copy last message with CHAT_WINDOW_SIZE
@@ -160,14 +159,14 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         context = messages;
       }
 
-      pushMessage(text, 'user', engine.id);
-      pushMessage('...', 'bot', engine.id, true);
+      pushMessage(text, 'user', selectedModel, false, selectedProvider);
+      pushMessage('...', 'bot', selectedModel, true, selectedProvider);
 
       // filter out image message
       context = context.filter((message) => message.type !== 'image');
 
       const requestBody = {
-        model: engine.id,
+        model: selectedModel,
         messages: [...context.reverse().map((message) => {
           return {
             role: message.type === 'bot' ? 'assistant' : 'user',
@@ -176,13 +175,14 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         }), { role: 'user', content: text }],
         stream: true
       };
-
       setInputMessage('');
-      es = new EventSource(`${OPENROUTER_HOST}/chat/completions`, {
+      es = new EventSource(`${selectedProvider === 'OpenAI' ? OPENAI_HOST : OPENROUTER_HOST}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${OPENROUTER_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
+          'HTTP-Referer': 'https://lensquery.com',
+          'X-Title': 'LensQuery'
         },
         body: JSON.stringify(requestBody),
         debug: false,
@@ -241,7 +241,31 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         },
       ]
     );
-  }
+  };
+
+  const checkValidKey = async (): Promise<{ status: boolean, key: string, model: string, provider: string }> => {
+    if (appConf?.defaultProvider === 'OpenAI') {
+      const key = appConf?.openAI?.apiKey;
+      const isValid = await checkValidApiKey(key);
+      if (isValid) {
+        const defaultModel = JSON.parse(appConf?.openAI.defaultModel) as TGetModelPropertiesResponse;
+        return { status: true, key: key, model: defaultModel?.id, provider: appConf?.defaultProvider }
+      } else {
+        return { status: false, key: '', model: '', provider: '' }
+      }
+    } else if (appConf?.defaultProvider === 'OpenRouter') {
+      const key = appConf?.openRouter?.apiKey;
+      const { status, data } = await getKeyLimit(key);
+      if (status === 200) {
+        const defaultModel = JSON.parse(appConf?.openRouter.defaultModel) as TGetModelPropertiesResponse;
+        return { status: true, key: key, model: defaultModel?.id, provider: appConf?.defaultProvider }
+      } else {
+        return { status: false, key: '', model: '', provider: '' }
+      }
+    }
+
+    return { status: false, key: '', model: '', provider: '' }
+  };
 
   useEffect(() => {
     const initData = async () => {
@@ -253,7 +277,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           const _chatBox: Realm.Object<IChatBox> = realm.create('ChatBox', {
             id: boxId,
             name: '',
-            engineId: engine.id,
+            engineId: selectedModel,
             collectionId: collectionId,
             lastMessage: '',
             lastMessageAt: new Date().getTime(),
@@ -276,8 +300,8 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         })
 
         if (imageUri !== undefined) {
-          const message = constructMessage(collectionId, imageUri, 'image', false, engine.id, userToken);
-          const typingMessage = constructMessage(collectionId, '...', 'bot', true, engine.id, userToken);
+          const message = constructMessage(collectionId, imageUri, 'image', false, selectedModel, userToken, selectedProvider);
+          const typingMessage = constructMessage(collectionId, '...', 'bot', true, selectedModel, userToken, selectedProvider);
           setMessages((messages) => [typingMessage, message, ...messages]);
           realm.write(() => {
             // @ts-ignore
@@ -293,7 +317,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           }
 
           // create new chat box in realm
-          const ocrMessage = constructMessage(collectionId, text, 'bot', false, engine.id, userToken);
+          const ocrMessage = constructMessage(collectionId, text, 'bot', false, selectedModel, userToken, selectedProvider);
           setFirstMessageState(ocrMessage);
 
           const updatedTime = new Date().getTime();
@@ -322,6 +346,21 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
     initData();
   }, [chatBoxId]);
+
+  useEffect(() => {
+    const initApiKey = async () => {
+      const { status, key, model, provider } = await checkValidKey();
+      if (status) {
+        setApiKey(key);
+        setSelectedModel(model);
+        setSelectedProvider(provider);
+      } else {
+        setIsNotFoundKeyModalVisible(true);
+      }
+    };
+
+    initApiKey();
+  }, [appConf]);
 
   const actionItem: Array<ActionItemProps> = [
     {
@@ -374,7 +413,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
             </View>
 
             <View style={styles.headerRight}>
-              <LabelSwitch
+              {/* <LabelSwitch
                 data={chatEngine}
                 value={engine}
                 onChange={setEngine}
@@ -382,7 +421,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
                 bgActiveColor={Colors.white}
                 labelActiveColor={Colors.primary}
                 labelInActiveColor={Colors.white}
-              />
+              /> */}
 
               <Pressable style={getPressableStyle} onPress={() => actionSheetRef.current?.show()} hitSlop={20}>
                 <Feather name="more-vertical" size={20} color={Colors.white} />

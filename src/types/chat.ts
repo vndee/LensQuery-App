@@ -32,6 +32,7 @@ export type IMessage = {
   createAt: number; // unix timestamp
   updateAt: number; // unix timestamp
   userToken: string; // specific user token
+  provider: string;
 }
 
 export type IMessageCollection = {

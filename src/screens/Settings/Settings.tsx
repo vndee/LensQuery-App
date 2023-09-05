@@ -8,16 +8,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import TextEdit from '../../components/Input/TextEdit';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
-import { Colors, Spacing, Layout, Typography } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
 import { setLanguage } from '../../redux/slice/auth';
 import { maskApiKey } from '../../utils/Helper';
+import { IAppConfig } from '../../types/chat';
+import { getKeyLimit } from '../../services/openrouter';
 import { checkValidApiKey } from '../../services/openai';
 import { useRealm, useObject } from '../../storage/realm';
-import { IAppConfig } from '../../types/chat';
 import { getPressableStyle } from '../../styles/Touchable';
 import LineData from '../../components/Information/LineData';
-import { getKeyLimit } from '../../services/openrouter';
+import { Colors, Spacing, Layout, Typography } from '../../styles';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { TGetKeyLimitResponse, TGetModelPropertiesResponse } from '../../types/openrouter';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
@@ -251,8 +251,6 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
   const handleSetKeyProps = async () => {
     if (appConf) {
-      console.log('appConf', appConf);
-
       if (appConf.defaultProvider === 'OpenRouter') {
         try {
           const defaultModel = JSON.parse(appConf?.openRouter.defaultModel) as TGetModelPropertiesResponse;
@@ -475,7 +473,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     marginLeft: Spacing.S,
-    backgroundColor: Colors.very_pale_green,
+    backgroundColor: Colors.powder_blue,
     paddingHorizontal: Spacing.S,
     paddingVertical: Spacing.XS,
   },
@@ -506,7 +504,7 @@ const styles = StyleSheet.create({
     gap: Spacing.XS,
     padding: Spacing.M,
     borderRadius: Spacing.M,
-    backgroundColor: Colors.very_light_green,
+    backgroundColor: Colors.ice_blue,
     // ...Layout.shadow,
     // shadowColor: Colors.kiwi_green
   },
@@ -515,14 +513,14 @@ const styles = StyleSheet.create({
     padding: Spacing.S,
     marginTop: Spacing.XS,
     borderRadius: Spacing.S,
-    backgroundColor: Colors.kiwi,
+    backgroundColor: Colors.sky_blue,
     justifyContent: 'center',
     alignItems: 'center',
   },
   defaultModel: {
     padding: Spacing.S,
     borderRadius: Spacing.S,
-    backgroundColor: Colors.very_light_green
+    backgroundColor: Colors.ice_blue
   }
 });
 

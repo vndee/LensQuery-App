@@ -31,7 +31,14 @@ export const unixToTime = (unix: number) => {
   return new Date(unix).toLocaleTimeString(undefined, options);
 };
 
-export const constructMessage = (chatCollectionId: string, content: string, type: 'bot' | 'user' | 'image', isInterupted: boolean, engineId: string, userToken: string): IMessage => {
+export const constructMessage = (
+  chatCollectionId: string,
+  content: string,
+  type: 'bot' | 'user' | 'image',
+  isInterupted: boolean,
+  engineId: string,
+  userToken: string,
+  provider: string): IMessage => {
   return {
     id: new Realm.BSON.ObjectId().toHexString(),
     collectionId: chatCollectionId,
@@ -42,6 +49,7 @@ export const constructMessage = (chatCollectionId: string, content: string, type
     createAt: new Date().getTime(),
     updateAt: new Date().getTime(),
     userToken: userToken,
+    provider: provider,
   }
 };
 

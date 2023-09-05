@@ -75,6 +75,7 @@ class Message extends Realm.Object<IMessage> {
   createAt!: number; // unix timestamp
   updateAt!: number; // unix timestamp
   userToken!: string; // specific user token
+  provider!: string;
 
   static schema: Realm.ObjectSchema = {
     name: "Message",
@@ -89,6 +90,7 @@ class Message extends Realm.Object<IMessage> {
       createAt: "int",
       updateAt: "int",
       userToken: "string",
+      provider: "string",
     },
   };
 };
@@ -118,7 +120,7 @@ class MessageCollection extends Realm.Object<MessageCollection> {
 const realmConfig = {
   path: "lensquery.realm",
   schema: [Provider, AppConfig, ChatBox, Message, MessageCollection],
-  schemaVersion: 17,
+  schemaVersion: 18,
   encryptionKey: new Int8Array(64),
   deleteRealmIfMigrationNeeded: true,
 };

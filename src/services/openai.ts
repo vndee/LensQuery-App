@@ -25,12 +25,11 @@ const getOpenAIResponse = async (payload: any, callback: (text: string) => void)
   })
 };
 
-const checkValidApiKey = async (apiKey: string): Promise<boolean> => {
+const checkValidApiKey = async (apiKey: string | undefined): Promise<boolean> => {
   if (isEmpty(apiKey)) return false;
 
   try {
     const response = await openai.get('/models', { headers: { Authorization: `Bearer ${apiKey}` } });
-    console.log(response.data);
     if (response.status === 200) {
       return true;
     } else {

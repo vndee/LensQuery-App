@@ -136,8 +136,8 @@ export default new LocalizedStrings({
       optionClear: 'Clear all messages',
       searchPlaceholder: 'Search...',
       cannotRecognizeMessage: 'Cannot recognize the text',
-      notFoundKeyModalTitle: 'OpenAI key not found',
-      notFoundKeyModalDescription: 'Please go to Settings to add your OpenAI key',
+      notFoundKeyModalTitle: 'API key issue',
+      notFoundKeyModalDescription: 'Your key is not found or invalid. Please go to Settings to add new key',
       notFoundKeyModalAction: 'Go to Settings',
     },
 
@@ -327,8 +327,8 @@ export default new LocalizedStrings({
       optionClear: 'Xóa tất cả tin nhắn',
       searchPlaceholder: 'Tìm kiếm...',
       cannotRecognizeMessage: 'Không thể nhận diện văn bản',
-      notFoundKeyModalTitle: 'OpenAI key không tồn tại',
-      notFoundKeyModalDescription: 'Vui lòng vào Cài đặt để thêm OpenAI key của bạn',
+      notFoundKeyModalTitle: 'Lỗi API key',
+      notFoundKeyModalDescription: 'Key của bạn không tồn tại hoặc không hợp lệ. Vui lòng đến cài đặt để thêm key mới',
       notFoundKeyModalAction: 'Đến cài đặt',
     },
 

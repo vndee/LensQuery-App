@@ -1,15 +1,15 @@
 export default {
-  primary: '#0000ff',
-  light_primary: '#60A5FA',
+  primary: '#14375F',
+  light_primary: '#6D8199',
   background: '#FFFFFF',
-  btnColor: '#0000ff',
-  secondary: '#10B981',
+  btnColor: '#14375F',
+  secondary: '#F9FAFB',
 
   link: '#188aeb',
   placeholder: '#ced0d4',
   hint: '#8d919d',
   disabled: '#bec4cf',
-  danger: '#e82956',
+  danger: '#E0312E',
   very_light_pink: '#f0f0f0',
   borders: '#e1e5f2',
 
