@@ -3,7 +3,9 @@ import { getPressableStyle } from '../../styles/Touchable';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Typography, Spacing, Colors } from '../../styles';
 import { IChatBox } from '../../types/chat';
+import Strings from '../../localization';
 import { formatTimeDiff } from '../../utils/Helper';
+import { isEmpty } from 'lodash';
 
 type IChatBoxProps = {
   item: IChatBox,
@@ -25,7 +27,7 @@ const BoxCard = ({ item, isSelected, selectedMode, onPress, onLongPress }: IChat
       {selectedMode && <View style={[styles.checkBox, isSelected && { backgroundColor: Colors.primary, borderWidth: 0 }]} />}
       <View style={styles.col}>
         <View style={styles.row}>
-          <Text style={[Typography.title, { flex: 1 }]} numberOfLines={1} ellipsizeMode='tail'>{name}</Text>
+          <Text style={[Typography.title, { flex: 1 }]} numberOfLines={1} ellipsizeMode='tail'>{!isEmpty(name) ? name : Strings.chatList.untitle}</Text>
           <View style={{ alignSelf: 'center', marginLeft: Spacing.L }}>
             <Text style={styles.timePassed}>{formatTimeDiff(lastMessageAt)}</Text>
           </View>

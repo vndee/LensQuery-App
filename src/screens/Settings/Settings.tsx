@@ -151,7 +151,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         if (appConf.openRouter) {
           appConf.openRouter.apiKey = key;
           appConf.defaultProvider = 'OpenRouter';
-          appConf.openRouter.defaultModel = JSON.stringify(defaultOpenRouterModel);
+          appConf.openRouter.defaultModel = JSON.stringify(selectedDefaultModel);
         }
       }
     });
