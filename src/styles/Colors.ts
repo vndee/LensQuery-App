@@ -1,8 +1,8 @@
 export default {
-  primary: '#14375F',
+  primary: '#000080',
   light_primary: '#6D8199',
   background: '#FFFFFF',
-  btnColor: '#14375F',
+  btnColor: '#000080',
   secondary: '#F9FAFB',
 
   link: '#188aeb',

@@ -2,16 +2,18 @@ import { isEmpty } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import Strings from '../../localization';
 import appStorage from '../../storage';
+import { SvgXml } from 'react-native-svg';
 import Button from '../../components/Button';
 import { Routes } from '../../types/navigation'
 import Checkbox from '../../components/Checkbox';
-import firebaseAuth from '../../services/firebase'
+import firebaseAuth from '../../services/firebase';
 import { setLanguage } from '../../redux/slice/auth';
 import { checkEmailValid } from '../../utils/Helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { StackScreenProps } from '@react-navigation/stack';
 import { FirebaseSignInResponse } from '../../types/firebase';
 import { getPressableStyle } from '../../styles/Touchable';
+import { LogoXML } from '../../components/Illustrations/Logo';
 import TextInputWithIcon from '../../components/Input/TextInputWithIcon';
 import { Colors, Spacing, Typography, Layout } from '../../styles/index';
 import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Image, Pressable } from 'react-native';
@@ -120,7 +122,9 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
     >
       <ScrollView contentContainerStyle={styles.container}>
         <View>
-          <Image source={require('../../assets/logo.png')} style={styles.logoBtn} />
+          <View style={styles.logoBtn}>
+            <SvgXml xml={LogoXML} width="100%" height="100%" />
+          </View>
           <Text style={[styles.appTitle, { marginTop: Spacing.M }]}>LensQuery</Text>
         </View>
 
