@@ -12,6 +12,7 @@ import { IChatBox, IMessageCollection } from '../../types/chat';
 import { NotFoundXML } from '../../components/Illustrations/NotFound';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LayoutAnimation, View, Text, StyleSheet, Alert, Pressable } from 'react-native';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
@@ -130,7 +131,9 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
     return (
       <View style={styles.row}>
         <Pressable onPress={() => { setIsSelectedAll(!isSelectedAll); setSelectedBox(new Set()) }} style={getPressableStyle} hitSlop={20}>
-          <View style={[styles.checkBox, isSelectedAll && { backgroundColor: Colors.white, borderWidth: 0 }]} />
+          <View style={[styles.checkBox]}>
+            {isSelectedAll && <View style={styles.innerBox} />}
+          </View>
         </Pressable>
         <Text style={[Typography.title, { flex: 1, color: Colors.white }]}>{isSelectedAll ? listOfChats.length : selectedBox.size} {Strings.chatList.selected}</Text>
         <View style={{ flexDirection: 'row', gap: Spacing.M, alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
@@ -174,7 +177,7 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
                 item={item}
                 isSelected={selectedBox.has(item?.id) || isSelectedAll}
                 selectedMode={isSelectedMode}
-                onPress={() => !isSelectedMode ? navigation.navigate('ChatBox', { chatBoxId: item.id, imageUri: undefined }) : setSelectedBox((prev) => { prev.has(item?.id) ? prev.delete(item?.id) : prev.add(item?.id); return new Set(prev); })}
+                onPress={() => !isSelectedMode ? navigation.navigate('ChatBox', { chatBoxId: item.id, imageUri: undefined, type: 'FREE_TEXT' }) : setSelectedBox((prev) => { prev.has(item?.id) ? prev.delete(item?.id) : prev.add(item?.id); return new Set(prev); })}
                 onLongPress={() => { setSelectedChatBoxId(item?.id); actionSheetRef?.current?.show(); }}
               />}
               keyExtractor={(item, index) => index.toString()}
@@ -187,8 +190,8 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
       </View>
 
       <View style={styles.fab}>
-        <Pressable style={({ pressed }) => [styles.fabBtn01, { opacity: pressed ? 0.4 : 1 }]} onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: undefined })} hitSlop={20}>
-          <Ionicons name='add' size={24} color={Colors.white} />
+        <Pressable style={({ pressed }) => [styles.fabBtn01, { opacity: pressed ? 0.4 : 1 }]} onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: undefined, type: 'FREE_TEXT' })} hitSlop={20}>
+          <MaterialCommunityIcons name='chat-plus-outline' size={18} color={Colors.white} />
         </Pressable>
 
         <Pressable style={({ pressed }) => [styles.fabBtn02, { opacity: pressed ? 0.4 : 1 }]} onPress={() => navigation.navigate('Lens')} hitSlop={20}>
@@ -214,30 +217,9 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
   },
-  fab_01: {
-    width: 44,
-    height: 44,
-    borderRadius: 28,
-    position: 'absolute',
-    bottom: Spacing.XL,
-    right: Spacing.XL,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.primary,
-
-    shadowColor: Colors.primary,
-    shadowOffset: {
-      width: 0,
-      height: 5,
-    },
-    shadowOpacity: 0.36,
-    shadowRadius: 6.68,
-
-    elevation: 11,
-  },
   fab: {
     width: 44,
-    height: 80,
+    height: 84,
     position: 'absolute',
     bottom: Spacing.safePaddingBottom,
     right: Spacing.XL,
@@ -291,15 +273,21 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     elevation: 11,
   },
   checkBox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.borders,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.S,
+  },
+  innerBox: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: Colors.white,
   },
 });
 

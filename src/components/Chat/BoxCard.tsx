@@ -24,7 +24,9 @@ const BoxCard = ({ item, isSelected, selectedMode, onPress, onLongPress }: IChat
       onPress={onPress}
       onLongPress={onLongPress}
     >
-      {selectedMode && <View style={[styles.checkBox, isSelected && { backgroundColor: Colors.primary, borderWidth: 0 }]} />}
+      {selectedMode && <View style={[styles.checkBox]}>
+        {isSelected && <View style={styles.innerBox} />}
+      </View>}
       <View style={styles.col}>
         <View style={styles.row}>
           <Text style={[Typography.title, { flex: 1 }]} numberOfLines={1} ellipsizeMode='tail'>{!isEmpty(name) ? name : Strings.chatList.untitle}</Text>
@@ -43,21 +45,27 @@ const BoxCard = ({ item, isSelected, selectedMode, onPress, onLongPress }: IChat
 const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    paddingHorizontal: Spacing.L,
+    paddingHorizontal: Spacing.XL,
     paddingVertical: Spacing.M,
     // borderBottomWidth: 0.25,
     // borderBottomColor: Colors.borders,
   },
   checkBox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
     borderWidth: 0.4,
     borderColor: Colors.primary,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.M,
+  },
+  innerBox: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: Colors.primary,
   },
   col: {
     flex: 1,

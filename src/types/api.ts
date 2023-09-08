@@ -16,3 +16,8 @@ export type OCRResultResponse = {
   status: number;
   data: string;
 }
+
+export type OCRResponse = {
+  status: number;
+  data: string;
+}

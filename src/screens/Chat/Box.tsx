@@ -4,10 +4,10 @@ import Realm from 'realm';
 import { isEmpty } from 'lodash';
 import Strings from '../../localization';
 import { useSelector } from 'react-redux';
-import { Routes } from '../../types/navigation';
 import EventSource from '../../services/sse';
 import { FlashList } from '@shopify/flash-list';
 import Toast from 'react-native-toast-message';
+import { getOCRText } from '../../services/api';
 import { getPressableStyle } from '../../styles/Touchable';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -22,6 +22,7 @@ import { getOCRResult } from '../../services/api'
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
 import { checkValidApiKey } from '../../services/openai';
 import { getKeyLimit } from '../../services/openrouter';
+import { Routes, OCRType } from '../../types/navigation';
 import ProgressCircle from 'react-native-progress/CircleSnail';
 import { IMessage, IChatBox, IMessageCollection } from '../../types/chat';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
@@ -35,7 +36,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   let es: EventSource | null = null;
   const { userToken } = useSelector((state: any) => state.auth);
   const isKeyboardVisible = useKeyboardVisible();
-  const { chatBoxId, imageUri } = route.params;
+  const { chatBoxId, imageUri, type } = route.params;
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const appConf = useObject<IAppConfig>('AppConfig', userToken);
   const [inputMessage, setInputMessage] = useState<string>('');
@@ -51,14 +52,6 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const [searchText, setSearchText] = useState<string>('');
   const [isSearchBarVisible, setIsSearchBarVisible] = useState<boolean>(false);
   const [isNotFoundKeyModalVisible, setIsNotFoundKeyModalVisible] = useState<boolean>(false);
-
-  const handleGetOCRResult = useCallback(async (imageUri: string): Promise<string> => {
-    const { status, data } = await getOCRResult(imageUri);
-    if (status === 200) {
-      return data;
-    }
-    return '';
-  }, []);
 
   const handleUnknowError = useCallback(() => {
     Toast.show({
@@ -116,7 +109,6 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const handleEvensourceEvent = (event: any) => {
     if (event.type === 'open') {
       console.log('open sse:', event);
-      console.log(`using model ${selectedModel} from ${selectedProvider}`)
     } else if (event.type === 'message') {
       if (!event.data || !chatCollection?.id) return;
       const message = constructMessage(chatCollection?.id, event.data, 'bot', true, selectedModel, userToken, selectedProvider);
@@ -176,6 +168,8 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         stream: true
       };
       setInputMessage('');
+      console.log(`using model ${selectedModel} from ${selectedProvider}`)
+
       es = new EventSource(`${selectedProvider === 'OpenAI' ? OPENAI_HOST : OPENROUTER_HOST}/chat/completions`, {
         method: 'POST',
         headers: {
@@ -269,6 +263,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
   useEffect(() => {
     const initData = async () => {
+      console.log(`[Image Uri]: ${imageUri} ~ [OCR Type]: ${type}`);
       if (chatBoxId === undefined) {
         let text: string = '';
         const boxId = new Realm.BSON.ObjectId().toHexString();
@@ -310,7 +305,11 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
             _messageCollection.updateAt = new Date().getTime();
           });
 
-          text = await handleGetOCRResult(imageUri)
+          const { status, data } = await getOCRText(imageUri, type);
+          if (status === 200) {
+            text = data;
+          }
+
           if (text === undefined || text === '') {
             alertCannotRecognizeText(_chatBox, _messageCollection);
             return;
@@ -413,16 +412,6 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
             </View>
 
             <View style={styles.headerRight}>
-              {/* <LabelSwitch
-                data={chatEngine}
-                value={engine}
-                onChange={setEngine}
-                bgInActiveColor={Colors.primary}
-                bgActiveColor={Colors.white}
-                labelActiveColor={Colors.primary}
-                labelInActiveColor={Colors.white}
-              /> */}
-
               <Pressable style={getPressableStyle} onPress={() => actionSheetRef.current?.show()} hitSlop={20}>
                 <Feather name="more-vertical" size={20} color={Colors.white} />
               </Pressable>
@@ -500,10 +489,10 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={Typography.body}>{Strings.chatBox.notFoundKeyModalTitle}</Text>
-            <Text style={Typography.description}>{Strings.chatBox.notFoundKeyModalDescription}</Text>
+            <Text style={Typography.title}>{Strings.chatBox.notFoundKeyModalTitle}</Text>
+            <Text style={[Typography.description, { textAlign: 'center' }]}>{Strings.chatBox.notFoundKeyModalDescription}</Text>
             <Pressable onPress={() => { setIsNotFoundKeyModalVisible(false); navigation.navigate('Settings') }} style={getPressableStyle}>
-              <Text style={[Typography.description, { color: Colors.primary }]}>{Strings.chatBox.notFoundKeyModalAction}</Text>
+              <Text style={[Typography.body, { color: Colors.primary, fontWeight: 'bold' }]}>{Strings.chatBox.notFoundKeyModalAction}</Text>
             </Pressable>
           </View>
         </View>

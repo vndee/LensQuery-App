@@ -11,7 +11,7 @@ import Touchable, { getPressableStyle } from '../../styles/Touchable';
 import LabelInput from '../../components/Input/LabelInput';
 import { FirebaseSignInResponse } from '../../types/firebase';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 
 const ChangePassword = ({ navigation, route }: StackScreenProps<Routes, 'ChangePassword'>): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -72,69 +72,71 @@ const ChangePassword = ({ navigation, route }: StackScreenProps<Routes, 'ChangeP
       </View>
       <ScrollView style={{ flex: 1, backgroundColor: Colors.background }}>
         <View style={[styles.container, { marginTop: Spacing.L }]}>
-          <LabelInput
-            label={Strings.changePassword.currentPassword}
-            value={currentPassword}
-            placeholder={Strings.changePassword.currentPasswordPlaceholder}
-            onChangeText={(text) => {
-              setCurrentPassword(text)
-              if (currentPassword.length < 6 && currentPassword === Strings.changePassword.weakPassword) {
-                return;
-              };
-              if (!isEmpty(currentPassword) && !isEmpty(text)) {
-                setCurrentPasswordErrorText('')
-              }
-              if (!isEmpty(erorText)) {
-                setErrorText('')
-              }
-            }}
-            secureTextEntry={true}
-            icon="lock-open-outline"
-            iconView="lock-closed-outline"
-            errorText={currentPasswordErrorText}
-          />
-          <LabelInput
-            label={Strings.changePassword.newPassword}
-            value={newPassword}
-            placeholder={Strings.changePassword.newPasswordPlaceholder}
-            onChangeText={(text) => {
-              setNewPassword(text)
-              if (newPassword.length < 6 && newPassword === Strings.changePassword.weakPassword) {
-                return;
-              };
-              if (!isEmpty(newPassword) && !isEmpty(text)) {
-                setNewPasswordErrorText('')
-              }
-              if (!isEmpty(erorText)) {
-                setErrorText('')
-              }
-            }}
-            secureTextEntry={true}
-            icon="lock-open-outline"
-            iconView="lock-closed-outline"
-            errorText={newPasswordErrorText}
-          />
-          <LabelInput
-            label={Strings.changePassword.confirmPassword}
-            value={confirmNewPassword}
-            placeholder={Strings.changePassword.confirmPasswordPlaceholder}
-            onChangeText={(text) => {
-              setConfirmNewPassword(text)
-              if (confirmNewPassword.length < 6 && confirmNewPassword === Strings.changePassword.weakPassword) {
-                return;
-              };
-              if (!isEmpty(confirmNewPassword) && !isEmpty(text)) {
-                setConfirmNewPasswordErrorText('')
-              }
-              if (!isEmpty(erorText)) {
-                setErrorText('')
-              }
-            }}
-            secureTextEntry={true}
-            icon="lock-open-outline"
-            iconView="lock-closed-outline"
-            errorText={confirmNewPasswordErrorText}
-          />
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <LabelInput
+              label={Strings.changePassword.currentPassword}
+              value={currentPassword}
+              placeholder={Strings.changePassword.currentPasswordPlaceholder}
+              onChangeText={(text) => {
+                setCurrentPassword(text)
+                if (currentPassword.length < 6 && currentPassword === Strings.changePassword.weakPassword) {
+                  return;
+                };
+                if (!isEmpty(currentPassword) && !isEmpty(text)) {
+                  setCurrentPasswordErrorText('')
+                }
+                if (!isEmpty(erorText)) {
+                  setErrorText('')
+                }
+              }}
+              secureTextEntry={true}
+              icon="lock-open-outline"
+              iconView="lock-closed-outline"
+              errorText={currentPasswordErrorText}
+            />
+            <LabelInput
+              label={Strings.changePassword.newPassword}
+              value={newPassword}
+              placeholder={Strings.changePassword.newPasswordPlaceholder}
+              onChangeText={(text) => {
+                setNewPassword(text)
+                if (newPassword.length < 6 && newPassword === Strings.changePassword.weakPassword) {
+                  return;
+                };
+                if (!isEmpty(newPassword) && !isEmpty(text)) {
+                  setNewPasswordErrorText('')
+                }
+                if (!isEmpty(erorText)) {
+                  setErrorText('')
+                }
+              }}
+              secureTextEntry={true}
+              icon="lock-open-outline"
+              iconView="lock-closed-outline"
+              errorText={newPasswordErrorText}
+            />
+            <LabelInput
+              label={Strings.changePassword.confirmPassword}
+              value={confirmNewPassword}
+              placeholder={Strings.changePassword.confirmPasswordPlaceholder}
+              onChangeText={(text) => {
+                setConfirmNewPassword(text)
+                if (confirmNewPassword.length < 6 && confirmNewPassword === Strings.changePassword.weakPassword) {
+                  return;
+                };
+                if (!isEmpty(confirmNewPassword) && !isEmpty(text)) {
+                  setConfirmNewPasswordErrorText('')
+                }
+                if (!isEmpty(erorText)) {
+                  setErrorText('')
+                }
+              }}
+              secureTextEntry={true}
+              icon="lock-open-outline"
+              iconView="lock-closed-outline"
+              errorText={confirmNewPasswordErrorText}
+            />
+          </KeyboardAvoidingView>
         </View>
       </ScrollView>
       <View style={Touchable.btnBottom}>

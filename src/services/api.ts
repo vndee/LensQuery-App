@@ -2,7 +2,7 @@ import qs from 'querystring';
 import firebaseAuth from './firebase'
 import axios, { AxiosError } from 'axios';
 import { MATHPIX_HOST } from '../utils/Constants'
-import { healthCheckResponse, GetOCRAccessTokenResponse, OCRResultResponse } from '../types/api';
+import { healthCheckResponse, GetOCRAccessTokenResponse, OCRResultResponse, OCRResponse } from '../types/api';
 
 const queryBackend = axios.create({
   baseURL: 'https://brain.lensquery.com',
@@ -108,4 +108,92 @@ const getPrivacyPolicy = async (): Promise<string> => {
   }
 }
 
-export { healthCheck, getOCRAccessToken, getOCRResult, getTermsOfUse, getPrivacyPolicy };
+const getFreeText = async (image: string): Promise<OCRResponse> => {
+  try {
+    const payload = new FormData();
+    payload.append('image', {
+      uri: image,
+      type: 'image/jpeg',
+      name: 'image.jpg',
+    });
+
+    const resp = await queryBackend.post('/api/v1/ocr/get_free_text', payload, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    let returned = '';
+    if (resp.status === 200) {
+      // get returned by join 
+      returned = resp.data.join('\n');
+    }
+    return { status: resp.status, data: returned };
+  } catch (error: any) {
+    console.error('getFreeText error:', error?.response?.data);
+    return { status: error?.response?.status, data: '' }
+  }
+};
+
+const getDocumentText = async (image: string): Promise<OCRResponse> => {
+  try {
+    const payload = new FormData();
+    payload.append('image', {
+      uri: image,
+      type: 'image/jpeg',
+      name: 'image.jpg',
+    });
+
+    const resp = await queryBackend.post('/api/v1/ocr/get_document_text', payload, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return { status: resp.status, data: resp.data?.data };
+  } catch (error: any) {
+    console.error('getDocumentText error:', error?.response?.data);
+    return { status: error?.response?.status, data: '' }
+  }
+};
+
+const getEquationText = async (image: string): Promise<OCRResponse> => {
+  try {
+    const payload = new FormData();
+    payload.append('image', {
+      uri: image,
+      type: 'image/jpeg',
+      name: 'image.jpg',
+    });
+    const resp = await queryBackend.post('/api/v1/ocr/get_equation_text', payload, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return { status: resp.status, data: resp.data.text };
+  } catch (error: any) {
+    console.error('getEquationText error:', error?.response?.data);
+    return { status: error?.response?.status, data: '' }
+  }
+};
+
+const getOCRText = async (image: string, type: string) => {
+  let resp: OCRResponse = { status: 500, data: '' };
+
+  switch (type) {
+    case 'FREE_TEXT':
+      resp = await getFreeText(image);
+      break;
+    case 'DOCUMENT_TEXT':
+      resp = await getDocumentText(image);
+      break;
+    case 'EQUATION_TEXT':
+      resp = await getEquationText(image);
+      break;
+    default:
+      break;
+  };
+
+  return resp;
+}
+
+export { healthCheck, getOCRAccessToken, getOCRResult, getTermsOfUse, getPrivacyPolicy, getOCRText };

@@ -18,8 +18,8 @@ import { useRealm, useObject } from '../../storage/realm';
 import { getPressableStyle } from '../../styles/Touchable';
 import LineData from '../../components/Information/LineData';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { TGetKeyLimitResponse, TGetModelPropertiesResponse } from '../../types/openrouter';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, KeyboardAvoidingView } from 'react-native';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
@@ -85,11 +85,28 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
     if (appConf) {
       if (selectedProvider === 'OpenAI') {
         setKey(appConf?.openAI?.apiKey || '');
+        try {
+          const defaultModel = JSON.parse(appConf?.openAI.defaultModel) as TGetModelPropertiesResponse;
+          setSelectedDefaultModel(defaultModel);
+        } catch (error) {
+          setSelectedDefaultModel(defaultOpenAIModel);
+        }
       } else {
         setKey(appConf?.openRouter?.apiKey || '');
+        try {
+          const defaultModel = JSON.parse(appConf?.openRouter.defaultModel) as TGetModelPropertiesResponse;
+          setSelectedDefaultModel(defaultModel);
+        } catch (error) {
+          setSelectedDefaultModel(defaultOpenRouterModel);
+        }
       }
     }
   }, [selectedProvider]);
+
+  const handleReset = () => {
+    setIsEditing(false);
+    setIsLoading(false);
+  }
 
   const handleSaveOpenAIKey = async (key: string) => {
     const isValidKey = await checkValidApiKey(key);
@@ -161,6 +178,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
     setIsLoading(true);
     if (isEmpty(key)) {
       setKeyErrorText(Strings.onboardingSetup.keyEmptyError);
+      setIsLoading(false);
       return;
     }
 
@@ -175,8 +193,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         break;
     }
 
-    setIsEditing(false);
-    setIsLoading(false);
+    handleReset();
   };
 
   const actionSheet: Array<ActionItemProps> = [
@@ -295,20 +312,22 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const renderOpenAIKeySetup = () => {
     return (
       <>
-        <TextEdit
-          value={isEditing ? key : maskApiKey(key)}
-          label={Strings.onboardingSetup.openAILabelInputKey}
-          placeholder={Strings.onboardingSetup.pleasePasteOpenAIKey}
-          onChange={(text) => {
-            setKey(text);
-            if (!isEmpty(keyErrorText) && !isEmpty(text)) {
-              setKeyErrorText('');
-            }
-          }}
-          errorText={keyErrorText}
-          icon="key"
-          isEdit={isEditing}
-        />
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <TextEdit
+            value={isEditing ? key : maskApiKey(key)}
+            label={Strings.onboardingSetup.openAILabelInputKey}
+            placeholder={Strings.onboardingSetup.pleasePasteOpenAIKey}
+            onChange={(text) => {
+              setKey(text);
+              if (!isEmpty(keyErrorText) && !isEmpty(text)) {
+                setKeyErrorText('');
+              }
+            }}
+            errorText={keyErrorText}
+            icon="key"
+            isEdit={isEditing}
+          />
+        </KeyboardAvoidingView>
         <View style={{ gap: Spacing.S }}>
           <View style={styles.instruction}>
             <Text style={Typography.description}>{Strings.onboardingSetup.dontKnowHowToGetKey}</Text>
@@ -324,20 +343,22 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const renderOpenRouterKeySetup = () => {
     return (
       <>
-        <TextEdit
-          value={isEditing ? key : maskApiKey(key)}
-          label={Strings.onboardingSetup.openRouterLabelInputKey}
-          placeholder={Strings.onboardingSetup.pleasePasteOpenRouterKey}
-          onChange={(text) => {
-            setKey(text);
-            if (!isEmpty(keyErrorText) && !isEmpty(text)) {
-              setKeyErrorText('');
-            }
-          }}
-          errorText={keyErrorText}
-          icon="key"
-          isEdit={isEditing}
-        />
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <TextEdit
+            value={isEditing ? key : maskApiKey(key)}
+            label={Strings.onboardingSetup.openRouterLabelInputKey}
+            placeholder={Strings.onboardingSetup.pleasePasteOpenRouterKey}
+            onChange={(text) => {
+              setKey(text);
+              if (!isEmpty(keyErrorText) && !isEmpty(text)) {
+                setKeyErrorText('');
+              }
+            }}
+            errorText={keyErrorText}
+            icon="key"
+            isEdit={isEditing}
+          />
+        </KeyboardAvoidingView>
         <View style={{ gap: Spacing.S }}>
           <View style={styles.instruction}>
             <Text style={Typography.description}>{Strings.onboardingSetup.dontKnowHowToGetKey}</Text>
@@ -405,12 +426,14 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         />
         <View style={{ height: Spacing.M }} />
         <View>
-          <TextEdit
-            label={Strings.setting.email}
-            value={email}
-            onChange={setEmail}
-            isEdit={isEditing}
-          />
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <TextEdit
+              label={Strings.setting.email}
+              value={email}
+              onChange={setEmail}
+              isEdit={isEditing}
+            />
+          </KeyboardAvoidingView>
 
           <View style={styles.row}>
             <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.providerLabel}</Text>

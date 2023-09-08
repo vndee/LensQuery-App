@@ -1,8 +1,9 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import { Colors, Spacing } from '../../styles';
+import { Colors, Spacing, Typography } from '../../styles';
 import { Routes } from '../../types/navigation';
 import {
   View,
+  Text,
   Image,
   Pressable,
   StatusBar,
@@ -11,18 +12,22 @@ import {
   NativeSyntheticEvent,
   ImageLoadEventData
 } from 'react-native';
+import { OCRType } from '../../types/navigation';
 import Cropper from 'react-native-image-cropview';
 import { getImageSize } from '../../utils/Helper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getPressableStyle } from '../../styles/Touchable';
 import { StackScreenProps } from '@react-navigation/stack';
+import { Label, OCRLabels } from '../../types/navigation';
 import ImageEditor from "@react-native-community/image-editor";
+import OCRModeSelection from '../../components/Selection/OCRModeSelection';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.Element => {
   const { path } = route.params;
   const cropperRef = useRef(null);
   const [isCropMode, setIsCropMode] = useState(false);
+  const [selectionMode, setSelectionMode] = useState<Label>(OCRLabels[0]);
 
   const onMediaLoad = useCallback((event: any | NativeSyntheticEvent<ImageLoadEventData>) => {
     console.log(`Image loaded. Size: ${event.nativeEvent.source.width}x${event.nativeEvent.source.height}`);
@@ -41,7 +46,7 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
     };
 
     ImageEditor.cropImage(source.uri, cropData).then(url => {
-      navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: url });
+      navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: url, type: selectionMode.id });
     });
   }
 
@@ -64,6 +69,10 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
     if (navigation.canGoBack()) navigation.goBack();
   }
 
+  useEffect(() => {
+    console.log('react changed:', selectionMode);
+  }, [selectionMode]);
+
   const renderFooterDefaultMode = useCallback(() => {
     return (
       <View style={styles.bottomBarBtn}>
@@ -73,12 +82,12 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
         <Pressable onPress={() => setIsCropMode(true)} style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20}>
           <MaterialCommunityIcons name="crop-free" size={26} color={Colors.white} style={styles.icon} />
         </Pressable>
-        <Pressable onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: source.uri })} style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20}>
+        <Pressable onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: source.uri, type: selectionMode.id })} style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20}>
           <Ionicons name="checkmark-outline" size={26} color={Colors.white} style={styles.icon} />
         </Pressable>
       </View>
     );
-  }, []);
+  }, [selectionMode]);
 
   const renderFooterCropMode = useCallback(() => {
     return (
@@ -91,7 +100,7 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
         </Pressable>
       </View>
     );
-  }, []);
+  }, [selectionMode]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -114,7 +123,10 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
             onLoadEnd={onMediaLoadEnd}
           />}
       </View>
+
       {isCropMode ? renderFooterCropMode() : renderFooterDefaultMode()}
+
+      <OCRModeSelection label={selectionMode} callback={setSelectionMode} />
     </View>
   );
 };
@@ -182,7 +194,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     backgroundColor: 'rgba(140, 140, 140, 0.3)',
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
 });
 
 export default Media;
