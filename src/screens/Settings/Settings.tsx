@@ -431,7 +431,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
               label={Strings.setting.email}
               value={email}
               onChange={setEmail}
-              isEdit={isEditing}
+              isEdit={false}
             />
           </KeyboardAvoidingView>
 
@@ -509,6 +509,7 @@ const styles = StyleSheet.create({
     gap: Spacing.M,
     flexDirection: 'row',
     marginBottom: Spacing.M,
+    paddingTop: Spacing.M,
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.horizontalPadding,
   },
