@@ -1,9 +1,11 @@
+import Modal from 'react-native-modal';
 import Strings from '../../localization';
 import { useSelector } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
 import { Routes } from '../../types/navigation';
 import { FlashList } from '@shopify/flash-list';
 import BoxCard from '../../components/Chat/BoxCard';
+import TextEdit from '../../components/Input/TextEdit';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getPressableStyle } from '../../styles/Touchable';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -12,9 +14,13 @@ import { IChatBox, IMessageCollection } from '../../types/chat';
 import { NotFoundXML } from '../../components/Illustrations/NotFound';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { useRealm, useQuery, useObject } from '../../storage/realm';
+import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../../styles/Spacing';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { LayoutAnimation, View, Text, StyleSheet, Alert, Pressable } from 'react-native';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
+import { LayoutAnimation, View, Text, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
+import { TextInput } from 'react-native-gesture-handler';
+import Button from '../../components/Button';
+import { isEmpty } from 'lodash';
 
 const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) => {
   const realm = useRealm();
@@ -29,6 +35,10 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
   const [selectedChatBoxId, setSelectedChatBoxId] = useState<string>('');
   const selectedChatBox = useObject<IChatBox>('ChatBox', selectedChatBoxId);
   const selectedMessageCollection = useObject<IMessageCollection>('MessageCollection', selectedChatBox?.collectionId || '');
+
+  const [isEditNameModalVisible, setIsEditNameModalVisible] = useState<boolean>(false);
+  const [selectedNewName, setSelectedNewName] = useState<string>('');
+  const [newNameError, setNewNameError] = useState<string>('');
 
   const handleDeleteChatBox = () => {
     actionSheetRef.current?.hide();
@@ -66,6 +76,19 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
     });
   };
 
+  const handleSaveName = () => {
+    realm.write(() => {
+      const chatBox = realm.objectForPrimaryKey<IChatBox>('ChatBox', selectedChatBoxId);
+      if (chatBox) {
+        chatBox.name = selectedNewName;
+      }
+      setTimeout(() => {
+        setIsEditNameModalVisible(false);
+        setSelectedNewName('');
+      }, 300);
+    })
+  };
+
   const alertDeleteBactch = () => {
     Alert.alert(
       Strings.common.alertTitle,
@@ -91,6 +114,9 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
       color: Colors.text_color,
       onPress: () => {
         actionSheetRef.current?.hide();
+        setTimeout(() => {
+          setIsEditNameModalVisible(true)
+        }, 400);
         console.log('Edit chatbox name');
       }
     },
@@ -173,13 +199,16 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
             <FlashList
               ref={listRef}
               data={listOfChats}
-              renderItem={({ item }: { item: IChatBox }) => <BoxCard
-                item={item}
-                isSelected={selectedBox.has(item?.id) || isSelectedAll}
-                selectedMode={isSelectedMode}
-                onPress={() => !isSelectedMode ? navigation.navigate('ChatBox', { chatBoxId: item.id, imageUri: undefined, type: 'FREE_TEXT' }) : setSelectedBox((prev) => { prev.has(item?.id) ? prev.delete(item?.id) : prev.add(item?.id); return new Set(prev); })}
-                onLongPress={() => { setSelectedChatBoxId(item?.id); actionSheetRef?.current?.show(); }}
-              />}
+              renderItem={({ item }: { item: IChatBox }) =>
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                  <BoxCard
+                    item={item}
+                    isSelected={selectedBox.has(item?.id) || isSelectedAll}
+                    selectedMode={isSelectedMode}
+                    onPress={() => !isSelectedMode ? navigation.navigate('ChatBox', { chatBoxId: item.id, imageUri: undefined, type: 'FREE_TEXT' }) : setSelectedBox((prev) => { prev.has(item?.id) ? prev.delete(item?.id) : prev.add(item?.id); return new Set(prev); })}
+                    onLongPress={() => { setSelectedChatBoxId(item?.id); actionSheetRef?.current?.show(); }}
+                  />
+                </KeyboardAvoidingView>}
               keyExtractor={(item, index) => index.toString()}
               showsVerticalScrollIndicator={false}
               estimatedItemSize={100}
@@ -200,6 +229,31 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
       </View>
 
       <BottomActionSheet actionRef={actionSheetRef} actions={actionItem} />
+
+      <Modal
+        isVisible={isEditNameModalVisible}
+        animationInTiming={300}
+        onBackdropPress={() => setIsEditNameModalVisible(false)}
+        style={styles.modalView}
+      >
+        <View style={styles.modalContent}>
+          <Text>{Strings.chatList.newName}</Text>
+          <TextInput
+            value={selectedNewName}
+            onChangeText={setSelectedNewName}
+            style={styles.inputNewName}
+          />
+          <View style={{ flexDirection: 'row', gap: Spacing.M }}>
+            <Pressable style={(pressed) => [getPressableStyle(pressed), styles.saveNameBtn, { backgroundColor: Colors.background, borderWidth: 1, borderColor: Colors.primary }]} onPress={handleSaveName}>
+              <Text style={[Typography.body, { fontWeight: 'bold', color: Colors.primary }]}>{Strings.chatList.cancelName}</Text>
+            </Pressable>
+
+            <Pressable style={(pressed) => [getPressableStyle(pressed), styles.saveNameBtn, { borderWidth: 1, borderColor: Colors.primary }]} onPress={handleSaveName}>
+              <Text style={[Typography.body, { fontWeight: 'bold', color: Colors.white }]}>{Strings.chatList.saveName}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   )
 };
@@ -212,7 +266,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   },
   svgIllus: {
     width: '50%',
-    height: '50%',
+    height: 300,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
@@ -289,6 +343,38 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: Colors.white,
   },
+  modalView: {
+    flex: 1,
+    margin: 20,
+    borderRadius: 20,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: Spacing.S,
+  },
+  modalContent: {
+    gap: Spacing.M,
+    padding: Spacing.M,
+    justifyContent: 'center',
+    borderRadius: Spacing.M,
+    width: SCREEN_WIDTH - Spacing.XL * 2,
+    backgroundColor: Colors.background
+  },
+  inputNewName: {
+    borderWidth: 1,
+    borderRadius: Spacing.S,
+    borderColor: Colors.borders,
+    padding: Spacing.S,
+    width: '100%',
+  },
+  saveNameBtn: {
+    flex: 1,
+    padding: Spacing.S,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: Spacing.S,
+  }
 });
 
 export default ChatList;

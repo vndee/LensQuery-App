@@ -1,6 +1,6 @@
 import React from 'react';
 import { getPressableStyle } from '../../styles/Touchable';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native';
 import { Typography, Spacing, Colors } from '../../styles';
 import { IChatBox } from '../../types/chat';
 import Strings from '../../localization';

@@ -26,7 +26,7 @@ import ProgressCircle from 'react-native-progress/CircleSnail';
 import { IMessage, IChatBox, IMessageCollection } from '../../types/chat';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Alert, Platform, Keyboard, Modal, Pressable } from 'react-native';
-import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE, OPENROUTER_HOST, OPENAI_API_KEY, OPENROUTER_KEY } from '../../utils/Constants';
+import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE, OPENROUTER_HOST } from '../../utils/Constants';
 import { TGetModelPropertiesResponse } from '../../types/openrouter';
 
 const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => {

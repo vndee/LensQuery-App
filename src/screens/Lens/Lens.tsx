@@ -213,7 +213,7 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
 
   if (device != null) return (
     <View style={styles.container}>
-      <StatusBar hidden />
+      {/* <StatusBar hidden /> */}
       <PinchGestureHandler onGestureEvent={onPinchGesture} enabled={isActive}>
         <Reanimated.View style={StyleSheet.absoluteFill}>
           <TapGestureHandler onEnded={onDoubleTap} numberOfTaps={2}>

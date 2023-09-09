@@ -334,7 +334,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
           <View style={styles.instruction}>
             <Text style={Typography.description}>{Strings.onboardingSetup.dontKnowHowToGetKey}</Text>
             <Pressable onPress={() => { }} style={getPressableStyle} hitSlop={20}>
-              <Text style={[Typography.description, { color: Colors.primary }]}> {Strings.common.clickHere}</Text>
+              <Text style={[Typography.description, { color: Colors.primary, fontWeight: 'bold' }]}> {Strings.common.clickHere}</Text>
             </Pressable>
           </View>
           <Text style={Typography.description}>{Strings.onboardingSetup.disclaimer}</Text>
@@ -365,7 +365,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
           <View style={styles.instruction}>
             <Text style={Typography.description}>{Strings.onboardingSetup.dontKnowHowToGetKey}</Text>
             <Pressable onPress={() => { }} style={getPressableStyle} hitSlop={20}>
-              <Text style={[Typography.description, { color: Colors.primary }]}> {Strings.common.clickHere}</Text>
+              <Text style={[Typography.description, { color: Colors.primary, fontWeight: 'bold' }]}> {Strings.common.clickHere}</Text>
             </Pressable>
           </View>
           <Text style={Typography.description}>{Strings.onboardingSetup.disclaimer}</Text>

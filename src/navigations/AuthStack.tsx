@@ -13,15 +13,19 @@ const Stack = createStackNavigator<Routes>();
 
 const AuthStack = (): JSX.Element => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login'>
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
-        <Stack.Screen name="Register" component={Register} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
-        <Stack.Screen name="Agreement" component={Agreement} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
-        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
-        <Stack.Screen name="OnboardingSetup" component={OnboardingSetup} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <StatusBar barStyle="dark-content" />
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName='Login'>
+          <Stack.Screen name="Login" component={Login} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="Register" component={Register} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="Agreement" component={Agreement} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="OnboardingSetup" component={OnboardingSetup} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
+
   );
 };
 

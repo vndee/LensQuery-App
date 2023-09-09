@@ -18,6 +18,7 @@ const Stack = createStackNavigator<Routes>();
 const MainStack = (): JSX.Element => {
   return (
     <>
+      <StatusBar barStyle="dark-content" />
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ title: undefined }} initialRouteName="ChatList">
           <Stack.Screen name="Lens" component={Lens} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />

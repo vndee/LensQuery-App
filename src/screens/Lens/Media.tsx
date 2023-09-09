@@ -56,9 +56,9 @@ const Media = ({ navigation, route }: StackScreenProps<Routes, 'Media'>): JSX.El
     cropperRef?.current?.cancel();
   }
 
-  useEffect(() => {
-    StatusBar.setHidden(true);
-  }, []);
+  // useEffect(() => {
+  //   StatusBar.setHidden(true);
+  // }, []);
 
   const handleCropData = () => {
     // @ts-ignore
