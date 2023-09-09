@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import Strings from '../localization'
 import { IMessage } from '../types/chat';
 import ImageSize from 'react-native-image-size';
@@ -73,6 +74,8 @@ export const getImageSize = async (uri: string): Promise<{ width: number; height
 }
 
 export const maskApiKey = (text: string) => {
+  if (isEmpty(text)) return '';
+
   const parts = text.split('-');
 
   // join part[1..n] with '-'

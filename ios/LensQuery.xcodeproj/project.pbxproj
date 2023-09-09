@@ -630,6 +630,8 @@
 				DEVELOPMENT_TEAM = 2C232ZL6B5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = LensQuery/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LensQuery;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -657,6 +659,8 @@
 				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 2C232ZL6B5;
 				INFOPLIST_FILE = LensQuery/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LensQuery;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
