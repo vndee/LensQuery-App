@@ -240,6 +240,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       color: Colors.text_color,
       onPress: () => {
         setSelectedProvider('OpenAI');
+        setKeyErrorText('');
         providerActionSheetRef.current?.hide();
       }
     },
@@ -248,6 +249,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       color: Colors.text_color,
       onPress: () => {
         setSelectedProvider('OpenRouter');
+        setKeyErrorText('');
         providerActionSheetRef.current?.hide();
       }
     }

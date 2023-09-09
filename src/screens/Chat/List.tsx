@@ -211,8 +211,8 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     gap: Spacing.XS
   },
   svgIllus: {
-    width: 300,
-    height: 200,
+    width: '50%',
+    height: '50%',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',

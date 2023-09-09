@@ -18,7 +18,6 @@ import { useRealm, useObject } from '../../storage/realm';
 import Message from '../../components/Chat/Message';
 import { constructMessage } from '../../utils/Helper';
 import { IAppConfig } from '../../types/chat';
-import { getOCRResult } from '../../services/api'
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
 import { checkValidApiKey } from '../../services/openai';
 import { getKeyLimit } from '../../services/openrouter';
@@ -68,7 +67,6 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
   const pushMessage = useCallback((text: string, type: 'user' | 'bot', engineId: string, isInterupted: boolean = false, provider: string) => {
     if (!chatCollection?.id || !chatBox) return;
-
     const message: IMessage = {
       id: new Realm.BSON.ObjectId().toHexString(),
       collectionId: chatCollection?.id,
@@ -90,7 +88,6 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
     if (type === 'bot' && text === '...') {
       return;
     }
-
     realm.write(() => {
       chatCollection.messages.push(message);
       chatBox.lastMessage! = message.content;
@@ -263,7 +260,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
   useEffect(() => {
     const initData = async () => {
-      console.log(`[Image Uri]: ${imageUri} ~ [OCR Type]: ${type}`);
+      console.log(`[Image Uri]: ${imageUri} ~ [OCR Type]: ${type} ~ [ChatBoxID]: ${chatBoxId}`);
       if (chatBoxId === undefined) {
         let text: string = '';
         const boxId = new Realm.BSON.ObjectId().toHexString();
@@ -290,7 +287,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
             updateAt: new Date().getTime(),
             userToken: userToken,
           });
-
+          setChatBoxIdCopy(boxId);
           return { _chatBox, _messageCollection }
         })
 
@@ -343,7 +340,19 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       }
     };
 
+    const initApiKey = async () => {
+      const { status, key, model, provider } = await checkValidKey();
+      if (status) {
+        setApiKey(key);
+        setSelectedModel(model);
+        setSelectedProvider(provider);
+      } else {
+        setIsNotFoundKeyModalVisible(true);
+      }
+    };
+
     initData();
+    initApiKey();
   }, [chatBoxId]);
 
   useEffect(() => {
