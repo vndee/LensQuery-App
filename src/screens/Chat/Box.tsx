@@ -23,6 +23,7 @@ import { checkValidApiKey } from '../../services/openai';
 import { getKeyLimit } from '../../services/openrouter';
 import { Routes, OCRType } from '../../types/navigation';
 import ProgressCircle from 'react-native-progress/CircleSnail';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { IMessage, IChatBox, IMessageCollection } from '../../types/chat';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Alert, Platform, Keyboard, Modal, Pressable } from 'react-native';
@@ -37,6 +38,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const isKeyboardVisible = useKeyboardVisible();
   const { chatBoxId, imageUri, type } = route.params;
   const actionSheetRef = useRef<ActionSheetRef>(null);
+  const messageActionSheetRef = useRef<ActionSheetRef>(null);
   const appConf = useObject<IAppConfig>('AppConfig', userToken);
   const [inputMessage, setInputMessage] = useState<string>('');
   const [messages, setMessages] = useState<Array<IMessage>>([]);
@@ -51,6 +53,9 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const [searchText, setSearchText] = useState<string>('');
   const [isSearchBarVisible, setIsSearchBarVisible] = useState<boolean>(false);
   const [isNotFoundKeyModalVisible, setIsNotFoundKeyModalVisible] = useState<boolean>(false);
+
+  const [selectedMessageID, setSelectedMessageID] = useState<string>('');
+  const [selectedMessageContent, setSelectedMessageContent] = useState<string>('');
 
   const handleUnknowError = useCallback(() => {
     Toast.show({
@@ -79,7 +84,6 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       userToken: userToken,
       provider: provider,
     };
-
     setMessages((messages) => [message, ...messages]);
     if (messages.length > CHAT_HISTORY_LOAD_LENGTH) {
       setMessages((messages) => messages.slice(0, CHAT_HISTORY_CACHE_LENGTH));
@@ -124,11 +128,11 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       const message: IMessage = constructMessage(chatCollection?.id, event.data, 'bot', false, selectedModel, userToken, selectedProvider);
       setFirstMessageState(message);
       realm.write(() => {
-        if (chatCollection?.messages?.length > 0) {
-          chatCollection.messages[chatCollection?.messages?.length - 1] = message;
+        if (chatCollection?.messages) {
+          chatCollection.messages.push(message);
+          chatBox.lastMessage! = message.content;
+          chatBox.lastMessageAt! = message.createAt;
         }
-        chatBox.lastMessage! = message.content;
-        chatBox.lastMessageAt! = message.createAt;
       });
       es?.close();
     }
@@ -187,7 +191,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
   useEffect(() => {
     if (!chatCollection?.messages?.length) return;
-
+    console.log('chatCollection', chatCollection?.messages?.length, chatCollection?.messages);
     if (messages.length === 0 && chatCollection?.messages?.length > 0) {
       let history: Array<IMessage> = [];
       const L = chatCollection?.messages.length;
@@ -212,7 +216,26 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
     Keyboard.dismiss();
     setSearchText('');
     console.debug('results', results);
-  }
+  };
+
+  const handleShowMessageOption = (id: string, content: string) => {
+    setSelectedMessageID(id);
+    setSelectedMessageContent(content);
+    messageActionSheetRef.current?.show();
+  };
+
+  const handleCopyToClipboard = (text: string) => {
+    Clipboard.setString(text);
+  };
+
+  const handleDeleteMessage = (id: string) => {
+    if (!chatCollection?.id) return;
+    setMessages((messages) => messages.filter((message) => message.id !== id));
+    realm.write(() => {
+      const message = realm.objectForPrimaryKey('Message', id);
+      realm.delete(message);
+    });
+  };
 
   const alertCannotRecognizeText = (_chatBox: Realm.Object<IChatBox>, _messageCollection: Realm.Object<IMessageCollection>) => {
     Alert.alert(
@@ -391,6 +414,27 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
     },
   ];
 
+  const messageActionItem: Array<ActionItemProps> = [
+    {
+      icon: 'copy-outline',
+      color: Colors.text_color,
+      label: Strings.chatBox.messageOptionCopy,
+      onPress: () => {
+        handleCopyToClipboard(selectedMessageContent);
+        messageActionSheetRef.current?.hide();
+      }
+    },
+    {
+      icon: 'trash-outline',
+      color: Colors.danger,
+      label: Strings.chatBox.messageOptionDelete,
+      onPress: () => {
+        handleDeleteMessage(selectedMessageID);
+        messageActionSheetRef.current?.hide();
+      }
+    },
+  ];
+
   const handleFetchMore = () => {
     if (!chatCollection?.messages?.length) return;
 
@@ -456,7 +500,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         <FlashList
           inverted
           data={messages}
-          renderItem={({ item }: { item: IMessage }) => <Message item={item} />}
+          renderItem={({ item }: { item: IMessage }) => <Message item={item} onLongPress={() => handleShowMessageOption(item.id, item.content)} />}
           keyExtractor={(item, index) => index.toString()}
           // @ts-ignore
           contentContainerStyle={styles.messagesContentContainer}
@@ -486,7 +530,9 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         position='top'
         bottomOffset={20}
       />
+
       <BottomActionSheet actionRef={actionSheetRef} actions={actionItem} />
+      <BottomActionSheet actionRef={messageActionSheetRef} actions={messageActionItem} />
 
       <Modal
         animationType="fade"

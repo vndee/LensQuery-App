@@ -143,6 +143,8 @@ export default new LocalizedStrings({
       notFoundKeyModalTitle: 'API key issue',
       notFoundKeyModalDescription: 'Your key is not found or invalid.\nPlease go to Settings to add new key',
       notFoundKeyModalAction: 'Go to Settings',
+      messageOptionCopy: 'Copy',
+      messageOptionDelete: 'Delete message',
     },
 
     // Setting
@@ -338,6 +340,8 @@ export default new LocalizedStrings({
       notFoundKeyModalTitle: 'Lỗi API key',
       notFoundKeyModalDescription: 'Key của bạn không tồn tại hoặc không hợp lệ.\nVui lòng đến cài đặt để thêm key mới',
       notFoundKeyModalAction: 'Đến cài đặt',
+      messageOptionCopy: 'Sao chép',
+      messageOptionDelete: 'Xóa tin nhắn',
     },
 
     // Setting
