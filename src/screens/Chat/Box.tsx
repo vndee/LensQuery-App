@@ -1,34 +1,32 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import 'react-native-get-random-values'
 import Realm from 'realm';
-import { isEmpty } from 'lodash';
+import 'react-native-get-random-values'
 import Strings from '../../localization';
 import { useSelector } from 'react-redux';
 import EventSource from '../../services/sse';
+import { Routes } from '../../types/navigation';
 import { FlashList } from '@shopify/flash-list';
-import Toast from 'react-native-toast-message';
+import { IAppConfig } from '../../types/chat';
+import Toast from 'react-native-simple-toast';
 import { getOCRText } from '../../services/api';
+import Message from '../../components/Chat/Message';
+import { constructMessage } from '../../utils/Helper';
+import { checkValidApiKey } from '../../services/openai';
+import { getKeyLimit } from '../../services/openrouter';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { getPressableStyle } from '../../styles/Touchable';
-import { Colors, Spacing, Typography, Layout } from '../../styles';
 import { StackScreenProps } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
-import LabelSwitch from '../../components/Switch/LabelSwitch';
 import { useRealm, useObject } from '../../storage/realm';
-import Message from '../../components/Chat/Message';
-import { constructMessage } from '../../utils/Helper';
-import { IAppConfig } from '../../types/chat';
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
-import { checkValidApiKey } from '../../services/openai';
-import { getKeyLimit } from '../../services/openrouter';
-import { Routes, OCRType } from '../../types/navigation';
 import ProgressCircle from 'react-native-progress/CircleSnail';
-import Clipboard from '@react-native-clipboard/clipboard';
+import { Colors, Spacing, Typography, Layout } from '../../styles';
+import { TGetModelPropertiesResponse } from '../../types/openrouter';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { IMessage, IChatBox, IMessageCollection } from '../../types/chat';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Alert, Platform, Keyboard, Modal, Pressable } from 'react-native';
 import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE, OPENROUTER_HOST } from '../../utils/Constants';
-import { TGetModelPropertiesResponse } from '../../types/openrouter';
 
 const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => {
   let failedCount: number = 0;
@@ -58,16 +56,18 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
   const [selectedMessageContent, setSelectedMessageContent] = useState<string>('');
 
   const handleUnknowError = useCallback(() => {
-    Toast.show({
-      type: 'error',
-      text2: Strings.common.unknownError,
-      autoHide: true,
-    });
-
     if (!chatCollection?.id) return;
     realm.write(() => {
       setMessages((messages) => messages.slice(1));
     });
+
+    Toast.showWithGravityAndOffset(
+      Strings.common.unknownError,
+      Toast.LONG,
+      Toast.TOP,
+      0,
+      70
+    )
   }, []);
 
   const pushMessage = useCallback((text: string, type: 'user' | 'bot', engineId: string, isInterupted: boolean = false, provider: string) => {
@@ -526,10 +526,10 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           </Pressable>
         </View>
       </KeyboardAvoidingView>
-      <Toast
+      {/* <Toast
         position='top'
         bottomOffset={20}
-      />
+      /> */}
 
       <BottomActionSheet actionRef={actionSheetRef} actions={actionItem} />
       <BottomActionSheet actionRef={messageActionSheetRef} actions={messageActionItem} />
