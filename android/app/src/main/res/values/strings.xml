@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">LensQuery</string>
+  <string moduleConfig="true" name="CodePushDeploymentKey">08S_3v27u_vjucz0XYb1LyQfi3JXedLpTghNE</string>
 </resources>

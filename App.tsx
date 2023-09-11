@@ -9,7 +9,14 @@ import React from 'react';
 import store from './src/redux/store';
 import { Provider } from 'react-redux';
 import { LogBox } from 'react-native';
+import CodePush from 'react-native-code-push';
 import MainApplication from './src/MainApplication';
+
+let codePushOptions = {
+  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+  installMode: CodePush.InstallMode.IMMEDIATE,
+  mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE
+};
 
 function App(): JSX.Element {
   LogBox.ignoreLogs([
@@ -25,4 +32,4 @@ function App(): JSX.Element {
   );
 }
 
-export default App;
+export default CodePush(codePushOptions)(App);
