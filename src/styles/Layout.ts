@@ -19,7 +19,7 @@ export default StyleSheet.create({
     backgroundColor: Colors.primary,
     paddingHorizontal: Spacing.horizontalPadding,
     marginHorizontal: Spacing.horizontalPadding,
-    marginTop: getStatusBarHeight(false) + Spacing.verticalPadding,
+    marginTop: getStatusBarHeight(true) + Spacing.verticalPadding,
 
     shadowColor: Colors.primary,
     shadowOffset: {

@@ -18,7 +18,7 @@ import { getPressableStyle } from '../../styles/Touchable';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsForeground } from '../../hooks/useIsForeground';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import { View, StyleSheet, StatusBar, Pressable } from 'react-native';
+import { View, StyleSheet, Linking, Pressable } from 'react-native';
 import { CaptureButton } from '../../components/Button/CaptureButton';
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { LENS_MAX_ZOOM_FACTOR, LENS_SCALE_FULL_ZOOM } from '../../utils/Constants';
@@ -46,6 +46,14 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
   const [enableHdr, setEnableHdr] = useState(false);
   const [flash, setFlash] = useState<'off' | 'on'>('off');
   const [enableNightMode, setEnableNightMode] = useState(false);
+
+  const requestCameraPermission = useCallback(async () => {
+    console.log('Requesting camera permission...');
+    const permission = await Camera.requestCameraPermission();
+    console.log(`Camera permission status: ${permission}`);
+
+    if (permission !== 'granted') await Linking.openSettings();
+  }, []);
 
   // camera format settings
   const devices = useCameraDevices();
@@ -210,6 +218,10 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
 
     await ImagePicker.launchImageLibrary(options, onSelect);
   };
+
+  useEffect(() => {
+    requestCameraPermission();
+  }, [])
 
   if (device != null) return (
     <View style={styles.container}>
