@@ -47,21 +47,31 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
   const [flash, setFlash] = useState<'off' | 'on'>('off');
   const [enableNightMode, setEnableNightMode] = useState(false);
 
+  // camera format settings
+  const devices = useCameraDevices();
+  const device = devices[cameraPosition];
+
   const requestCameraPermission = useCallback(async () => {
     console.log('Requesting camera permission...');
     const permission = await Camera.requestCameraPermission();
     console.log(`Camera permission status: ${permission}`);
 
-    if (permission !== 'granted') await Linking.openSettings();
+    if (permission !== 'granted') await Linking.openSettings()
+    else {
+      console.log('Camera permission granted!');
+      setCameraPosition(() => cameraPosition);
+    }
   }, []);
 
-  // camera format settings
-  const devices = useCameraDevices();
-  const device = devices[cameraPosition];
   const formats = useMemo<CameraDeviceFormat[]>(() => {
     if (device?.formats == null) return [];
     return device.formats.sort(sortFormats);
   }, [device?.formats]);
+
+  const supportFocus = useMemo<boolean>(() => {
+    if (device == null) return false;
+    return device.supportsFocus;
+  }, [device?.supportsFocus]);
 
   //#region Memos
   const [is60Fps, setIs60Fps] = useState(true);
