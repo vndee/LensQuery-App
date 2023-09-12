@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
 import { isEmpty } from 'lodash';
+import React, { useState } from 'react';
 import { IMessage } from '../../types/chat';
 import { unixToTime } from '../../utils/Helper';
 import { getImageSize } from '../../utils/Helper';
-import { getPressableStyle } from '../../styles/Touchable';
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
-import { Typography, Spacing, Colors, Layout } from '../../styles';
 import { TypingAnimation } from 'react-native-typing-animation';
+import { Typography, Spacing, Colors, Layout } from '../../styles';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 
 type Props = {
   item: IMessage,
@@ -31,7 +30,7 @@ const Message = ({ item, onLongPress }: Props) => {
     })();
 
     return (
-      <Pressable style={(pressed) => [styles.messageContainer, styles.userBubble, getPressableStyle(pressed)]}>
+      <Pressable style={(pressed) => [styles.messageContainer, styles.userBubble]}>
         <Image source={{ uri: item.content }} style={{ width: imageWidth, height: imageHeight }} resizeMode="contain" />
       </Pressable>
     )
@@ -39,7 +38,7 @@ const Message = ({ item, onLongPress }: Props) => {
 
   return (
     <Pressable
-      style={(pressed) => [styles.messageContainer, isUser ? styles.userBubble : styles.botBubble, isTyping && styles.typingContainer, getPressableStyle(pressed)]}
+      style={(pressed) => [styles.messageContainer, isUser ? styles.userBubble : styles.botBubble, isTyping && styles.typingContainer]}
       onPress={setTimeVisible.bind(null, !timeVisible)}
       onLongPress={onLongPress}
     >

@@ -20,6 +20,7 @@ import { useIsForeground } from '../../hooks/useIsForeground';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { View, StyleSheet, Linking, Pressable } from 'react-native';
 import { CaptureButton } from '../../components/Button/CaptureButton';
+import { GestureDetector, Gesture, GestureStateChangeEvent, TapGestureHandlerEventPayload } from 'react-native-gesture-handler';
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { LENS_MAX_ZOOM_FACTOR, LENS_SCALE_FULL_ZOOM } from '../../utils/Constants';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -229,16 +230,23 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
     await ImagePicker.launchImageLibrary(options, onSelect);
   };
 
+  const singleTap = Gesture.Tap().maxDuration(250).onEnd((tapEvent: GestureStateChangeEvent<TapGestureHandlerEventPayload>) => {
+    console.log("Single tap detected!", tapEvent);
+    // if (!camera || !supportFocus || !camera.current) return;
+    // camera.current.focus({ x: tapEvent.x, y: tapEvent.y });
+  });
+
+  const doubleTap = Gesture.Tap().maxDuration(250).numberOfTaps(2).onStart(onDoubleTap);
+
   useEffect(() => {
     requestCameraPermission();
   }, [])
 
   if (device != null) return (
     <View style={styles.container}>
-      {/* <StatusBar hidden /> */}
       <PinchGestureHandler onGestureEvent={onPinchGesture} enabled={isActive}>
         <Reanimated.View style={StyleSheet.absoluteFill}>
-          <TapGestureHandler onEnded={onDoubleTap} numberOfTaps={2}>
+          <GestureDetector gesture={Gesture.Exclusive(doubleTap, singleTap)}>
             <ReanimatedCamera
               ref={camera}
               style={StyleSheet.absoluteFill}
@@ -253,7 +261,7 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
               photo={true}
               orientation="portrait"
             />
-          </TapGestureHandler>
+          </GestureDetector>
         </Reanimated.View>
       </PinchGestureHandler>
 
