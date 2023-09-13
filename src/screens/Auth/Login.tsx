@@ -73,6 +73,7 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
 
         setIsLoading(false);
       }).catch((error) => {
+        console.log('errors', error);
         setIsLoading(false);
         switch (error.code) {
           case FirebaseSignInResponse.WRONG_PASSWORD:
