@@ -2,6 +2,7 @@ import qs from 'querystring';
 import firebaseAuth from './firebase'
 import axios, { AxiosError } from 'axios';
 import { MATHPIX_HOST } from '../utils/Constants'
+import { getOcrResponseText } from '../utils/Helper';
 import { healthCheckResponse, GetOCRAccessTokenResponse, OCRResultResponse, OCRResponse } from '../types/api';
 
 const queryBackend = axios.create({
@@ -17,6 +18,7 @@ queryBackend.interceptors.request.use(
     const token = await firebaseAuth.currentUser?.getIdToken();
     if (token) {
       config.headers.Authorization = `${token}`;
+      console.log('token:', token);
     }
     return config;
   },
@@ -125,8 +127,7 @@ const getFreeText = async (image: string): Promise<OCRResponse> => {
 
     let returned = '';
     if (resp.status === 200) {
-      // get returned by join 
-      returned = resp.data.join('\n');
+      returned = getOcrResponseText(resp.data?.labels, resp.data?.text);
     }
     return { status: resp.status, data: returned };
   } catch (error: any) {
@@ -149,7 +150,12 @@ const getDocumentText = async (image: string): Promise<OCRResponse> => {
         'Content-Type': 'multipart/form-data'
       }
     });
-    return { status: resp.status, data: resp.data?.data };
+
+    let returned = '';
+    if (resp.status === 200) {
+      returned = getOcrResponseText(resp.data?.labels, resp.data?.text);
+    }
+    return { status: resp.status, data: returned };
   } catch (error: any) {
     console.error('getDocumentText error:', error?.response?.data);
     return { status: error?.response?.status, data: '' }

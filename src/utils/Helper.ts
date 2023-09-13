@@ -82,4 +82,13 @@ export const maskApiKey = (text: string) => {
   const latter = parts.slice(1).join('-');
 
   return `${parts[0]}-${'*'.repeat(latter.length)}`;
+};
+
+export const getOcrResponseText = (labels: string[], text: string) => {
+  if (labels.length === 0 && isEmpty(text)) return '';
+  if (labels.length === 0) return `This is the text that was extracted from your given image:\n${text}`;
+
+  const labelStr = labels.join(', ');
+  const answer = `Detected label(s) from your given image (sorted in descending order by confidence score):\n${labelStr}\n\nThis is the text that was extracted from your given image:\n${text}`;
+  return answer;
 }

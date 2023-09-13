@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "232425000199",
-    "project_id": "lensquery-6292b",
-    "storage_bucket": "lensquery-6292b.appspot.com"
+    "project_number": "202666517093",
+    "project_id": "core-398815",
+    "storage_bucket": "core-398815.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:232425000199:android:8c223f1fab9109d39c49a2",
+        "mobilesdk_app_id": "1:202666517093:android:aa7183703b1b6cc1bf5c8c",
         "android_client_info": {
           "package_name": "com.lensquery"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDW66FHVvuKrpXOH_6nWYS5ovGGX5xIXnA"
+          "current_key": "AIzaSyCn7e_YudwsczrUMpsuHpmiatGbe_CrMmg"
         }
       ],
       "services": {
