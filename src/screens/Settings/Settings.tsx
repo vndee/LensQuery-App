@@ -12,6 +12,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { setLanguage } from '../../redux/slice/auth';
 import { maskApiKey } from '../../utils/Helper';
 import { IAppConfig } from '../../types/chat';
+import Purchases from 'react-native-purchases';
 import { getKeyLimit } from '../../services/openrouter';
 import { checkValidApiKey } from '../../services/openai';
 import { useRealm, useObject } from '../../storage/realm';
@@ -68,7 +69,10 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const handleLogout = () => {
     auth()
       .signOut()
-      .then(() => console.log('User signed out!'));
+      .then(() => {
+        Purchases.logOut();
+        console.log('User signed out!')
+      });
   };
 
   useEffect(() => {

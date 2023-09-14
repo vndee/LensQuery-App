@@ -32,6 +32,7 @@ export type Routes = {
     callback: (item: TGetModelPropertiesResponse) => void;
     key: string | undefined;
   };
+  Paywall: undefined;
 };
 
 export type Label = {

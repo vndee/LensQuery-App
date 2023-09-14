@@ -1944,6 +1944,11 @@
     redux-thunk "^2.4.2"
     reselect "^4.1.8"
 
+"@revenuecat/purchases-typescript-internal@6.1.2":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-typescript-internal/-/purchases-typescript-internal-6.1.2.tgz#7f7906c4beba9c06b74d10ea10ce57b2aab73814"
+  integrity sha512-Cl/mOHk1SiQ2Z5DzHfWKhFDnGenFeAcTF82OpaoTeftXtWdL/JKa74UK2pPIxaT6udP7DK0LpmRZshYKe9/wsA==
+
 "@shopify/flash-list@^1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@shopify/flash-list/-/flash-list-1.5.0.tgz#f1cf3c4f9bb706a58c3d1f794ddfaedb5872f431"
@@ -7045,6 +7050,18 @@ react-native-progress@^5.0.0:
   integrity sha512-KjnGIt3r9i5Kn2biOD9fXLJocf0bwxPRxOyAgXEnZTJQU2O+HyzgGFRCbM5h3izm9kKIkSc1txh8aGmMafCD9A==
   dependencies:
     prop-types "^15.7.2"
+
+react-native-purchases@^6.6.5:
+  version "6.6.5"
+  resolved "https://registry.yarnpkg.com/react-native-purchases/-/react-native-purchases-6.6.5.tgz#70f73ae28d8f8176ac7e9f3d56c8cd27ec5b00f7"
+  integrity sha512-HkelzQ8FDdsC8hRQS4tAGgqdiYSh70jjDF7K2iS9NPUvx16wmruJ7oGU0A+idf9v72uuWnI3mvkby0EKn/66lA==
+  dependencies:
+    "@revenuecat/purchases-typescript-internal" "6.1.2"
+
+react-native-reanimated-carousel@^3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated-carousel/-/react-native-reanimated-carousel-3.5.1.tgz#3605b9959ffc0aa1c6b8b8736d98f91f46e36b17"
+  integrity sha512-9BBQV6JAYSQm2lV7MFtT4mzapXmW4IZO6s38gfiJL84Jg23ivGB1UykcNQauKgtHyhtW2NuZJzItb1s42lM+hA==
 
 react-native-reanimated@^3.5.0:
   version "3.5.0"

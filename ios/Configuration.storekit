@@ -1,0 +1,92 @@
+{
+  "identifier" : "2A9C41D5",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6463097463",
+    "_developerTeamID" : "2C232ZL6B5",
+    "_lastSynchronizedDate" : 716369624.83857298
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21387562",
+      "localizations" : [
+
+      ],
+      "name" : "LensQuery Subscription",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "14.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "6466262000",
+          "introductoryOffer" : null,
+          "localizations" : [
+
+          ],
+          "productID" : "lq_premium_plan",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Premium Plan",
+          "subscriptionGroupID" : "21387562",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6466262051",
+          "introductoryOffer" : null,
+          "localizations" : [
+
+          ],
+          "productID" : "lq_standard_plan",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Standard Plan",
+          "subscriptionGroupID" : "21387562",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "4.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6466261965",
+          "introductoryOffer" : null,
+          "localizations" : [
+
+          ],
+          "productID" : "lq_starter_plan",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Starter Plan",
+          "subscriptionGroupID" : "21387562",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}

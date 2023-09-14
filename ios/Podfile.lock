@@ -144,6 +144,8 @@ PODS:
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
   - PromisesObjC (2.3.1)
+  - PurchasesHybridCommon (6.1.2):
+    - RevenueCat (= 4.25.9)
   - RCT-Folly (2021.07.22.00):
     - boost
     - DoubleConversion
@@ -579,6 +581,7 @@ PODS:
     - React-Core
   - RealmJS (11.10.2):
     - React
+  - RevenueCat (4.25.9)
   - RNCClipboard (1.11.2):
     - React-Core
   - RNFastImage (8.6.3):
@@ -595,6 +598,9 @@ PODS:
   - RNFlashList (1.5.0):
     - React-Core
   - RNGestureHandler (2.12.1):
+    - React-Core
+  - RNPurchases (6.6.5):
+    - PurchasesHybridCommon (= 6.1.2)
     - React-Core
   - RNReanimated (3.5.0):
     - DoubleConversion
@@ -710,6 +716,7 @@ DEPENDENCIES:
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFlashList (from `../node_modules/@shopify/flash-list`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNPurchases (from `../node_modules/react-native-purchases`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNStaticSafeAreaInsets (from `../node_modules/react-native-static-safe-area-insets`)
@@ -738,6 +745,8 @@ SPEC REPOS:
     - MMKVCore
     - nanopb
     - PromisesObjC
+    - PurchasesHybridCommon
+    - RevenueCat
     - SDWebImage
     - SDWebImageWebPCoder
     - SocketRocket
@@ -858,6 +867,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@shopify/flash-list"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNPurchases:
+    :path: "../node_modules/react-native-purchases"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -898,6 +909,7 @@ SPEC CHECKSUMS:
   MMKVCore: e50135dbd33235b6ab390635991bab437ab873c0
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
+  PurchasesHybridCommon: b7c4205b6d2479cdd8914084a2b536e5e5b1445f
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: a2faf4bad4e438ca37b2040cb8f7799baa065c18
   RCTTypeSafety: cb09f3e4747b6d18331a15eb05271de7441ca0b3
@@ -941,12 +953,14 @@ SPEC CHECKSUMS:
   ReactCommon: 3ccb8fb14e6b3277e38c73b0ff5e4a1b8db017a9
   ReactNativeLocalization: fb171138cdc80d5d0d4f20243d2fc82c2b3cc48f
   RealmJS: 73a36da3cbbe85e1bdcbf55683172b51f35070d3
+  RevenueCat: 4160d04575059fc1edbb973981f541b705ddebef
   RNCClipboard: 3f0451a8100393908bea5c5c5b16f96d45f30bfc
   RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
   RNFBApp: f0b5cf917b0b91a0ae890fbbaec0fb5d3285ea46
   RNFBAuth: e3f51b2e4acc39e4664b24117f9106af493b2dd3
   RNFlashList: 25b0e092b4470c84db0386d4f5316dc34123bb6d
   RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
+  RNPurchases: 536d66e63df8dd67f9323d9575eb23580843b4af
   RNReanimated: fd0dc9a5889bfac6c45a922b26c902dc6185b4dc
   RNScreens: b21dc57dfa2b710c30ec600786a3fc223b1b92e7
   RNStaticSafeAreaInsets: 055ddbf5e476321720457cdaeec0ff2ba40ec1b8
