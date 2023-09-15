@@ -1,15 +1,18 @@
+import Button from '../../components/Button';
+import { SvgXml } from 'react-native-svg';
 import { Routes } from '../../types/navigation';
 import { StackScreenProps } from '@react-navigation/stack';
 import SubcriptionCard from '../../components/Paywall/Card';
-import { Colors, Layout, Spacing, Typography } from '../../styles';
+import { Colors, Spacing, Typography } from '../../styles';
 import React, { useState, useEffect, useCallback } from 'react';
-import SubcriptionPackage from '../../components/Paywall/Package';
 import Purchases, { PurchasesPackage } from 'react-native-purchases';
 import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
 import { ISubscriptionConfig } from '../../types/config';
 import SubscriptionInfo from '../../components/Paywall/Info';
+import { getPressableStyle } from '../../styles/Touchable';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { OuterSpaceXML } from '../../components/Illustrations/OuterSpace';
 
-const LQ_MONTHLY_OFFERINGS = 'lq_monthly_offerings';
 
 const Paywall = ({ navigation, route }: StackScreenProps<Routes, 'Paywall'>): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -41,12 +44,26 @@ const Paywall = ({ navigation, route }: StackScreenProps<Routes, 'Paywall'>): JS
     }
   }, [offeringsMetadata]);
 
+  const handleGoBack = useCallback(() => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    }
+  }, []);
+
   useEffect(() => {
     getOfferings();
   }, []);
 
   return (
     <View style={styles.container}>
+      <Pressable
+        hitSlop={10}
+        onPress={handleGoBack}
+        style={(pressed) => [getPressableStyle(pressed), styles.closeBtn]}
+      >
+        <Ionicons name={"close"} size={26} color={Colors.black_two} />
+      </Pressable>
+      <SvgXml xml={OuterSpaceXML} width={'100%'} height={'30%'} />
       {selectedPackage && offeringsMetadata && (
         <SubscriptionInfo item={offeringsMetadata[selectedPackage.identifier]} />
       )}
@@ -63,6 +80,13 @@ const Paywall = ({ navigation, route }: StackScreenProps<Routes, 'Paywall'>): JS
           )}
         </View>
       )}
+      <View style={{ paddingHorizontal: Spacing.L, width: '100%' }}>
+        <Button
+          label={"Subscribe"}
+          onPress={() => { }}
+          style={styles.purchaseBtn}
+        />
+      </View>
     </View>
   );
 };
@@ -73,16 +97,15 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     paddingHorizontal: 0,
     alignItems: 'center',
     alignContent: 'center',
-    justifyContent: 'flex-end',
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.ice_blue,
     paddingTop: Spacing.safePaddingTop,
     paddingBottom: Spacing.safePaddingBottom,
   },
   bottomView: {
+    flex: 1,
     gap: Spacing.S,
     width: '100%',
     flexDirection: 'column',
-    // position: 'absolute',
     alignItems: 'center',
     alignContent: 'center',
     justifyContent: 'center',
@@ -90,6 +113,17 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   },
   carousel: {
     marginTop: Spacing.safePaddingTop
+  },
+  purchaseBtn: {
+    width: '100%',
+    borderRadius: 16,
+  },
+  closeBtn: {
+    position: 'absolute',
+    top: Spacing.safePaddingTop,
+    right: Spacing.horizontalPadding,
+    width: 44,
+    height: 44,
   }
 });
 

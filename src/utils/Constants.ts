@@ -28,26 +28,3 @@ export const OPENROUTER_HOST = 'https://openrouter.ai/api/v1'
 export const OPENROUTER_KEY = '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';
 export const REVENUECAT_API_KEY_IOS = 'appl_tZgdchIpAdHlylHMhGkYJnpMuhf';
 export const REVENUECAT_API_KEY_ANDROID = 'goog_EveBpuHAtfhlShhvHPSmOqOInuy';
-
-export const SUBSCRIPTION_CONFIG: {
-  [key: string]: ISubscriptionConfig;
-} = {
-  lq_stater: {
-    TextOCRSnap: 300,
-    EquationOCRSnap: 50,
-    FullChatExperience: true,
-    CustomLLMProvider: true,
-  },
-  lq_standard: {
-    TextOCRSnap: 700,
-    EquationOCRSnap: 110,
-    FullChatExperience: true,
-    CustomLLMProvider: true,
-  },
-  lq_premium: {
-    TextOCRSnap: 1500,
-    EquationOCRSnap: 180,
-    FullChatExperience: true,
-    CustomLLMProvider: true,
-  }
-};

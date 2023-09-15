@@ -512,17 +512,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footer: {
+    width: '100%',
     gap: Spacing.M,
+    borderWidth: 1,
+    alignSelf: 'center',
     flexDirection: 'row',
-    marginBottom: Spacing.M,
     paddingTop: Spacing.M,
+    marginBottom: Spacing.M,
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.horizontalPadding,
+    paddingBottom: Spacing.SAFE_BOTTOM
   },
   btnBottom: {
-    flex: 1,
+    width: '100%',
     alignSelf: 'center',
-    marginBottom: Spacing.SAFE_BOTTOM,
   },
   moreIcon: {
     width: 24,

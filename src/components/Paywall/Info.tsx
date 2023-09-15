@@ -1,3 +1,4 @@
+import Strings from '../../localization'
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
 import { Typography, Colors, Spacing, Layout } from '../../styles';
@@ -19,10 +20,12 @@ const SubscriptionInfo = ({ item }: { item: ISubscriptionConfig }): JSX.Element 
 
   return (
     <View style={styles.infoView}>
-      <CheckField value={true} label={`${item.TextOCRSnap} Text OCR Snap`} />
-      <CheckField value={true} label={`${item.EquationOCRSnap} Equation OCR Snap`} />
-      <CheckField value={true} label={"Full Chat Experience"} />
-      <CheckField value={true} label={"Custom LLM Provider"} />
+      <Text style={[Typography.H2, styles.title]}>{item.name}</Text>
+      <CheckField value={true} label={`${item.TextOCRSnap} ${Strings.paywall.textOCRSnap}`} />
+      <CheckField value={true} label={`${item.EquationOCRSnap} ${Strings.paywall.equationOCRSnap}`} />
+      <CheckField value={true} label={Strings.paywall.fullChatExperience} />
+      <CheckField value={true} label={Strings.paywall.customLLMProvider} />
+      <CheckField value={true} label={Strings.paywall.customLLMModel} />
     </View>
   )
 };
@@ -31,15 +34,18 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   checkField: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.XS
+    gap: Spacing.S,
   },
   checkFieldText: {
     ...Typography.title,
+    textAlign: 'center'
   },
   infoView: {
     flex: 1,
     gap: Spacing.S,
     justifyContent: 'center',
+  },
+  title: {
   }
 });
 

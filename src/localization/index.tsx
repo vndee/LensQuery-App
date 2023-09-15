@@ -201,6 +201,11 @@ export default new LocalizedStrings({
     // Paywall
     paywall: {
       perMonth: 'per month',
+      textOCRSnap: 'Text OCR Snap',
+      equationOCRSnap: 'Equation OCR Snap',
+      fullChatExperience: 'Full Chat Experience',
+      customLLMProvider: 'Custom LLM Provider',
+      customLLMModel: 'Custom LLM Model',
     }
   },
   // Vietnamese
@@ -403,6 +408,11 @@ export default new LocalizedStrings({
     // Paywall
     paywall: {
       perMonth: 'mỗi tháng',
+      textOCRSnap: 'Text OCR Snap',
+      equationOCRSnap: 'Equation OCR Snap',
+      fullChatExperience: 'Full Chat Experience',
+      customLLMProvider: 'Custom LLM Provider',
+      customLLMModel: 'Custom LLM Model',
     }
   },
 });

@@ -62,7 +62,7 @@ const MainApplication = (): JSX.Element => {
   return (
     <GestureHandlerRootView style={iphoneXSeries}>
       <RealmProvider>
-        {isLogin ? <WallStack /> : <AuthStack />}
+        {isLogin ? <MainStack /> : <AuthStack />}
       </RealmProvider>
     </GestureHandlerRootView>
   );

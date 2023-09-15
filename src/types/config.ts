@@ -7,6 +7,7 @@ export type IAppConfig = {
 }
 
 export type ISubscriptionConfig = {
+  name: string;
   TextOCRSnap: number;
   EquationOCRSnap: number;
   FullChatExperience: boolean;
