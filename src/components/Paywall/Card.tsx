@@ -1,9 +1,11 @@
+import Strings from '../../localization';
 import React, { useState, useCallback, useEffect } from 'react';
 import Purchases, { PurchasesPackage } from 'react-native-purchases';
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { Colors, Layout, Spacing, Typography } from '../../styles';
 import { getPressableStyle } from '../../styles/Touchable';
-
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const SubcriptionCard = ({ item, isSelected, callback }:
   {
@@ -12,16 +14,22 @@ const SubcriptionCard = ({ item, isSelected, callback }:
     callback: (state: PurchasesPackage) => void
   }): JSX.Element => {
   const { product: { title, description, priceString } } = item;
-
+  console.log('item:', title);
   return (
     <View style={styles.container}>
       <Pressable
         hitSlop={10}
+        onPress={() => callback(item)}
         style={(pressed) => [styles.card, getPressableStyle(pressed)]}
       >
-        <Text>{title}</Text>
+        <View style={styles.header}>
+          {isSelected ?
+            <Ionicons name={"checkmark-circle"} size={20} color={Colors.primary} />
+            : <Entypo name={"circle"} size={20} color={Colors.border_light} />}
+          <Text style={styles.headerText}>{title}</Text>
+        </View>
         <Text>{description}</Text>
-        <Text>{priceString}</Text>
+        <Text>{priceString}{' '}{Strings.paywall.perMonth}</Text>
       </Pressable>
     </View>
   );
@@ -48,8 +56,9 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   },
   header: {
     flex: 1,
+    gap: Spacing.S,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   headerText: {

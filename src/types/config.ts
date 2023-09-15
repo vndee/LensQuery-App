@@ -5,3 +5,10 @@ export type IAppConfig = {
   apiKey: string;
   defaultModel: string;
 }
+
+export type ISubscriptionConfig = {
+  TextOCRSnap: number;
+  EquationOCRSnap: number;
+  FullChatExperience: boolean;
+  CustomLLMProvider: boolean;
+}

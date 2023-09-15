@@ -196,6 +196,11 @@ export default new LocalizedStrings({
       promptCost: "Prompt cost",
       completionCost: "Completion cost",
       contextLength: "Context length",
+    },
+
+    // Paywall
+    paywall: {
+      perMonth: 'per month',
     }
   },
   // Vietnamese
@@ -393,6 +398,11 @@ export default new LocalizedStrings({
       promptCost: "Prompt cost",
       completionCost: "Completion cost",
       contextLength: "Context length",
+    },
+
+    // Paywall
+    paywall: {
+      perMonth: 'mỗi tháng',
     }
   },
 });
