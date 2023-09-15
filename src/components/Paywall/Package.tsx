@@ -16,6 +16,7 @@ const SubcriptionPackage = ({ item }: { item: PurchasesPackage }): JSX.Element =
 
 const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   card: {
+    flex: 1,
     borderWidth: 1,
     alignSelf: 'center',
     borderColor: Colors.border_light,
