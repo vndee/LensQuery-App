@@ -21,9 +21,6 @@ const Button = ({ label, onPress, disabled, style, outline, isLoading }: {
     };
   });
 
-  console.log('Label:', label);
-  console.log('style:', style);
-
   return (
     <Pressable
       onPress={onPress}

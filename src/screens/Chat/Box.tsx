@@ -325,7 +325,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
             _messageCollection.updateAt = new Date().getTime();
           });
 
-          const { status, data } = await getOCRText(imageUri, type);
+          const { status, data, title } = await getOCRText(imageUri, type);
           if (status === 200) {
             text = data;
           }
@@ -346,7 +346,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
             // @ts-ignore
             _messageCollection.updateAt = updatedTime;
 
-            let _chatName = text.length > 50 ? text.slice(0, 50) + '...' : text;
+            let _chatName = title.length > 50 ? title.slice(0, 50) + '...' : title;
             _chatName = _chatName.replace(/\n/g, ' ');
 
             // @ts-ignore

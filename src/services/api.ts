@@ -129,10 +129,10 @@ const getFreeText = async (image: string): Promise<OCRResponse> => {
     if (resp.status === 200) {
       returned = getOcrResponseText(resp.data?.labels, resp.data?.text);
     }
-    return { status: resp.status, data: returned };
+    return { status: resp.status, data: returned, title: resp.data?.text };
   } catch (error: any) {
     console.error('getFreeText error:', error?.response?.data);
-    return { status: error?.response?.status, data: '' }
+    return { status: error?.response?.status, data: '', title: '' }
   }
 };
 
@@ -155,10 +155,10 @@ const getDocumentText = async (image: string): Promise<OCRResponse> => {
     if (resp.status === 200) {
       returned = getOcrResponseText(resp.data?.labels, resp.data?.text);
     }
-    return { status: resp.status, data: returned };
+    return { status: resp.status, data: returned, title: resp.data?.text };
   } catch (error: any) {
     console.error('getDocumentText error:', error?.response?.data);
-    return { status: error?.response?.status, data: '' }
+    return { status: error?.response?.status, data: '', title: '' }
   }
 };
 
@@ -175,15 +175,15 @@ const getEquationText = async (image: string): Promise<OCRResponse> => {
         'Content-Type': 'multipart/form-data'
       }
     });
-    return { status: resp.status, data: resp.data.text };
+    return { status: resp.status, data: resp.data.text, title: resp.data?.text };
   } catch (error: any) {
     console.error('getEquationText error:', error?.response?.data);
-    return { status: error?.response?.status, data: '' }
+    return { status: error?.response?.status, data: '', title: '' }
   }
 };
 
 const getOCRText = async (image: string, type: string) => {
-  let resp: OCRResponse = { status: 500, data: '' };
+  let resp: OCRResponse = { status: 500, data: '', title: '' };
 
   switch (type) {
     case 'FREE_TEXT':
