@@ -18,6 +18,7 @@ import { checkValidApiKey } from '../../services/openai';
 import { useRealm, useObject } from '../../storage/realm';
 import { getPressableStyle } from '../../styles/Touchable';
 import LineData from '../../components/Information/LineData';
+import ProgressCircle from 'react-native-progress/CircleSnail';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
 import { TGetKeyLimitResponse, TGetModelPropertiesResponse } from '../../types/openrouter';
 import { View, Text, StyleSheet, ScrollView, Pressable, Platform, KeyboardAvoidingView } from 'react-native';
@@ -179,6 +180,10 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   }
 
   const handleSaveKey = async () => {
+    if (isLoading) {
+      return;
+    }
+
     setIsLoading(true);
     if (isEmpty(key)) {
       setKeyErrorText(Strings.onboardingSetup.keyEmptyError);
@@ -481,13 +486,19 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             style={(pressed) => [styles.btnBottomOutline, getPressableStyle(pressed)]}
             onPress={() => { setIsEditing(false); handleSetKeyProps(); }}
           >
-            <Text style={[styles.btnLabel, { color: Colors.text_color }]}>{Strings.common.cancel}</Text>
+            <Text style={[styles.btnLabel, { color: Colors.primary }]}>{Strings.common.cancel}</Text>
           </Pressable>
           <Pressable
             style={(pressed) => [styles.btnBottom, getPressableStyle(pressed)]}
             onPress={handleSaveKey}
           >
             <Text style={styles.btnLabel}>{Strings.onboardingSetup.saveBtn}</Text>
+            {
+              isLoading &&
+              <View style={{ marginLeft: Spacing.S }}>
+                <ProgressCircle size={20} color={Colors.white} thickness={2} />
+              </View>
+            }
           </Pressable>
         </View>
       }
@@ -557,6 +568,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.L,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row'
   },
   btnBottomOutline: {
     flex: 1,

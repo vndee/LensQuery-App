@@ -6,7 +6,7 @@ import { Colors, Layout, Spacing, Typography } from '../../styles';
 import { getPressableStyle } from '../../styles/Touchable';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, withSpring, LinearTransition, FadingTransition } from 'react-native-reanimated';
 
 const SubcriptionCard = ({ item, isSelected, callback }:
   {
@@ -41,7 +41,10 @@ const SubcriptionCard = ({ item, isSelected, callback }:
         onPressOut={handlePressOut}
         style={(pressed) => [getPressableStyle(pressed), { width: '100%' }]}
       >
-        <Animated.View style={[styles.card, isSelected ? styles.selected : styles.row, scaleAnimation]}>
+        <Animated.View
+          style={[styles.card, isSelected ? styles.selected : styles.row]}
+          layout={LinearTransition}
+        >
           <Animated.View style={[styles.row]}>
             <View style={styles.header}>
               {isSelected ?
