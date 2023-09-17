@@ -425,6 +425,19 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         </Pressable>
       </View>
       <ScrollView style={styles.container}>
+        <View style={styles.row}>
+          <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.subscription}</Text>
+          <Pressable
+            hitSlop={20}
+            onPress={() => navigation.navigate('Paywall')}
+            style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
+          >
+            <Text style={Typography.description}>Starter</Text>
+          </Pressable>
+        </View>
+
+        <View style={{ height: Spacing.M }} />
+
         <InlineOptionSheet
           title={Strings.setting.language}
           options={languageOptions}
@@ -461,11 +474,23 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         <View style={{ height: Spacing.XL }} />
       </ScrollView >
 
-      {isEditing &&
+      {
+        isEditing &&
         <View style={styles.footer}>
-          <Button label={Strings.common.cancel} onPress={() => { setIsEditing(false); handleSetKeyProps(); }} style={styles.btnBottom} outline={true} />
-          <Button label={Strings.onboardingSetup.saveBtn} onPress={handleSaveKey} style={styles.btnBottom} isLoading={isLoading} />
-        </View>}
+          <Pressable
+            style={(pressed) => [styles.btnBottomOutline, getPressableStyle(pressed)]}
+            onPress={() => { setIsEditing(false); handleSetKeyProps(); }}
+          >
+            <Text style={[styles.btnLabel, { color: Colors.text_color }]}>{Strings.common.cancel}</Text>
+          </Pressable>
+          <Pressable
+            style={(pressed) => [styles.btnBottom, getPressableStyle(pressed)]}
+            onPress={handleSaveKey}
+          >
+            <Text style={styles.btnLabel}>{Strings.onboardingSetup.saveBtn}</Text>
+          </Pressable>
+        </View>
+      }
 
       <BottomActionSheet
         actionRef={actionSheetRef}
@@ -514,7 +539,6 @@ const styles = StyleSheet.create({
   footer: {
     width: '100%',
     gap: Spacing.M,
-    borderWidth: 1,
     alignSelf: 'center',
     flexDirection: 'row',
     paddingTop: Spacing.M,
@@ -524,8 +548,30 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.SAFE_BOTTOM
   },
   btnBottom: {
-    width: '100%',
-    alignSelf: 'center',
+    flex: 1,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    backgroundColor: Colors.btnColor,
+    borderRadius: Spacing.M,
+    paddingVertical: Spacing.buttonVerticalPadding,
+    paddingHorizontal: Spacing.L,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnBottomOutline: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    backgroundColor: Colors.white,
+    borderRadius: Spacing.M,
+    paddingVertical: Spacing.buttonVerticalPadding,
+    paddingHorizontal: Spacing.L,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnLabel: {
+    ...Typography.title,
+    color: Colors.white_two,
   },
   moreIcon: {
     width: 24,

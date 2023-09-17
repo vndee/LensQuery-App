@@ -168,6 +168,7 @@ export default new LocalizedStrings({
       keyCreditRemaining: 'Credit remaining',
       keyRateLimit: 'Rate limit',
       addCreditBtn: 'Add credit',
+      subscription: 'Subscription plan',
     },
 
     // Change password
@@ -375,6 +376,7 @@ export default new LocalizedStrings({
       keyCreditRemaining: 'Credit còn lại',
       keyRateLimit: 'Giới hạn tốc độ',
       addCreditBtn: 'Thêm credit',
+      subscription: 'Gói đăng ký',
     },
 
     // Change password

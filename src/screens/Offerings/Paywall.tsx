@@ -120,8 +120,8 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   },
   closeBtn: {
     position: 'absolute',
-    top: Spacing.safePaddingTop,
-    right: Spacing.horizontalPadding,
+    top: Spacing.L,
+    right: 0,
     width: 44,
     height: 44,
   }
