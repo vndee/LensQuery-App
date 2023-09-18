@@ -6,8 +6,6 @@ import { ISubscriptionConfig } from '../../types/config';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const SubscriptionInfo = ({ item }: { item: ISubscriptionConfig }): JSX.Element => {
-  console.log('Items:', item);
-
   const CheckField = ({ value, label }: { value: boolean, label: string }): JSX.Element => (
     <View style={styles.checkField}>
       {value ?

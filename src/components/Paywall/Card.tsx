@@ -6,7 +6,7 @@ import { Colors, Layout, Spacing, Typography } from '../../styles';
 import { getPressableStyle } from '../../styles/Touchable';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import Animated, { useAnimatedStyle, withSpring, LinearTransition, FadingTransition } from 'react-native-reanimated';
+import Animated, { LinearTransition } from 'react-native-reanimated';
 
 const SubcriptionCard = ({ item, isSelected, callback }:
   {
@@ -15,30 +15,12 @@ const SubcriptionCard = ({ item, isSelected, callback }:
     callback: (state: PurchasesPackage) => void
   }): JSX.Element => {
   const { product: { title, description, priceString } } = item;
-  const [isPressed, setIsPressed] = useState(false);
-
-  const scaleAnimation = useAnimatedStyle(() => {
-    const scale = isPressed ? withSpring(0.9) : withSpring(1);
-    return {
-      transform: [{ scale }],
-    };
-  });
-
-  const handlePressIn = () => {
-    setIsPressed(true);
-  };
-
-  const handlePressOut = () => {
-    setIsPressed(false);
-  };
 
   return (
     <View style={styles.container}>
       <Pressable
         hitSlop={10}
         onPress={() => callback(item)}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
         style={(pressed) => [getPressableStyle(pressed), { width: '100%' }]}
       >
         <Animated.View

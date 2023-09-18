@@ -207,6 +207,7 @@ export default new LocalizedStrings({
       fullChatExperience: 'Full Chat Experience',
       customLLMProvider: 'Custom LLM Provider',
       customLLMModel: 'Custom LLM Model',
+      purchaseError: 'Purchase error, please try again later!',
     }
   },
   // Vietnamese
@@ -332,7 +333,7 @@ export default new LocalizedStrings({
       deleteConfirmationNo: 'Không',
       selected: 'Đã chọn',
       chatBox: 'cuộc trò chuyện',
-      notFound: 'Không tìm thấy cuộc trò chuyện nào',
+      notFound: 'Chưa có cuộc trò chuyện nào',
       untitle: 'Chưa có tiêu đề',
       newName: 'Tiêu đề mới',
       saveName: 'Luư',
@@ -415,6 +416,7 @@ export default new LocalizedStrings({
       fullChatExperience: 'Full Chat Experience',
       customLLMProvider: 'Custom LLM Provider',
       customLLMModel: 'Custom LLM Model',
+      purchaseError: 'Thanh toán thất bại, vui lòng thử lại sau!',
     }
   },
 });

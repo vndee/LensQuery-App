@@ -1,17 +1,19 @@
+import Strings from '../../localization';
 import Button from '../../components/Button';
 import { SvgXml } from 'react-native-svg';
+import Toast from 'react-native-simple-toast';
 import { Routes } from '../../types/navigation';
 import { StackScreenProps } from '@react-navigation/stack';
 import SubcriptionCard from '../../components/Paywall/Card';
 import { Colors, Spacing, Typography } from '../../styles';
 import React, { useState, useEffect, useCallback } from 'react';
-import Purchases, { PurchasesPackage } from 'react-native-purchases';
 import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
 import { ISubscriptionConfig } from '../../types/config';
 import SubscriptionInfo from '../../components/Paywall/Info';
 import { getPressableStyle } from '../../styles/Touchable';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { OuterSpaceXML } from '../../components/Illustrations/OuterSpace';
+import Purchases, { PurchasesPackage, PurchasesError } from 'react-native-purchases';
 
 
 const Paywall = ({ navigation, route }: StackScreenProps<Routes, 'Paywall'>): JSX.Element => {
@@ -38,17 +40,55 @@ const Paywall = ({ navigation, route }: StackScreenProps<Routes, 'Paywall'>): JS
     }
   }, []);
 
+  const handlePurchaseError = useCallback(() => {
+    Toast.showWithGravityAndOffset(
+      Strings.paywall.purchaseError,
+      Toast.LONG,
+      Toast.TOP,
+      0,
+      40
+    )
+  }, []);
+
   useEffect(() => {
     if (offeringsMetadata !== null) {
       console.log('Offerings Metadata:', offeringsMetadata);
     }
   }, [offeringsMetadata]);
 
+  useEffect(() => {
+    if (packages !== null) {
+      console.log('Packages:', packages);
+    }
+  }, [packages]);
+
   const handleGoBack = useCallback(() => {
     if (navigation.canGoBack()) {
       navigation.goBack();
     }
   }, []);
+
+  const handleMakingPurchase = useCallback(async () => {
+    if (selectedPackage !== null) {
+      try {
+        setIsLoading(true);
+        const { customerInfo, productIdentifier } = await Purchases.purchasePackage(selectedPackage);
+        console.log('Customer Info:', customerInfo);
+        console.log('Product Identifier:', productIdentifier);
+        setIsLoading(false);
+      } catch (e) {
+        console.log(e);
+
+        const err = e as PurchasesError;
+        if (!err.userCancelled) {
+          handlePurchaseError();
+        }
+        setIsLoading(false);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }, [selectedPackage]);
 
   useEffect(() => {
     getOfferings();
@@ -83,8 +123,9 @@ const Paywall = ({ navigation, route }: StackScreenProps<Routes, 'Paywall'>): JS
       <View style={{ paddingHorizontal: Spacing.L, width: '100%' }}>
         <Button
           label={"Subscribe"}
-          onPress={() => { }}
+          onPress={handleMakingPurchase}
           style={styles.purchaseBtn}
+          isLoading={isLoading}
         />
       </View>
     </View>
