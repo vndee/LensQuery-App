@@ -28,3 +28,9 @@ export const OPENROUTER_HOST = 'https://openrouter.ai/api/v1'
 export const OPENROUTER_KEY = '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';
 export const REVENUECAT_API_KEY_IOS = 'appl_tZgdchIpAdHlylHMhGkYJnpMuhf';
 export const REVENUECAT_API_KEY_ANDROID = 'goog_EveBpuHAtfhlShhvHPSmOqOInuy';
+
+export const subscriptionName = {
+  "lq_starter_0499_1m": "Starter Plan",
+  "lq_standard_0999_1m": "Standard Plan",
+  "lq_premium_1499_1m": "Premium Plan",
+};

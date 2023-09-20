@@ -169,6 +169,10 @@ export default new LocalizedStrings({
       keyRateLimit: 'Rate limit',
       addCreditBtn: 'Add credit',
       subscription: 'Subscription plan',
+      remainingFreeTextSnap: 'Remaining free text snap',
+      remainingFreeEquationSnap: 'Remaining free equation snap',
+      expireTime: 'Expire time',
+      freeTrial: 'Free trial',
     },
 
     // Change password
@@ -378,6 +382,10 @@ export default new LocalizedStrings({
       keyRateLimit: 'Giới hạn tốc độ',
       addCreditBtn: 'Thêm credit',
       subscription: 'Gói đăng ký',
+      remainingFreeTextSnap: 'Số lần sử dụng Text OCR Snap còn lại',
+      remainingFreeEquationSnap: 'Số lần sử dụng Equation OCR Snap còn lại',
+      expireTime: 'Hết hạn vào',
+      freeTrial: 'Dùng thử miễn phí',
     },
 
     // Change password

@@ -1,3 +1,4 @@
+import { get } from 'lodash'
 import React, { useEffect, useState } from 'react';
 import { Routes } from '../../types/navigation';
 import Button from '../../components/Button';
@@ -10,7 +11,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import { StackScreenProps } from '@react-navigation/stack';
 import { setLanguage } from '../../redux/slice/auth';
-import { maskApiKey } from '../../utils/Helper';
+import { maskApiKey, formatTime } from '../../utils/Helper';
 import { IAppConfig } from '../../types/chat';
 import Purchases from 'react-native-purchases';
 import { getKeyLimit } from '../../services/openrouter';
@@ -21,9 +22,12 @@ import LineData from '../../components/Information/LineData';
 import ProgressCircle from 'react-native-progress/CircleSnail';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
 import { TGetKeyLimitResponse, TGetModelPropertiesResponse } from '../../types/openrouter';
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, KeyboardAvoidingView, Linking } from 'react-native';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
+import { CreditDetails } from '../../types/config';
+import { getSubscriptionDetails } from '../../services/api';
+import { subscriptionName } from '../../utils/Constants';
 
 const defaultOpenRouterModel: TGetModelPropertiesResponse = {
   id: "openai/gpt-3.5-turbo",
@@ -55,7 +59,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const realm = useRealm();
   const dispatch = useDispatch();
   const [key, setKey] = useState<string>('');
-  const { userToken, language } = useSelector((state: any) => state.auth);
+  const { userToken, language, subscriptionPlan, subscriptionExpire } = useSelector((state: any) => state.auth);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [keyErrorText, setKeyErrorText] = useState<string>('');
@@ -63,6 +67,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const providerActionSheetRef = React.useRef<ActionSheetRef>(null);
   const appConf = useObject<IAppConfig>('AppConfig', userToken);
   const [email, setEmail] = useState<string>('');
+  const [creditDetails, setCreditDetails] = useState<CreditDetails | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<string>(appConf?.defaultProvider || 'OpenAI');
   const [openRouterKeyInfo, setOpenRouterKeyInfo] = useState<TGetKeyLimitResponse | null>(null);
   const [selectedDefaultModel, setSelectedDefaultModel] = useState<TGetModelPropertiesResponse | null>(null);
@@ -320,6 +325,27 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
     return subscriber;
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      getSubscriptionDetails().then((res) => {
+        const { status, data } = res;
+        if (status === 200) {
+          setCreditDetails(data);
+        }
+      }).catch((err) => {
+        console.debug('~ err', err)
+      });
+
+      Purchases.getCustomerInfo().then((res) => {
+        console.debug('~ res', res)
+      }).catch((err) => {
+        console.debug('~ err', err)
+      });
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const renderOpenAIKeySetup = () => {
     return (
       <>
@@ -406,7 +432,10 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             <LineData label={Strings.setting.keyCreditRemaining} value={openRouterKeyInfo?.data?.limit_remaining} />
             <LineData label={Strings.setting.keyCreditLimit} value={openRouterKeyInfo?.data?.limit} />
             <LineData label={Strings.setting.keyRateLimit} value={`${openRouterKeyInfo?.data?.rate_limit?.requests} requests per ${openRouterKeyInfo?.data?.rate_limit?.interval}`} />
-            <Pressable style={(pressed) => [styles.addCreditBtn, getPressableStyle(pressed)]}>
+            <Pressable
+              style={(pressed) => [styles.addCreditBtn, getPressableStyle(pressed)]}
+              onPress={() => Linking.openURL('https://openrouter.ai/account')}
+            >
               <Text>{Strings.setting.addCreditBtn}</Text>
             </Pressable>
           </View>
@@ -430,15 +459,21 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         </Pressable>
       </View>
       <ScrollView style={styles.container}>
-        <View style={styles.row}>
-          <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.subscription}</Text>
-          <Pressable
-            hitSlop={20}
-            onPress={() => navigation.navigate('Paywall')}
-            style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
-          >
-            <Text style={Typography.description}>Starter</Text>
-          </Pressable>
+        <View style={{ gap: Spacing.XS }}>
+          <View style={styles.row}>
+            <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.subscription}</Text>
+            <Pressable
+              hitSlop={20}
+              onPress={() => navigation.navigate('Paywall')}
+              style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
+            >
+              <Text style={Typography.description}>{!isEmpty(subscriptionPlan) ? Strings.setting.freeTrial : get(subscriptionName, subscriptionPlan, '')}</Text>
+            </Pressable>
+          </View>
+
+          <Text style={Typography.description}>{Strings.setting.remainingFreeTextSnap}: {creditDetails?.remain_text_snap}</Text>
+          <Text style={Typography.description}>{Strings.setting.remainingFreeEquationSnap}: {creditDetails?.remain_equation_snap}</Text>
+          <Text style={Typography.description}>{Strings.setting.expireTime}: {formatTime(subscriptionExpire)}</Text>
         </View>
 
         <View style={{ height: Spacing.M }} />

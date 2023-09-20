@@ -1,3 +1,5 @@
+import { CreditDetails } from "./config";
+
 export type healthCheckResponse = {
   status: number;
   data: string;
@@ -21,4 +23,9 @@ export type OCRResponse = {
   status: number;
   data: string;
   title: string;
+}
+
+export type CreditDetailsResponse = {
+  status: number;
+  data: CreditDetails;
 }

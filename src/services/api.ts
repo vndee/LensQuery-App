@@ -3,7 +3,8 @@ import firebaseAuth from './firebase'
 import axios, { AxiosError } from 'axios';
 import { MATHPIX_HOST } from '../utils/Constants'
 import { getOcrResponseText } from '../utils/Helper';
-import { healthCheckResponse, GetOCRAccessTokenResponse, OCRResultResponse, OCRResponse } from '../types/api';
+import { healthCheckResponse, GetOCRAccessTokenResponse, OCRResultResponse, OCRResponse, CreditDetailsResponse } from '../types/api';
+import { CreditDetails } from '../types/config';
 
 const queryBackend = axios.create({
   baseURL: 'https://brain.lensquery.com',
@@ -200,6 +201,16 @@ const getOCRText = async (image: string, type: string) => {
   };
 
   return resp;
-}
+};
 
-export { healthCheck, getOCRAccessToken, getOCRResult, getTermsOfUse, getPrivacyPolicy, getOCRText };
+const getSubscriptionDetails = async (): Promise<CreditDetailsResponse> => {
+  try {
+    const resp = await queryBackend.get('/api/v1/credit/details');
+    return { status: resp.status, data: resp.data as CreditDetails };
+  } catch (error: any) {
+    console.error('getSubscriptionDetails error:', error?.response?.data);
+    return { status: error?.response?.status, data: {} as CreditDetails }
+  };
+};
+
+export { healthCheck, getOCRAccessToken, getOCRResult, getTermsOfUse, getPrivacyPolicy, getOCRText, getSubscriptionDetails };

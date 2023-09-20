@@ -13,3 +13,16 @@ export type ISubscriptionConfig = {
   FullChatExperience: boolean;
   CustomLLMProvider: boolean;
 }
+
+export type CreditDetails = {
+  ID: string;
+  UpdateAt: string;
+  DeleteAt: string;
+  user_id: string;
+  purchased_timestamp_ms: number;
+  expired_timestamp_ms: number;
+  ammount_equation_snap: number;
+  remain_equation_snap: number;
+  ammount_text_snap: number;
+  remain_text_snap: number;
+}

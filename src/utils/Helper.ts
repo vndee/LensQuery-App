@@ -32,6 +32,12 @@ export const unixToTime = (unix: number) => {
   return new Date(unix).toLocaleTimeString(undefined, options);
 };
 
+export const formatTime = (time: string) => {
+  const options = { hour: 'numeric', minute: 'numeric', year: 'numeric', month: 'long', day: 'numeric' };
+  // @ts-ignore
+  return new Date(time).toLocaleDateString(undefined, options);
+};
+
 export const constructMessage = (
   chatCollectionId: string,
   content: string,
