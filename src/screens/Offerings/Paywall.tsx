@@ -86,6 +86,9 @@ const Paywall = ({ navigation, route }: StackScreenProps<Routes, 'Paywall'>): JS
         setIsLoading(false);
       } finally {
         setIsLoading(false);
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
       }
     }
   }, [selectedPackage]);
