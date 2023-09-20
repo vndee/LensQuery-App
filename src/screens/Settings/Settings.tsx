@@ -336,11 +336,11 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         console.debug('~ err', err)
       });
 
-      Purchases.getCustomerInfo().then((res) => {
-        console.debug('~ res', res)
-      }).catch((err) => {
-        console.debug('~ err', err)
-      });
+      // Purchases.getCustomerInfo().then((res) => {
+      //   console.debug('~ res', res)
+      // }).catch((err) => {
+      //   console.debug('~ err', err)
+      // });
     });
 
     return unsubscribe;

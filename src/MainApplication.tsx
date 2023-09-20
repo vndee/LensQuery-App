@@ -72,6 +72,9 @@ const MainApplication = (): JSX.Element => {
           dispatch(setSubscriptionPlan(identifier));
           dispatch(setSubscriptionExpire(expirationDate));
         }
+      } else {
+        dispatch(setSubscriptionPlan(''));
+        dispatch(setSubscriptionExpire(''));
       }
     });
   };
