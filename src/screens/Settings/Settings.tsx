@@ -467,13 +467,13 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
               onPress={() => navigation.navigate('Paywall')}
               style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
             >
-              <Text style={Typography.description}>{!isEmpty(subscriptionPlan) ? Strings.setting.freeTrial : get(subscriptionName, subscriptionPlan, '')}</Text>
+              <Text style={Typography.description}>{isEmpty(subscriptionPlan) ? Strings.setting.noPlan : get(subscriptionName, subscriptionPlan, '')}</Text>
             </Pressable>
           </View>
 
           <Text style={Typography.description}>{Strings.setting.remainingFreeTextSnap}: {creditDetails?.remain_text_snap}</Text>
           <Text style={Typography.description}>{Strings.setting.remainingFreeEquationSnap}: {creditDetails?.remain_equation_snap}</Text>
-          <Text style={Typography.description}>{Strings.setting.expireTime}: {formatTime(subscriptionExpire)}</Text>
+          {!isEmpty(subscriptionExpire) && <Text style={Typography.description}>{Strings.setting.expireTime}: {formatTime(subscriptionExpire)}</Text>}
         </View>
 
         <View style={{ height: Spacing.M }} />

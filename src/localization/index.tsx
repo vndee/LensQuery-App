@@ -173,6 +173,7 @@ export default new LocalizedStrings({
       remainingFreeEquationSnap: 'Remaining free equation snap',
       expireTime: 'Expire time',
       freeTrial: 'Free trial',
+      noPlan: 'No plan',
     },
 
     // Change password
@@ -386,6 +387,7 @@ export default new LocalizedStrings({
       remainingFreeEquationSnap: 'Số lần sử dụng Equation OCR Snap còn lại',
       expireTime: 'Hết hạn vào',
       freeTrial: 'Dùng thử miễn phí',
+      noPlan: 'Chưa đăng ký gói',
     },
 
     // Change password
