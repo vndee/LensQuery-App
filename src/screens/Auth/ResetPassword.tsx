@@ -15,11 +15,11 @@ import { Layout, Typography, Spacing, Colors, Touchable } from '../../styles';
 import { View, Text, Platform, Pressable, StatusBar, StyleSheet, KeyboardAvoidingView, NativeSyntheticEvent, ImageLoadEventData, Keyboard } from 'react-native';
 
 const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPassword'>): JSX.Element => {
-  const [state, setState] = useState<'INPUT_MAIL' | 'VERIFY_CODE' | 'RESET_SUCCESS'>('INPUT_MAIL');
+  const [state, setState] = useState<'INPUT_MAIL' | 'VERIFY_CODE' | 'RESET_SUCCESS' | 'RESET_BY_FIREBASE'>('INPUT_MAIL');
   const [email, setEmail] = useState<string>('');
   const [emailError, setEmailError] = useState<string>('');
 
-  const renderInputMail = useMemo(() => {
+  const renderInputMail = (): JSX.Element => {
     return (
       <Pressable style={styles.content} onPress={Keyboard.dismiss}>
         <View style={styles.svgIllus}>
@@ -41,15 +41,15 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
             }}
             errorText={emailError}
             isEdit={true}
-            onSubmit={handleSendEmail}
+            // onSubmit={handleSendEmail}
             autoCapitalize='none'
           />
         </KeyboardAvoidingView>
       </Pressable>
     )
-  }, [email, emailError]);
+  };
 
-  const renderVerifyCode = useMemo(() => {
+  const renderVerifyCode = () => {
     return (
       <View style={styles.content}>
         <View style={styles.svgIllus}>
@@ -64,28 +64,38 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
         </KeyboardAvoidingView>
       </View>
     )
-  }, []);
+  };
 
-  const renderResetSuccess = useMemo(() => {
+  const renderResetSuccess = () => {
     return (
       <View style={styles.content}>
 
       </View>
     )
-  }, []);
+  };
 
-  const renderContent = useMemo(() => {
+  const renderResetByFirebase = () => {
+    return (
+      <View style={styles.content}>
+
+      </View>
+    )
+  };
+
+  const Content = (): JSX.Element => {
     switch (state) {
       case 'INPUT_MAIL':
-        return renderInputMail;
+        return renderInputMail();
       case 'VERIFY_CODE':
-        return renderVerifyCode;
+        return renderVerifyCode();
       case 'RESET_SUCCESS':
-        return renderResetSuccess;
+        return renderResetSuccess();
+      case 'RESET_BY_FIREBASE':
+        return renderResetByFirebase();
       default:
-        return renderInputMail;
+        return renderInputMail();
     }
-  }, [state]);
+  };
 
   const handleSendEmail = useCallback(() => {
     Keyboard.dismiss();
@@ -104,7 +114,7 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
     firebaseAuth.sendPasswordResetEmail(email)
       .then(() => {
         console.debug('~ sendPasswordResetEmail success')
-        setState('VERIFY_CODE');
+        setState('RESET_BY_FIREBASE');
       })
       .catch((error) => {
         console.log('error:', error);
@@ -123,32 +133,63 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
         return Strings.resetPassword.verifyBtn;
       case 'RESET_SUCCESS':
         return Strings.resetPassword.resetSuccessBtn;
+      case 'RESET_BY_FIREBASE':
+        return Strings.resetPassword.backToLogin;
       default:
         return Strings.resetPassword.sendBtn;
     }
   };
 
-  const getBtnAction = useCallback(() => {
-    switch (state) {
-      case 'INPUT_MAIL':
-        return handleSendEmail;
-      case 'VERIFY_CODE':
-        return () => { };
-      case 'RESET_SUCCESS':
-        return () => { };
-      default:
-        return handleSendEmail;
+  const handleGoBack = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate('Login');
     }
-  }, [state]);
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <Header title={Strings.resetPassword.title} />
 
-      {renderInputMail}
+      {state === 'INPUT_MAIL' ?
+        <Pressable style={styles.content} onPress={Keyboard.dismiss}>
+          <View style={styles.svgIllus}>
+            <SvgXml xml={MailBoxXML} width="100%" height="100%" />
+          </View>
+          <KeyboardAvoidingView
+            style={{ gap: Spacing.S }}
+            behavior={Platform.OS == 'ios' ? 'padding' : undefined}
+          >
+            <Text style={Typography.description}>{Strings.resetPassword.recoveryEmailHelper}</Text>
+            <TextEdit
+              value={email}
+              placeholder={Strings.resetPassword.recoveryEmailPlaceholder}
+              onChange={(text) => {
+                setEmail(text)
+                if (!isEmpty(emailError) && !isEmpty(text)) {
+                  setEmailError('')
+                }
+              }}
+              errorText={emailError}
+              isEdit={true}
+              onSubmit={handleSendEmail}
+              autoCapitalize='none'
+            />
+          </KeyboardAvoidingView>
+        </Pressable>
+        : (
+          <View style={[styles.content, { gap: Spacing.M }]}>
+            <View style={styles.svgIllus}>
+              <SvgXml xml={MailSentXML} width="100%" height="100%" />
+            </View>
+            <Text>{Strings.resetPassword.resetByFirebase}</Text>
+            <Text style={Typography.description}>{Strings.resetPassword.resetByFirebaseDesc}</Text>
+          </View>
+        )}
 
       <View style={[Touchable.btnBottom]}>
-        <Button label={getBtnLabel()} onPress={() => state === 'INPUT_MAIL' ? handleSendEmail() : state === 'VERIFY_CODE' ? {} : {}} />
+        <Button label={getBtnLabel()} onPress={() => state === 'INPUT_MAIL' ? handleSendEmail() : state === 'RESET_BY_FIREBASE' ? handleGoBack() : {}} />
       </View>
     </View>
   )

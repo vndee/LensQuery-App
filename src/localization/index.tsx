@@ -110,6 +110,9 @@ export default new LocalizedStrings({
       emailRequired: 'Email is required',
       emailInvalid: 'Email is invalid',
       emailNotFound: 'Email not found',
+      backToLogin: 'Back to login',
+      resetByFirebase: 'The reset password email has been sent to your email. Please check your email to reset your password via Firebase link.',
+      resetByFirebaseDesc: 'Please check your spam folder if you cannot find the email.',
     },
 
     // Chat listing
@@ -324,6 +327,9 @@ export default new LocalizedStrings({
       emailRequired: 'Email không được để trống',
       emailInvalid: 'Email không hợp lệ',
       emailNotFound: 'Email không tồn tại',
+      backToLogin: 'Quay lại đăng nhập',
+      resetByFirebase: 'Email đặt lại mật khẩu đã được gửi đến email của bạn. Vui lòng kiểm tra email của bạn để đặt lại mật khẩu qua đường dẫn Firebase.',
+      resetByFirebaseDesc: 'Vui lòng kiểm tra thư mục spam nếu bạn không thể tìm thấy email.',
     },
 
     // Chat listing
