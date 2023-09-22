@@ -39,11 +39,13 @@ const MainApplication = (): JSX.Element => {
       if (!isEmpty(customerInfo?.entitlements?.active)) {
         const entitlements = Object.values(customerInfo?.entitlements?.active)[0];
         const { isActive, identifier, expirationDate } = entitlements;
-        // console.log('entitlements', isActive, identifier, expirationDate);
 
         if (isActive) {
           dispatch(setSubscriptionPlan(identifier));
           dispatch(setSubscriptionExpire(expirationDate));
+        } else {
+          dispatch(setSubscriptionPlan(''));
+          dispatch(setSubscriptionExpire(''));
         }
       }
     } else {
@@ -66,11 +68,13 @@ const MainApplication = (): JSX.Element => {
       if (!isEmpty(purchaserInfo?.entitlements?.active)) {
         const entitlements = Object.values(purchaserInfo?.entitlements?.active)[0];
         const { isActive, identifier, expirationDate } = entitlements;
-        // console.log('entitlements', isActive, identifier, expirationDate);
 
         if (isActive) {
           dispatch(setSubscriptionPlan(identifier));
           dispatch(setSubscriptionExpire(expirationDate));
+        } else {
+          dispatch(setSubscriptionPlan(''));
+          dispatch(setSubscriptionExpire(''));
         }
       } else {
         dispatch(setSubscriptionPlan(''));
