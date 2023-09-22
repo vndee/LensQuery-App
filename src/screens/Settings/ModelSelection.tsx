@@ -12,10 +12,13 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Typography, Layout, Colors, Spacing } from '../../styles';
 import { TGetModelPropertiesResponse } from '../../types/openrouter';
 import { getOpenRouterModelProperties } from '../../services/openrouter';
+import { TextInput } from 'react-native-gesture-handler';
 
 const ModelSelection = ({ navigation, route }: StackScreenProps<Routes, 'ModelSelection'>) => {
   const { provider, callback, key } = route.params;
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [originalData, setOriginalData] = useState<Array<TGetModelPropertiesResponse> | null>([]);
   const [openRouterModelProperties, setOpenRouterModelProperties] = useState<Array<TGetModelPropertiesResponse> | null>([]);
 
   const handleGetOpenRouterModelProperties = async () => {
@@ -24,6 +27,7 @@ const ModelSelection = ({ navigation, route }: StackScreenProps<Routes, 'ModelSe
       const { status, data } = await getOpenRouterModelProperties();
       if (status === 200) {
         setOpenRouterModelProperties(data);
+        setOriginalData(data);
       } else {
         console.log('error:', status, data);
       }
@@ -43,11 +47,25 @@ const ModelSelection = ({ navigation, route }: StackScreenProps<Routes, 'ModelSe
     } finally {
       setIsLoading(false);
     }
-  }
+  };
+
+  const handleOnSearchFilter = (text: string) => {
+    setSearchTerm(text);
+    if (text.length === 0 && !openRouterModelProperties) {
+      return;
+    }
+
+    const filteredData = originalData?.filter((item) => {
+      return item.id.toLowerCase().includes(text.toLowerCase());
+    });
+    if (filteredData) {
+      setOpenRouterModelProperties(filteredData);
+    }
+  };
 
   useEffect(() => {
     handleGetOpenRouterModelProperties();
-  }, [])
+  }, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.background }}>
@@ -58,6 +76,16 @@ const ModelSelection = ({ navigation, route }: StackScreenProps<Routes, 'ModelSe
           </Pressable>
           <Text style={[Typography.H3, { marginLeft: Spacing.XS, color: Colors.white }]}>{Strings.modelSelection.title}</Text>
         </View>
+      </View>
+      <View style={styles.inputField}>
+        <Feather name="search" size={20} color={Colors.second_text_color} />
+        <TextInput
+          value={searchTerm}
+          autoCapitalize="none"
+          placeholder={Strings.modelSelection.searchPlaceholder}
+          onChangeText={handleOnSearchFilter}
+          style={{ flex: 1, marginLeft: Spacing.S }}
+        />
       </View>
       {openRouterModelProperties && openRouterModelProperties?.length > 0 && (
         <View style={styles.container}>
@@ -79,6 +107,16 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   container: {
     ...Layout.content,
     marginTop: Spacing.M,
+    gap: Spacing.M,
+  },
+  inputField: {
+    borderWidth: 1,
+    padding: Spacing.S,
+    flexDirection: 'row',
+    marginTop: Spacing.M,
+    borderRadius: Spacing.S,
+    borderColor: Colors.borders,
+    marginHorizontal: Spacing.horizontalPadding,
   }
 });
 

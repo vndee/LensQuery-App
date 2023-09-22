@@ -471,8 +471,11 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             </Pressable>
           </View>
 
-          <Text style={Typography.description}>{Strings.setting.remainingFreeTextSnap}: {creditDetails?.remain_text_snap}</Text>
-          <Text style={Typography.description}>{Strings.setting.remainingFreeEquationSnap}: {creditDetails?.remain_equation_snap}</Text>
+          {!isEmpty(subscriptionPlan) && (
+            <><Text style={Typography.description}>{Strings.setting.remainingFreeTextSnap}: {creditDetails?.remain_text_snap}</Text>
+              <Text style={Typography.description}>{Strings.setting.remainingFreeEquationSnap}: {creditDetails?.remain_equation_snap}</Text>
+            </>
+          )}
           {!isEmpty(subscriptionExpire) && <Text style={Typography.description}>{Strings.setting.expireTime}: {formatTime(subscriptionExpire)}</Text>}
         </View>
 
