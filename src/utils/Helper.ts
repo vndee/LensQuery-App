@@ -32,6 +32,12 @@ export const unixToTime = (unix: number) => {
   return new Date(unix).toLocaleTimeString(undefined, options);
 };
 
+export const unixToTimeWithSeconds = (unix: number) => {
+  const options = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  // @ts-ignore
+  return new Date(unix).toLocaleTimeString(undefined, options);
+};
+
 export const formatTime = (time: string) => {
   const options = { hour: 'numeric', minute: 'numeric', year: 'numeric', month: 'long', day: 'numeric' };
   // @ts-ignore

@@ -7,7 +7,7 @@ import { Routes } from '../../types/navigation';
 import Button from '../../components/Button';
 import firebaseAuth from '../../services/firebase';
 import TextEdit from '../../components/Input/TextEdit';
-import { checkEmailValid, unixToTime } from '../../utils/Helper';
+import { checkEmailValid, unixToTime, unixToTimeWithSeconds } from '../../utils/Helper';
 import { StackScreenProps } from '@react-navigation/stack';
 import { MailBoxXML } from '../../components/Illustrations/MailBox';
 import { MailSentXML } from '../../components/Illustrations/MailSent';
@@ -29,7 +29,8 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
   const [email, setEmail] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<string>('');
-  const [expireAt, setExpireAt] = useState<string>("10:57 PM");
+  const [expireAt, setExpireAt] = useState<string>('');
+  const [sessionExpireAt, setSessionExpireAt] = useState<string>('');
 
   const [value, setValue] = useState('');
   const [codeError, setCodeError] = useState<string>('');
@@ -121,6 +122,7 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
         <View style={{ paddingHorizontal: Spacing.XS }}>
           <Text style={Typography.body}>{Strings.resetPassword.newPasswordLabel}</Text>
           <Text style={[Typography.description, { color: Colors.second_text_color }]}>{Strings.resetPassword.newPasswordHelper}</Text>
+          {!isEmpty(sessionExpireAt) && <Text style={[Typography.description, { color: Colors.second_text_color }]}>{Strings.resetPassword.sessionExpireAt} {sessionExpireAt}</Text>}
         </View>
         <TextInputWithIcon
           value={newPassword}
@@ -176,7 +178,7 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
     }
   };
 
-  const handleSendEmail = useCallback(async () => {
+  const handleSendEmail = async () => {
     Keyboard.dismiss();
     setIsLoading(true);
 
@@ -192,17 +194,19 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
 
     const resp = await requestResetPassword(email);
     if (resp.status === 202) {
-      console.log('resp.data', resp.data)
-      setExpireAt(unixToTime(resp.data - 10 * 60))
+      const expireAt = unixToTimeWithSeconds(1000 * (resp.data - 5 * 60));
+      const sessionExpireAt = unixToTimeWithSeconds(1000 * (resp.data - 15));
+      setExpireAt(expireAt)
+      setSessionExpireAt(sessionExpireAt)
       setState('VERIFY_CODE');
     } else {
       setEmailError(Strings.common.unknownError);
     }
 
     setIsLoading(false);
-  }, [email]);
+  };
 
-  const handleVerifyCode = useCallback(async () => {
+  const handleVerifyCode = async () => {
     Keyboard.dismiss();
     setIsLoading(true);
 
@@ -222,9 +226,9 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
     }
 
     setIsLoading(false);
-  }, [email, value]);
+  };
 
-  const handleChangePassword = useCallback(async () => {
+  const handleChangePassword = async () => {
     Keyboard.dismiss();
     setIsLoading(true);
 
@@ -266,7 +270,7 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
     }
 
     setIsLoading(false);
-  }, [newPassword]);
+  };
 
   const getBtnLabel = () => {
     switch (state) {

@@ -215,7 +215,10 @@ const getSubscriptionDetails = async (): Promise<CreditDetailsResponse> => {
 
 const requestResetPassword = async (email: string): Promise<RequestResetPasswordResponse> => {
   try {
-    const resp = await queryBackend.get(`/api/v1/account/reset_password?recipient=${email}`);
+    const body = JSON.stringify({
+      recipient: email
+    });
+    const resp = await queryBackend.post(`/api/v1/account/reset_password`, body);
     console.log('requestResetPassword resp:', resp.status, resp.data)
     return { status: resp.status, data: resp.data?.exp ?? 0 };
   } catch (error: any) {
@@ -226,7 +229,12 @@ const requestResetPassword = async (email: string): Promise<RequestResetPassword
 
 const verifyResetPasswordCode = async (email: string, code: string): Promise<number> => {
   try {
-    const resp = await queryBackend.get(`/api/v1/account/verify_code?type=RESET_PASSWORD&email=${email}&code=${code}`);
+    const body = JSON.stringify({
+      type: "RESET_PASSWORD",
+      email: email,
+      code: code
+    });
+    const resp = await queryBackend.post(`/api/v1/account/verify_code`, body);
     return resp.status;
   } catch (error: any) {
     console.error('verifyResetPasswordCode error:', error?.response?.data);
@@ -236,11 +244,12 @@ const verifyResetPasswordCode = async (email: string, code: string): Promise<num
 
 const changePassword = async (email: string, code: string, password: string): Promise<number> => {
   try {
-    const resp = await queryBackend.post('/api/v1/account/update_password', {
+    const body = JSON.stringify({
       email: email,
       code: code,
       new_password: password
     });
+    const resp = await queryBackend.post('/api/v1/account/update_password', body);
     return resp.status;
   } catch (error: any) {
     console.error('changePassword error:', error?.response?.data);
