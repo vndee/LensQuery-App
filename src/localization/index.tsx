@@ -113,6 +113,10 @@ export default new LocalizedStrings({
       backToLogin: 'Back to login',
       resetByFirebase: 'The reset password email has been sent to your email. Please check your email to reset your password via Firebase link.',
       resetByFirebaseDesc: 'Please check your spam folder if you cannot find the email.',
+      expireAt: 'The verification code will expire at',
+      codeRequired: 'Verification code is required',
+      codeInvalid: 'Verification code is invalid',
+      changePasswordBtn: 'Save',
     },
 
     // Chat listing
@@ -330,6 +334,10 @@ export default new LocalizedStrings({
       backToLogin: 'Quay lại đăng nhập',
       resetByFirebase: 'Email đặt lại mật khẩu đã được gửi đến email của bạn. Vui lòng kiểm tra email của bạn để đặt lại mật khẩu qua đường dẫn Firebase.',
       resetByFirebaseDesc: 'Vui lòng kiểm tra thư mục spam nếu bạn không thể tìm thấy email.',
+      expireAt: 'Mã xác nhận sẽ hết hạn vào',
+      codeRequired: 'Mã xác nhận không được để trống',
+      codeInvalid: 'Mã xác nhận không hợp lệ',
+      changePasswordBtn: 'Lưu',
     },
 
     // Chat listing

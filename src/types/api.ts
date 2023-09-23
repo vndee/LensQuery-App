@@ -29,3 +29,8 @@ export type CreditDetailsResponse = {
   status: number;
   data: CreditDetails;
 }
+
+export type RequestResetPasswordResponse = {
+  status: number;
+  data: number;
+}

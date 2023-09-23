@@ -3,7 +3,7 @@ import firebaseAuth from './firebase'
 import axios, { AxiosError } from 'axios';
 import { MATHPIX_HOST } from '../utils/Constants'
 import { getOcrResponseText } from '../utils/Helper';
-import { healthCheckResponse, GetOCRAccessTokenResponse, OCRResultResponse, OCRResponse, CreditDetailsResponse } from '../types/api';
+import { healthCheckResponse, GetOCRAccessTokenResponse, OCRResultResponse, OCRResponse, CreditDetailsResponse, RequestResetPasswordResponse } from '../types/api';
 import { CreditDetails } from '../types/config';
 
 const queryBackend = axios.create({
@@ -213,4 +213,30 @@ const getSubscriptionDetails = async (): Promise<CreditDetailsResponse> => {
   };
 };
 
-export { healthCheck, getOCRAccessToken, getOCRResult, getTermsOfUse, getPrivacyPolicy, getOCRText, getSubscriptionDetails };
+const requestResetPassword = async (email: string): Promise<RequestResetPasswordResponse> => {
+  try {
+    const resp = await queryBackend.get(`/api/v1/account/reset_password?recipient=${email}`);
+    console.log('requestResetPassword resp:', resp.status, resp.data)
+    return { status: resp.status, data: resp.data?.exp ?? 0 };
+  } catch (error: any) {
+    console.error('requestResetPassword error:', error?.response?.data);
+    return { status: error?.response?.status, data: 0 }
+  }
+};
+
+const verifyResetPasswordCode = async (email: string, code: string): Promise<number> => {
+  try {
+    const resp = await queryBackend.get('/api/v1/account/verify_code', {
+      params: {
+        email: email,
+        code: code
+      }
+    });
+    return resp.status;
+  } catch (error: any) {
+    console.error('verifyResetPasswordCode error:', error?.response?.data);
+    return 400;
+  }
+};
+
+export { healthCheck, getOCRAccessToken, getOCRResult, getTermsOfUse, getPrivacyPolicy, getOCRText, getSubscriptionDetails, requestResetPassword, verifyResetPasswordCode };
