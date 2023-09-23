@@ -117,6 +117,11 @@ export default new LocalizedStrings({
       codeRequired: 'Verification code is required',
       codeInvalid: 'Verification code is invalid',
       changePasswordBtn: 'Save',
+      newPasswordLabel: 'Enter your new password below:',
+      newPasswordHelper: 'New password must be at least 6 characters',
+      newPasswordPlaceholder: 'New password',
+      newPasswordInvalid: 'New password is invalid',
+      resetPasswordSuccess: 'Reset password success',
     },
 
     // Chat listing
@@ -338,6 +343,11 @@ export default new LocalizedStrings({
       codeRequired: 'Mã xác nhận không được để trống',
       codeInvalid: 'Mã xác nhận không hợp lệ',
       changePasswordBtn: 'Lưu',
+      newPasswordLabel: 'Nhập mật khẩu mới của bạn bên dưới:',
+      newPasswordHelper: 'Mật khẩu mới phải có ít nhất 6 ký tự',
+      newPasswordPlaceholder: 'Mật khẩu mới',
+      newPasswordInvalid: 'Mật khẩu mới không hợp lệ',
+      resetPasswordSuccess: 'Đặt lại mật khẩu thành công',
     },
 
     // Chat listing

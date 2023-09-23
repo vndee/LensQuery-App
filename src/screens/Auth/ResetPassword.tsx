@@ -11,9 +11,10 @@ import { checkEmailValid, unixToTime } from '../../utils/Helper';
 import { StackScreenProps } from '@react-navigation/stack';
 import { MailBoxXML } from '../../components/Illustrations/MailBox';
 import { MailSentXML } from '../../components/Illustrations/MailSent';
+import TextInputWithIcon from '../../components/Input/TextInputWithIcon';
 import { Layout, Typography, Spacing, Colors, Touchable } from '../../styles';
 import { requestResetPassword, verifyResetPasswordCode } from '../../services/api';
-import { View, Text, Platform, Pressable, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
+import { View, Text, Platform, Pressable, StyleSheet, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
 import {
   CodeField,
   Cursor,
@@ -37,6 +38,9 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
     value,
     setValue,
   });
+
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [newPasswordError, setNewPasswordError] = useState<string>('');
 
   const renderInputMail = (): JSX.Element => {
     return (
@@ -113,8 +117,28 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
 
   const renderChangePassword = () => {
     return (
-      <View style={styles.content}>
-
+      <View style={[styles.content, { gap: Spacing.S }]}>
+        <View style={{ paddingHorizontal: Spacing.XS }}>
+          <Text style={Typography.body}>{Strings.resetPassword.newPasswordLabel}</Text>
+          <Text style={[Typography.description, { color: Colors.second_text_color }]}>{Strings.resetPassword.newPasswordHelper}</Text>
+        </View>
+        <TextInputWithIcon
+          value={newPassword}
+          placeholder={Strings.resetPassword.newPasswordPlaceholder}
+          onChangeText={(text: string) => {
+            setNewPassword(text)
+            if (!isEmpty(newPasswordError) && !isEmpty(text)) {
+              setNewPasswordError('')
+            }
+          }}
+          errorText={newPasswordError}
+          isEdit={true}
+          autoCapitalize='none'
+          secureTextEntry={true}
+          onSubmitEditing={() => Keyboard.dismiss()}
+          icon="lock-open-outline"
+          iconView="lock-closed-outline"
+        />
       </View>
     )
   };
@@ -200,6 +224,36 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
     setIsLoading(false);
   }, [email, value]);
 
+  const handleChangePassword = useCallback(async () => {
+    Keyboard.dismiss();
+    setIsLoading(true);
+
+    if (isEmpty(newPassword)) {
+      setNewPasswordError(Strings.resetPassword.newPasswordInvalid);
+      setIsLoading(false);
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setNewPasswordError(Strings.resetPassword.newPasswordInvalid);
+      setIsLoading(false);
+      return;
+    }
+
+    Alert.alert(
+      Strings.common.alertTitle,
+      Strings.resetPassword.resetPasswordSuccess,
+      [
+        {
+          text: Strings.resetPassword.backToLogin,
+          onPress: () => handleGoBack(),
+        }
+      ]
+    );
+
+    setIsLoading(false);
+  }, [newPassword]);
+
   const getBtnLabel = () => {
     switch (state) {
       case 'INPUT_MAIL':
@@ -259,7 +313,9 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
           : state === 'CHANGE_PASSWORD' ? renderChangePassword() : null}
 
       <View style={[Touchable.btnBottom]}>
-        <Button label={getBtnLabel()} onPress={() => state === 'INPUT_MAIL' ? handleSendEmail() : state === 'VERIFY_CODE' ? handleVerifyCode() : {}} isLoading={isLoading} />
+        <Button label={getBtnLabel()} onPress={() => state === 'INPUT_MAIL' ? handleSendEmail()
+          : state === 'VERIFY_CODE' ? handleVerifyCode()
+            : state === 'CHANGE_PASSWORD' ? handleChangePassword() : {}} isLoading={isLoading} />
       </View>
     </View>
   )
