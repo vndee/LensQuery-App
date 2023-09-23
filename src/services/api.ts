@@ -226,12 +226,7 @@ const requestResetPassword = async (email: string): Promise<RequestResetPassword
 
 const verifyResetPasswordCode = async (email: string, code: string): Promise<number> => {
   try {
-    const resp = await queryBackend.get('/api/v1/account/verify_code', {
-      params: {
-        email: email,
-        code: code
-      }
-    });
+    const resp = await queryBackend.get(`/api/v1/account/verify_code?type=RESET_PASSWORD&email=${email}&code=${code}`);
     return resp.status;
   } catch (error: any) {
     console.error('verifyResetPasswordCode error:', error?.response?.data);
@@ -239,4 +234,29 @@ const verifyResetPasswordCode = async (email: string, code: string): Promise<num
   }
 };
 
-export { healthCheck, getOCRAccessToken, getOCRResult, getTermsOfUse, getPrivacyPolicy, getOCRText, getSubscriptionDetails, requestResetPassword, verifyResetPasswordCode };
+const changePassword = async (email: string, code: string, password: string): Promise<number> => {
+  try {
+    const resp = await queryBackend.post('/api/v1/account/update_password', {
+      email: email,
+      code: code,
+      new_password: password
+    });
+    return resp.status;
+  } catch (error: any) {
+    console.error('changePassword error:', error?.response?.data);
+    return 400;
+  }
+};
+
+export {
+  getOCRText,
+  healthCheck,
+  getOCRAccessToken,
+  getOCRResult,
+  getTermsOfUse,
+  getPrivacyPolicy,
+  getSubscriptionDetails,
+  requestResetPassword,
+  verifyResetPasswordCode,
+  changePassword
+};

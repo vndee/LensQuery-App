@@ -13,7 +13,7 @@ import { MailBoxXML } from '../../components/Illustrations/MailBox';
 import { MailSentXML } from '../../components/Illustrations/MailSent';
 import TextInputWithIcon from '../../components/Input/TextInputWithIcon';
 import { Layout, Typography, Spacing, Colors, Touchable } from '../../styles';
-import { requestResetPassword, verifyResetPasswordCode } from '../../services/api';
+import { changePassword, requestResetPassword, verifyResetPasswordCode } from '../../services/api';
 import { View, Text, Platform, Pressable, StyleSheet, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
 import {
   CodeField,
@@ -25,7 +25,7 @@ import {
 const CELL_COUNT = 6;
 
 const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPassword'>): JSX.Element => {
-  const [state, setState] = useState<'INPUT_MAIL' | 'VERIFY_CODE' | 'CHANGE_PASSWORD' | 'RESET_SUCCESS' | 'RESET_BY_FIREBASE'>('CHANGE_PASSWORD');
+  const [state, setState] = useState<'INPUT_MAIL' | 'VERIFY_CODE' | 'CHANGE_PASSWORD' | 'RESET_SUCCESS' | 'RESET_BY_FIREBASE'>('INPUT_MAIL');
   const [email, setEmail] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<string>('');
@@ -193,7 +193,7 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
     const resp = await requestResetPassword(email);
     if (resp.status === 202) {
       console.log('resp.data', resp.data)
-      setExpireAt(unixToTime(resp.data))
+      setExpireAt(unixToTime(resp.data - 10 * 60))
       setState('VERIFY_CODE');
     } else {
       setEmailError(Strings.common.unknownError);
@@ -214,7 +214,7 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
 
     const resp = await verifyResetPasswordCode(email, value);
     if (resp === 200) {
-      setState('RESET_SUCCESS');
+      setState('CHANGE_PASSWORD');
     } else if (resp === 401) {
       setCodeError(Strings.resetPassword.codeInvalid);
     } else {
@@ -240,16 +240,30 @@ const ResetPassword = ({ navigation, route }: StackScreenProps<Routes, 'ResetPas
       return;
     }
 
-    Alert.alert(
-      Strings.common.alertTitle,
-      Strings.resetPassword.resetPasswordSuccess,
-      [
-        {
-          text: Strings.resetPassword.backToLogin,
-          onPress: () => handleGoBack(),
-        }
-      ]
-    );
+    const resp = await changePassword(email, value, newPassword);
+    if (resp === 200) {
+      Alert.alert(
+        Strings.common.alertTitle,
+        Strings.resetPassword.resetPasswordSuccess,
+        [
+          {
+            text: Strings.resetPassword.backToLogin,
+            onPress: () => handleGoBack(),
+          }
+        ]
+      );
+    } else {
+      Alert.alert(
+        Strings.common.alertTitle,
+        Strings.common.unknownError,
+        [
+          {
+            text: Strings.common.ok,
+            onPress: () => { },
+          }
+        ]
+      )
+    }
 
     setIsLoading(false);
   }, [newPassword]);
