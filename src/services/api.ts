@@ -19,7 +19,7 @@ queryBackend.interceptors.request.use(
     const token = await firebaseAuth.currentUser?.getIdToken();
     if (token) {
       config.headers.Authorization = `${token}`;
-      console.log('token:', token);
+      // console.log('token:', token);
     }
     return config;
   },
@@ -257,6 +257,19 @@ const changePassword = async (email: string, code: string, password: string): Pr
   }
 };
 
+const deleteAccount = async (user_id: string): Promise<number> => {
+  try {
+    const body = JSON.stringify({
+      user_id: user_id
+    });
+    const resp = await queryBackend.delete('/api/v1/account', { data: body });
+    return resp.status;
+  } catch (error: any) {
+    console.error('deleteAccount error:', error?.response?.data);
+    return 400;
+  }
+};
+
 export {
   getOCRText,
   healthCheck,
@@ -267,5 +280,6 @@ export {
   getSubscriptionDetails,
   requestResetPassword,
   verifyResetPasswordCode,
-  changePassword
+  changePassword,
+  deleteAccount
 };

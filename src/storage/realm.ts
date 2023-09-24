@@ -122,7 +122,7 @@ const realmConfig = {
   schema: [Provider, AppConfig, ChatBox, Message, MessageCollection],
   schemaVersion: 18,
   encryptionKey: new Int8Array(64),
-  deleteRealmIfMigrationNeeded: true,
+  // deleteRealmIfMigrationNeeded: true,
 };
 
 export const { RealmProvider, useRealm, useObject, useQuery } = createRealmContext(realmConfig);

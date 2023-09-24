@@ -29,6 +29,9 @@ export const OPENROUTER_KEY = 'sk-or-v1-c250af7521084e0222e21296fd81119c28ad48db
 export const REVENUECAT_API_KEY_IOS = 'appl_tZgdchIpAdHlylHMhGkYJnpMuhf';
 export const REVENUECAT_API_KEY_ANDROID = 'goog_EveBpuHAtfhlShhvHPSmOqOInuy';
 
+export const OPENAI_KEY_HELP = 'https://scribehow.com/shared/How_to_Create_a_Secret_Key_in_OpenAI_Platform__tN5WEq52RVqmlP6vklZ92A';
+export const OPENROUTER_KEY_HELP = 'https://scribehow.com/shared/Create_an_API_Key_for_OpenRouterai__SnRzEjEeR12UFfAWsyolKA';
+
 export const subscriptionName = {
   "lq_starter_0499_1m": "Starter Plan",
   "lq_standard_0999_1m": "Standard Plan",

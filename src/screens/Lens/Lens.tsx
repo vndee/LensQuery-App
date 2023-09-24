@@ -231,7 +231,7 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
   };
 
   const singleTap = Gesture.Tap().maxDuration(250).onEnd((tapEvent: GestureStateChangeEvent<TapGestureHandlerEventPayload>) => {
-    console.log("Single tap detected!", tapEvent);
+    // console.log("Single tap detected!", tapEvent);
     // if (!camera || !supportFocus || !camera.current) return;
     // camera.current.focus({ x: tapEvent.x, y: tapEvent.y });
   });
@@ -246,7 +246,7 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
     <View style={styles.container}>
       <PinchGestureHandler onGestureEvent={onPinchGesture} enabled={isActive}>
         <Reanimated.View style={StyleSheet.absoluteFill}>
-          <GestureDetector gesture={Gesture.Exclusive(doubleTap, singleTap)}>
+          <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
             <ReanimatedCamera
               ref={camera}
               style={StyleSheet.absoluteFill}

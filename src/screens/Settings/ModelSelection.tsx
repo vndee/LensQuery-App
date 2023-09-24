@@ -83,6 +83,7 @@ const ModelSelection = ({ navigation, route }: StackScreenProps<Routes, 'ModelSe
           value={searchTerm}
           autoCapitalize="none"
           placeholder={Strings.modelSelection.searchPlaceholder}
+          placeholderTextColor={Colors.second_text_color}
           onChangeText={handleOnSearchFilter}
           style={{ flex: 1, marginLeft: Spacing.S }}
         />

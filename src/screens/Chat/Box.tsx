@@ -191,7 +191,6 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
 
   useEffect(() => {
     if (!chatCollection?.messages?.length) return;
-    console.log('chatCollection', chatCollection?.messages?.length, chatCollection?.messages);
     if (messages.length === 0 && chatCollection?.messages?.length > 0) {
       let history: Array<IMessage> = [];
       const L = chatCollection?.messages.length;
@@ -250,6 +249,26 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
               if (_messageCollection) realm.delete(_messageCollection);
             })
             navigation.goBack()
+          },
+          style: 'default'
+        },
+      ]
+    );
+  };
+
+  const alertNotEnoughCredit = (_chatBox: Realm.Object<IChatBox>, _messageCollection: Realm.Object<IMessageCollection>) => {
+    Alert.alert(
+      Strings.common.alertTitle,
+      Strings.chatBox.notEnoughCredit,
+      [
+        {
+          text: Strings.common.ok,
+          onPress: () => {
+            realm.write(() => {
+              if (_chatBox) realm.delete(_chatBox);
+              if (_messageCollection) realm.delete(_messageCollection);
+            })
+            navigation.navigate('Paywall')
           },
           style: 'default'
         },
@@ -328,6 +347,9 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
           const { status, data, title } = await getOCRText(imageUri, type);
           if (status === 200) {
             text = data;
+          } else if (status === 402) {
+            alertNotEnoughCredit(_chatBox, _messageCollection);
+            return;
           }
 
           if (text === undefined || text === '') {

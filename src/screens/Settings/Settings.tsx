@@ -22,12 +22,12 @@ import LineData from '../../components/Information/LineData';
 import ProgressCircle from 'react-native-progress/CircleSnail';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
 import { TGetKeyLimitResponse, TGetModelPropertiesResponse } from '../../types/openrouter';
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform, KeyboardAvoidingView, Linking } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, KeyboardAvoidingView, Linking, Alert } from 'react-native';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 import { CreditDetails } from '../../types/config';
-import { getSubscriptionDetails } from '../../services/api';
-import { subscriptionName } from '../../utils/Constants';
+import { deleteAccount, getSubscriptionDetails } from '../../services/api';
+import { OPENAI_KEY_HELP, OPENROUTER_KEY_HELP, subscriptionName } from '../../utils/Constants';
 
 const defaultOpenRouterModel: TGetModelPropertiesResponse = {
   id: "openai/gpt-3.5-turbo",
@@ -210,6 +210,29 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
     handleReset();
   };
 
+  const handleDeleteAccount = async () => {
+    setIsLoading(true);
+
+    const resp = await deleteAccount(userToken);
+    if (resp === 200) {
+      handleLogout();
+    } else {
+      Alert.alert(
+        Strings.common.alertTitle,
+        Strings.common.unknownError,
+        [
+          {
+            text: Strings.common.ok,
+            onPress: () => { },
+          }
+        ]
+      )
+      setIsLoading(false);
+    }
+
+    setIsLoading(false);
+  };
+
   const actionSheet: Array<ActionItemProps> = [
     {
       label: Strings.setting.actionChangeInformation,
@@ -235,6 +258,22 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       color: Colors.text_color,
       onPress: () => {
         actionSheetRef.current?.hide();
+        Alert.alert(
+          Strings.common.alertTitle,
+          Strings.setting.deleteAccountConfirm,
+          [
+            {
+              text: Strings.common.cancel,
+              onPress: () => { },
+              style: 'cancel'
+            },
+            {
+              text: Strings.common.ok,
+              onPress: () => { handleDeleteAccount() },
+              style: 'destructive'
+            }
+          ]
+        )
       }
     },
     {
@@ -399,7 +438,9 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         <View style={{ gap: Spacing.S }}>
           <View style={styles.instruction}>
             <Text style={Typography.description}>{Strings.onboardingSetup.dontKnowHowToGetKey}</Text>
-            <Pressable onPress={() => { }} style={getPressableStyle} hitSlop={20}>
+            <Pressable onPress={() => {
+              Linking.openURL(selectedProvider === 'OpenAI' ? OPENAI_KEY_HELP : OPENROUTER_KEY_HELP)
+            }} style={getPressableStyle} hitSlop={20}>
               <Text style={[Typography.description, { color: Colors.primary, fontWeight: 'bold' }]}> {Strings.common.clickHere}</Text>
             </Pressable>
           </View>

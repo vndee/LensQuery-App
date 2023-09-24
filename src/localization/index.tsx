@@ -158,6 +158,7 @@ export default new LocalizedStrings({
       notFoundKeyModalAction: 'Go to Settings',
       messageOptionCopy: 'Copy',
       messageOptionDelete: 'Delete message',
+      notEnoughCredit: 'Not enough credit. Please add more credit to continue using this feature.',
     },
 
     // Setting
@@ -187,6 +188,7 @@ export default new LocalizedStrings({
       expireTime: 'Expire time',
       freeTrial: 'Free trial',
       noPlan: 'No plan',
+      deleteAccountConfirm: 'Are you sure you want to delete this account? All your data will be deleted permanently.',
     },
 
     // Change password
@@ -385,6 +387,8 @@ export default new LocalizedStrings({
       notFoundKeyModalAction: 'Đến cài đặt',
       messageOptionCopy: 'Sao chép',
       messageOptionDelete: 'Xóa tin nhắn',
+      notEnoughCredit: 'Không đủ credit. Vui lòng thêm credit để tiếp tục sử dụng tính năng này.',
+      deleteAccountConfirm: 'Bạn có chắc chắn muốn xóa tài khoản này? Tất cả dữ liệu của bạn sẽ bị xóa vĩnh viễn.',
     },
 
     // Setting
