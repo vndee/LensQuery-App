@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import Modal from 'react-native-modal';
 import Strings from '../../localization';
 import { useSelector } from 'react-redux';
@@ -19,8 +20,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 import { LayoutAnimation, View, Text, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-import Button from '../../components/Button';
-import { isEmpty } from 'lodash';
 
 const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) => {
   const realm = useRealm();
@@ -39,6 +38,8 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
   const [isEditNameModalVisible, setIsEditNameModalVisible] = useState<boolean>(false);
   const [selectedNewName, setSelectedNewName] = useState<string>('');
   const [newNameError, setNewNameError] = useState<string>('');
+
+  const { subscriptionPlan } = useSelector((state: any) => state.auth);
 
   const handleDeleteChatBox = () => {
     actionSheetRef.current?.hide();
@@ -228,7 +229,17 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
           <MaterialCommunityIcons name='chat-plus-outline' size={18} color={Colors.white} />
         </Pressable>
 
-        <Pressable style={({ pressed }) => [styles.fabBtn02, { opacity: pressed ? 0.4 : 1 }]} onPress={() => navigation.navigate('Lens')} hitSlop={20}>
+        <Pressable
+          hitSlop={20}
+          onPress={() => {
+            if (!isEmpty(subscriptionPlan)) {
+              navigation.navigate('Lens');
+            } else {
+              navigation.navigate('Paywall');
+            }
+          }}
+          style={({ pressed }) => [styles.fabBtn02, { opacity: pressed ? 0.4 : 1 }]}
+        >
           <Ionicons name='camera' size={20} color={Colors.white} />
         </Pressable>
       </View>

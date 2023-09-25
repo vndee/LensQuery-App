@@ -50,11 +50,11 @@ const Paywall = ({ navigation, route }: StackScreenProps<Routes, 'Paywall'>): JS
     )
   }, []);
 
-  useEffect(() => {
-    if (offeringsMetadata !== null) {
-      console.log('Offerings Metadata:', offeringsMetadata);
-    }
-  }, [offeringsMetadata]);
+  // useEffect(() => {
+  //   if (offeringsMetadata !== null) {
+  //     console.log('Offerings Metadata:', offeringsMetadata);
+  //   }
+  // }, [offeringsMetadata]);
 
   useEffect(() => {
     if (packages !== null) {

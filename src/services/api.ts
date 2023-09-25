@@ -270,6 +270,20 @@ const deleteAccount = async (user_id: string): Promise<number> => {
   }
 };
 
+const activateFreeTrial = async (user_id: string, email: string): Promise<number> => {
+  try {
+    const body = JSON.stringify({
+      user_id: user_id,
+      email: email
+    });
+    const resp = await queryBackend.post('/api/v1/account/activate_free_trial', body);
+    return resp.status;
+  } catch (error: any) {
+    console.error('activateFreeTrial error:', error?.response?.data);
+    return 400;
+  }
+}
+
 export {
   getOCRText,
   healthCheck,
@@ -281,5 +295,6 @@ export {
   requestResetPassword,
   verifyResetPasswordCode,
   changePassword,
-  deleteAccount
+  deleteAccount,
+  activateFreeTrial
 };

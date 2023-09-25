@@ -18,14 +18,15 @@ import { getPressableStyle } from '../../styles/Touchable';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsForeground } from '../../hooks/useIsForeground';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import { View, StyleSheet, Linking, Pressable } from 'react-native';
 import { CaptureButton } from '../../components/Button/CaptureButton';
+import { View, StyleSheet, Linking, Pressable, Text } from 'react-native';
 import { GestureDetector, Gesture, GestureStateChangeEvent, TapGestureHandlerEventPayload } from 'react-native-gesture-handler';
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { LENS_MAX_ZOOM_FACTOR, LENS_SCALE_FULL_ZOOM } from '../../utils/Constants';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PinchGestureHandler, PinchGestureHandlerGestureEvent, TapGestureHandler } from 'react-native-gesture-handler';
 import Reanimated, { Extrapolate, interpolate, useAnimatedGestureHandler, useAnimatedProps, useSharedValue } from 'react-native-reanimated';
+import { isEmpty } from 'lodash';
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({

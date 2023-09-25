@@ -12,6 +12,7 @@ import { FirebaseSignUpResponse } from '../../types/firebase';
 import { getPressableStyle } from '../../styles/Touchable';
 import { Colors, Spacing, Layout, Typography } from '../../styles';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, ScrollView, Pressable } from 'react-native';
+import { activateFreeTrial } from '../../services/api';
 
 const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -81,10 +82,17 @@ const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): 
     }
 
     firebaseAuth.createUserWithEmailAndPassword(email, password)
-      .then(() => {
+      .then(async () => {
         setIsLoading(false);
+        const uid = firebaseAuth.currentUser?.uid;
+        if (!uid) {
+          return;
+        }
+        const resp = await activateFreeTrial(uid, name);
         firebaseAuth.currentUser?.updateProfile({ displayName: name });
         console.debug('Created user successfully and login!', firebaseAuth.currentUser);
+
+        navigation.navigate('ChatList');
       }).catch((error) => {
         setIsLoading(false);
         switch (error.code) {
@@ -105,7 +113,7 @@ const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): 
         console.debug('error', error);
       }).finally(() => {
         setIsLoading(false);
-        navigation.navigate('OnboardingSetup', { email, password });
+        // navigation.navigate('OnboardingSetup', { email, password });
       });
   };
 
