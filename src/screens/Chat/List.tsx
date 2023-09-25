@@ -77,6 +77,11 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
   };
 
   const handleSaveName = () => {
+    if (isEmpty(selectedNewName)) {
+      setNewNameError(Strings.chatList.newNameError);
+      return;
+    }
+
     realm.write(() => {
       const chatBox = realm.objectForPrimaryKey<IChatBox>('ChatBox', selectedChatBoxId);
       if (chatBox) {
@@ -241,10 +246,14 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
           <TextInput
             value={selectedNewName}
             onChangeText={setSelectedNewName}
-            style={styles.inputNewName}
+            style={[styles.inputNewName, !isEmpty(newNameError) && { borderColor: Colors.danger }]}
           />
           <View style={{ flexDirection: 'row', gap: Spacing.M }}>
-            <Pressable style={(pressed) => [getPressableStyle(pressed), styles.saveNameBtn, { backgroundColor: Colors.background, borderWidth: 1, borderColor: Colors.primary }]} onPress={handleSaveName}>
+            <Pressable style={(pressed) => [getPressableStyle(pressed), styles.saveNameBtn, { backgroundColor: Colors.background, borderWidth: 1, borderColor: Colors.primary }]}
+              onPress={() => {
+                setSelectedNewName('');
+                setIsEditNameModalVisible(false);
+              }}>
               <Text style={[Typography.body, { fontWeight: 'bold', color: Colors.primary }]}>{Strings.chatList.cancelName}</Text>
             </Pressable>
 
@@ -253,8 +262,8 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
             </Pressable>
           </View>
         </View>
-      </Modal>
-    </View>
+      </Modal >
+    </View >
   )
 };
 

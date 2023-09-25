@@ -143,6 +143,7 @@ export default new LocalizedStrings({
       saveName: 'Save',
       cancelName: 'Cancel',
       deleteBatchMessageWarning: 'You have selected {0} chat boxes. Are you sure you want to delete them?',
+      newNameError: 'New name is invalid'
     },
 
     // Chat box
@@ -372,6 +373,7 @@ export default new LocalizedStrings({
       saveName: 'Luư',
       cancelName: 'Huỷ',
       deleteBatchMessageWarning: 'Bạn đã chọn {0} cuộc trò chuyện. Bạn có chắc chắn muốn xóa chúng?',
+      newNameError: 'Tiêu đề mới không hợp lệ'
     },
 
     // Chat box
