@@ -88,11 +88,11 @@ const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): 
         if (!uid) {
           return;
         }
-        const resp = await activateFreeTrial(uid, name);
+        const resp = await activateFreeTrial(uid, email);
+        console.log('Activate free trial response', resp);
+
         firebaseAuth.currentUser?.updateProfile({ displayName: name });
         console.debug('Created user successfully and login!', firebaseAuth.currentUser);
-
-        navigation.navigate('ChatList');
       }).catch((error) => {
         setIsLoading(false);
         switch (error.code) {

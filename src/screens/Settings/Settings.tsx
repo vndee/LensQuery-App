@@ -26,7 +26,7 @@ import { View, Text, StyleSheet, ScrollView, Pressable, Platform, KeyboardAvoidi
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 import { CreditDetails } from '../../types/config';
-import { deleteAccount, getSubscriptionDetails } from '../../services/api';
+import { checkFreeTrialStatus, deleteAccount, getSubscriptionDetails } from '../../services/api';
 import { OPENAI_KEY_HELP, OPENROUTER_KEY_HELP, subscriptionName } from '../../utils/Constants';
 
 const defaultOpenRouterModel: TGetModelPropertiesResponse = {
@@ -71,6 +71,23 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const [selectedProvider, setSelectedProvider] = useState<string>(appConf?.defaultProvider || 'OpenAI');
   const [openRouterKeyInfo, setOpenRouterKeyInfo] = useState<TGetKeyLimitResponse | null>(null);
   const [selectedDefaultModel, setSelectedDefaultModel] = useState<TGetModelPropertiesResponse | null>(null);
+
+  const [isFreeTrialActive, setIsFreeTrialActive] = useState<boolean>(false);
+
+  const handleCheckFreeTrial = async () => {
+    const resp = await checkFreeTrialStatus(userToken, email);
+    if (resp === 200) {
+      setIsFreeTrialActive(true);
+    }
+  };
+
+  useEffect(() => {
+    if (isEmpty(email)) return;
+
+    if (isEmpty(subscriptionPlan)) {
+      handleCheckFreeTrial();
+    }
+  }, [subscriptionPlan, email]);
 
   const handleLogout = () => {
     auth()
@@ -370,6 +387,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         const { status, data } = res;
         if (status === 200) {
           setCreditDetails(data);
+          console.log('Credit details', data)
         }
       }).catch((err) => {
         console.debug('~ err', err)
@@ -508,11 +526,11 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
               onPress={() => navigation.navigate('Paywall')}
               style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
             >
-              <Text style={Typography.description}>{isEmpty(subscriptionPlan) ? Strings.setting.noPlan : get(subscriptionName, subscriptionPlan, '')}</Text>
+              <Text style={Typography.description}>{!isEmpty(subscriptionPlan) ? get(subscriptionName, subscriptionPlan, '') : isFreeTrialActive ? Strings.setting.freeTrial : Strings.setting.noPlan}</Text>
             </Pressable>
           </View>
 
-          {!isEmpty(subscriptionPlan) && (
+          {!isEmpty(subscriptionPlan) || isFreeTrialActive && (
             <><Text style={Typography.description}>{Strings.setting.remainingFreeTextSnap}: {creditDetails?.remain_text_snap}</Text>
               <Text style={Typography.description}>{Strings.setting.remainingFreeEquationSnap}: {creditDetails?.remain_equation_snap}</Text>
             </>
