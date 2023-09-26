@@ -11,7 +11,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import { StackScreenProps } from '@react-navigation/stack';
 import { setLanguage } from '../../redux/slice/auth';
-import { maskApiKey, formatTime } from '../../utils/Helper';
+import { maskApiKey, formatTime, unixToDate } from '../../utils/Helper';
 import { IAppConfig } from '../../types/chat';
 import Purchases from 'react-native-purchases';
 import { getKeyLimit } from '../../services/openrouter';
@@ -73,11 +73,13 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const [selectedDefaultModel, setSelectedDefaultModel] = useState<TGetModelPropertiesResponse | null>(null);
 
   const [isFreeTrialActive, setIsFreeTrialActive] = useState<boolean>(false);
+  const [subscriptionExpireTime, setSubscriptionExpireTime] = useState<string>('');
 
   const handleCheckFreeTrial = async () => {
-    const resp = await checkFreeTrialStatus(userToken, email);
-    if (resp === 200) {
+    const { status, exp } = await checkFreeTrialStatus(userToken, email);
+    if (status === 200) {
       setIsFreeTrialActive(true);
+      setSubscriptionExpireTime(unixToDate(exp * 1000));
     }
   };
 
@@ -252,15 +254,6 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
   const actionSheet: Array<ActionItemProps> = [
     {
-      label: Strings.setting.actionChangeInformation,
-      icon: 'person-outline',
-      color: Colors.text_color,
-      onPress: () => {
-        actionSheetRef.current?.hide();
-        setIsEditing(true);
-      },
-    },
-    {
       label: Strings.setting.actionChangePassword,
       icon: 'lock-closed-outline',
       color: Colors.text_color,
@@ -364,6 +357,8 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
         }
       }
+    } else {
+      setSelectedProvider('OpenAI');
     }
   }
 
@@ -387,6 +382,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         const { status, data } = res;
         if (status === 200) {
           setCreditDetails(data);
+          setSubscriptionExpireTime(unixToDate(data?.expired_timestamp_ms));
           console.log('Credit details', data)
         }
       }).catch((err) => {
@@ -425,7 +421,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         <View style={{ gap: Spacing.S }}>
           <View style={styles.instruction}>
             <Text style={Typography.description}>{Strings.onboardingSetup.dontKnowHowToGetKey}</Text>
-            <Pressable onPress={() => { }} style={getPressableStyle} hitSlop={20}>
+            <Pressable onPress={() => Linking.openURL(OPENAI_KEY_HELP)} style={getPressableStyle} hitSlop={20}>
               <Text style={[Typography.description, { color: Colors.primary, fontWeight: 'bold' }]}> {Strings.common.clickHere}</Text>
             </Pressable>
           </View>
@@ -457,7 +453,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
           <View style={styles.instruction}>
             <Text style={Typography.description}>{Strings.onboardingSetup.dontKnowHowToGetKey}</Text>
             <Pressable onPress={() => {
-              Linking.openURL(selectedProvider === 'OpenAI' ? OPENAI_KEY_HELP : OPENROUTER_KEY_HELP)
+              Linking.openURL(OPENROUTER_KEY_HELP)
             }} style={getPressableStyle} hitSlop={20}>
               <Text style={[Typography.description, { color: Colors.primary, fontWeight: 'bold' }]}> {Strings.common.clickHere}</Text>
             </Pressable>
@@ -530,12 +526,13 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             </Pressable>
           </View>
 
-          {!isEmpty(subscriptionPlan) || isFreeTrialActive && (
+          {(!isEmpty(subscriptionPlan) || isFreeTrialActive) && (
             <><Text style={Typography.description}>{Strings.setting.remainingFreeTextSnap}: {creditDetails?.remain_text_snap}</Text>
               <Text style={Typography.description}>{Strings.setting.remainingFreeEquationSnap}: {creditDetails?.remain_equation_snap}</Text>
             </>
           )}
-          {!isEmpty(subscriptionExpire) && <Text style={Typography.description}>{Strings.setting.expireTime}: {formatTime(subscriptionExpire)}</Text>}
+          {/* {!isEmpty(subscriptionExpire) && <Text style={Typography.description}>{Strings.setting.expireTime}: {formatTime(subscriptionExpire)}</Text>} */}
+          {!isEmpty(subscriptionExpireTime) && <Text style={Typography.description}>{Strings.setting.expireTime}: {subscriptionExpireTime}</Text>}
         </View>
 
         <View style={{ height: Spacing.M }} />
@@ -565,6 +562,13 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
               style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
             >
               <Text style={Typography.description}>{selectedProvider}</Text>
+            </Pressable>
+            <Pressable
+              hitSlop={20}
+              onPress={() => { setIsEditing(true); providerActionSheetRef.current?.show(); }}
+              style={(pressed) => [{ marginLeft: Spacing.XXS }, getPressableStyle(pressed)]}
+            >
+              <Ionicons name="settings-outline" size={20} color={Colors.primary} />
             </Pressable>
           </View>
 

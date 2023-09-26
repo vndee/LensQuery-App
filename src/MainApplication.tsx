@@ -3,7 +3,7 @@ import Strings from './localization';
 import { Platform } from 'react-native';
 import Purchases from 'react-native-purchases';
 import auth from '@react-native-firebase/auth';
-import { setLogin, setSubscriptionExpire } from './redux/slice/auth';
+import { setLogin } from './redux/slice/auth';
 import WallStack from './navigations/WallStack';
 import MainStack from './navigations/MainStack';
 import AuthStack from './navigations/AuthStack';
@@ -16,6 +16,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { setSubscriptionPlan } from './redux/slice/auth';
 import { REVENUECAT_API_KEY_IOS, REVENUECAT_API_KEY_ANDROID } from './utils/Constants';
+import { unixToDate } from './utils/Helper';
 
 const MainApplication = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -38,14 +39,13 @@ const MainApplication = (): JSX.Element => {
       console.log('customerInfo', customerInfo?.entitlements, created)
       if (!isEmpty(customerInfo?.entitlements?.active)) {
         const entitlements = Object.values(customerInfo?.entitlements?.active)[0];
-        const { isActive, identifier, expirationDate } = entitlements;
+        const { isActive, identifier, expirationDateMillis } = entitlements;
 
         if (isActive) {
           dispatch(setSubscriptionPlan(identifier));
-          dispatch(setSubscriptionExpire(expirationDate));
+          // dispatch(setSubscriptionExpire(unixToDate(expirationDateMillis)));
         } else {
           dispatch(setSubscriptionPlan(''));
-          dispatch(setSubscriptionExpire(''));
         }
       }
     } else {
@@ -71,14 +71,11 @@ const MainApplication = (): JSX.Element => {
 
         if (isActive) {
           dispatch(setSubscriptionPlan(identifier));
-          dispatch(setSubscriptionExpire(expirationDate));
         } else {
           dispatch(setSubscriptionPlan(''));
-          dispatch(setSubscriptionExpire(''));
         }
       } else {
         dispatch(setSubscriptionPlan(''));
-        dispatch(setSubscriptionExpire(''));
       }
     });
   };

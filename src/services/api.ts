@@ -284,17 +284,17 @@ const activateFreeTrial = async (user_id: string, email: string): Promise<number
   }
 };
 
-const checkFreeTrialStatus = async (user_id: string, email: string): Promise<number> => {
+const checkFreeTrialStatus = async (user_id: string, email: string): Promise<{ status: number, exp: number }> => {
   try {
     const body = JSON.stringify({
       user_id: user_id,
       email: email
     });
     const resp = await queryBackend.post('/api/v1/account/check_free_trial', body);
-    return resp.status;
+    return { status: resp.status, exp: resp.data?.exp ?? 0 }
   } catch (error: any) {
     console.error('checkFreeTrialStatus error:', error?.response?.data);
-    return 400;
+    return { status: 400, exp: 0 };
   }
 }
 

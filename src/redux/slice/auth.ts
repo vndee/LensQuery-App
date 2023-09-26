@@ -7,7 +7,6 @@ const initialStateAuth = {
   language: appStorage.getString('auth.language') || 'en',
   userToken: appStorage.getString('auth.userToken') || '',
   subscriptionPlan: '',
-  subscriptionExpire: '',
 };
 
 const authSlice = createSlice({
@@ -30,13 +29,9 @@ const authSlice = createSlice({
       state.subscriptionPlan = action.payload;
       appStorage.set('auth.subscriptionPlan', action.payload);
     },
-    setSubscriptionExpire: (state, action) => {
-      state.subscriptionExpire = action.payload;
-      appStorage.set('auth.subscriptionExpire', action.payload);
-    }
   }
 });
 
-export const { setLogin, setLanguage, setUserToken, setSubscriptionPlan, setSubscriptionExpire } = authSlice.actions;
+export const { setLogin, setLanguage, setUserToken, setSubscriptionPlan } = authSlice.actions;
 
 export default authSlice.reducer;
