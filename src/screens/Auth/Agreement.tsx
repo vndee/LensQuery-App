@@ -13,7 +13,9 @@ const Agreement = ({ navigation, route }: StackScreenProps<Routes, 'Agreement'>)
   const { type } = route.params;
   const { width } = useWindowDimensions();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [source, setSource] = useState<{ html: string }>({ html: '' });
+  const [source, setSource] = useState<{ html: string }>({
+    html: ``
+  });
 
   const handleFetchSource = async () => {
     setIsLoading(true);
@@ -34,15 +36,17 @@ const Agreement = ({ navigation, route }: StackScreenProps<Routes, 'Agreement'>)
   return (
     <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <Header title={type === 'terms' ? Strings.common.terms : Strings.common.privacy} />
+      <View style={{ height: Spacing.L }} />
       <View style={styles.container}>
         <ScrollView>
           {source && (
             <RenderHtml
-              tagsStyles={tagsStyles}
+              classesStyles={classStyles}
               contentWidth={width}
               source={source}
             />
           )}
+          <View style={{ height: Spacing.L * 3 }} />
         </ScrollView>
       </View>
     </View>
@@ -58,10 +62,20 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
   },
 });
 
-const tagsStyles = {
-  body: {
-    paddingBottom: Spacing.XL + Spacing.M,
+const classStyles = {
+  "font-bold": {
+    fontWeight: 'bold' as const,
   },
+  "text-xl": {
+    fontSize: 18,
+    marginBottom: 8,
+  },
+  "text-3xl": {
+    fontSize: 24,
+  },
+  "ml-8": {
+    marginBottom: 8,
+  }
 };
 
 export default Agreement;
