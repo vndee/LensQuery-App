@@ -11,7 +11,9 @@
     "pod": "cd ios && pod install && cd ..",
     "watchman:clean": "watchman watch-del-all",
     "postinstall": "patch-package",
-    "version": "react-native-version"
+    "version": "react-native-version",
+    "codepush:android": "appcenter codepush release-react -a LensQuery/LensQuery-Android -d Production",
+    "codepush:ios": "appcenter codepush release-react -a LensQuery/LensQuery-iOS -d Production"
   },
   "dependencies": {
     "@react-native-camera-roll/camera-roll": "^5.7.2",
