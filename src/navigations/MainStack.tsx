@@ -1,5 +1,5 @@
-import { StatusBar } from 'react-native';
 import { Routes } from '../types/navigation';
+import { StatusBar, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 
@@ -28,9 +28,9 @@ const MainStack = (): JSX.Element => {
           <Stack.Screen name="ChatBox" component={ChatBox} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
           <Stack.Screen name="ChatSearch" component={ChatSearch} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
           <Stack.Screen name="Settings" component={Settings} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
-          <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
-          <Stack.Screen name="ModelSelection" component={ModelSelection} options={{ headerShown: false, ...TransitionPresets.ModalPresentationIOS }} />
-          <Stack.Screen name="Paywall" component={Paywall} options={{ headerShown: false, ...TransitionPresets.ModalPresentationIOS }} />
+          <Stack.Screen name="ChangePassword" component={ChangePassword} options={Platform.OS === 'ios' ? { headerShown: false, ...TransitionPresets.ModalPresentationIOS } : { headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          < Stack.Screen name="ModelSelection" component={ModelSelection} options={Platform.OS === 'ios' ? { headerShown: false, ...TransitionPresets.ModalPresentationIOS } : { headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="Paywall" component={Paywall} options={Platform.OS === 'ios' ? { headerShown: false, ...TransitionPresets.ModalPresentationIOS } : { headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
         </Stack.Navigator>
       </NavigationContainer>
     </>
