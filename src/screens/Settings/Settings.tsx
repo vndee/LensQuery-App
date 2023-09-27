@@ -264,6 +264,25 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       }
     },
     {
+      label: Strings.setting.termOfUse,
+      icon: 'document-text-outline',
+      color: Colors.text_color,
+      onPress: () => {
+        actionSheetRef.current?.hide();
+        Linking.openURL("https://www.lensquery.com/terms")
+      }
+    },
+    {
+      label: Strings.setting.privacyPolicy,
+      icon: 'shield-checkmark-outline',
+      color: Colors.text_color,
+      onPress: () => {
+        actionSheetRef.current?.hide();
+        Linking.openURL("https://www.lensquery.com/privacy")
+      }
+
+    },
+    {
       label: Strings.setting.actionDeleteAccuont,
       icon: 'trash-outline',
       color: Colors.text_color,

@@ -190,6 +190,8 @@ export default new LocalizedStrings({
       freeTrial: 'Free trial',
       noPlan: 'No plan',
       deleteAccountConfirm: 'Are you sure you want to delete this account? All your data will be deleted permanently.',
+      termOfUse: 'Term of use',
+      privacyPolicy: 'Privacy policy',
     },
 
     // Change password
@@ -420,6 +422,9 @@ export default new LocalizedStrings({
       expireTime: 'Hết hạn vào',
       freeTrial: 'Dùng thử miễn phí',
       noPlan: 'Chưa đăng ký gói',
+      termOfUse: 'Điều khoản sử dụng',
+      privacyPolicy: 'Chính sách bảo mật',
+      deleteAccountConfirm: 'Bạn có chắc chắn muốn xóa tài khoản này? Tất cả dữ liệu của bạn sẽ bị xóa vĩnh viễn.',
     },
 
     // Change password
