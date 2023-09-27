@@ -269,7 +269,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       color: Colors.text_color,
       onPress: () => {
         actionSheetRef.current?.hide();
-        Linking.openURL("https://www.lensquery.com/terms")
+        navigation.navigate('Agreement', { type: 'terms' })
       }
     },
     {
@@ -278,38 +278,14 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       color: Colors.text_color,
       onPress: () => {
         actionSheetRef.current?.hide();
-        Linking.openURL("https://www.lensquery.com/privacy")
+        navigation.navigate('Agreement', { type: 'privacy' })
       }
 
     },
     {
-      label: Strings.setting.actionDeleteAccuont,
-      icon: 'trash-outline',
-      color: Colors.text_color,
-      onPress: () => {
-        actionSheetRef.current?.hide();
-        Alert.alert(
-          Strings.common.alertTitle,
-          Strings.setting.deleteAccountConfirm,
-          [
-            {
-              text: Strings.common.cancel,
-              onPress: () => { },
-              style: 'cancel'
-            },
-            {
-              text: Strings.common.ok,
-              onPress: () => { handleDeleteAccount() },
-              style: 'destructive'
-            }
-          ]
-        )
-      }
-    },
-    {
       label: Strings.setting.actionLogOut,
       icon: 'log-out-outline',
-      color: Colors.text_color,
+      color: Colors.danger,
       onPress: () => {
         actionSheetRef.current?.hide();
         handleLogout();
@@ -600,6 +576,36 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
         </View>
         <View style={{ height: Spacing.XL }} />
+
+        <View style={styles.dangerZone}>
+          <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.dangerZone}</Text>
+          <Text style={[Typography.description, { fontWeight: '300' }]}>{Strings.setting.dangerZoneDesc}</Text>
+          <Pressable
+            style={(pressed) => [styles.dangerBtn, getPressableStyle(pressed)]}
+            onPress={() => {
+              Alert.alert(
+                Strings.common.alertTitle,
+                Strings.setting.deleteAccountConfirm,
+                [
+                  {
+                    text: Strings.common.cancel,
+                    onPress: () => { },
+                    style: 'cancel'
+                  },
+                  {
+                    text: Strings.common.ok,
+                    onPress: () => { handleDeleteAccount() },
+                    style: 'destructive'
+                  }
+                ]
+              )
+            }}
+          >
+            <Text style={[styles.btnLabel, { color: Colors.white }]}>{Strings.setting.actionDeleteAccuont}</Text>
+          </Pressable>
+        </View>
+        <View style={{ height: Spacing.XL }} />
+
       </ScrollView >
 
       {
@@ -735,6 +741,24 @@ const styles = StyleSheet.create({
     padding: Spacing.S,
     borderRadius: Spacing.S,
     backgroundColor: Colors.ice_blue
+  },
+  dangerZone: {
+    width: '100%',
+    gap: Spacing.XS,
+    padding: Spacing.S,
+    borderRadius: Spacing.S,
+    backgroundColor: Colors.light_pink_two,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+  },
+  dangerBtn: {
+    width: '100%',
+    padding: Spacing.S,
+    marginTop: Spacing.XS,
+    borderRadius: Spacing.S,
+    backgroundColor: Colors.danger,
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
 

@@ -189,6 +189,8 @@ export default new LocalizedStrings({
       expireTime: 'Expire time',
       freeTrial: 'Free trial',
       noPlan: 'No plan',
+      dangerZone: 'Danger zone',
+      dangerZoneDesc: 'Once you delete your account, there is no way to go back. Please consider carefully.',
       deleteAccountConfirm: 'Are you sure you want to delete this account? All your data will be deleted permanently.',
       termOfUse: 'Term of use',
       privacyPolicy: 'Privacy policy',
@@ -424,6 +426,8 @@ export default new LocalizedStrings({
       noPlan: 'Chưa đăng ký gói',
       termOfUse: 'Điều khoản sử dụng',
       privacyPolicy: 'Chính sách bảo mật',
+      dangerZone: 'Vùng nguy hiểm',
+      dangerZoneDesc: 'Sau khi xóa tài khoản, bạn sẽ không thể khôi phục lại. Vui lòng cân nhắc kỹ.',
       deleteAccountConfirm: 'Bạn có chắc chắn muốn xóa tài khoản này? Tất cả dữ liệu của bạn sẽ bị xóa vĩnh viễn.',
     },
 
