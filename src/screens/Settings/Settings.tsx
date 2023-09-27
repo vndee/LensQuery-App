@@ -488,7 +488,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
               style={(pressed) => [styles.addCreditBtn, getPressableStyle(pressed)]}
               onPress={() => Linking.openURL('https://openrouter.ai/account')}
             >
-              <Text>{Strings.setting.addCreditBtn}</Text>
+              <Text style={[styles.btnLabel, { color: Colors.text_color }]}>{Strings.setting.addCreditBtn}</Text>
             </Pressable>
           </View>
         )}
