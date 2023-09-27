@@ -77,6 +77,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
   const handleCheckFreeTrial = async () => {
     const { status, exp } = await checkFreeTrialStatus(userToken, email);
+    // console.log('Free trial status', status, exp)
     if (status === 200) {
       setIsFreeTrialActive(true);
       setSubscriptionExpireTime(unixToDate(exp * 1000));
@@ -380,6 +381,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
     const unsubscribe = navigation.addListener('focus', async () => {
       getSubscriptionDetails().then((res) => {
         const { status, data } = res;
+        // console.log('Subscription details', data)
         if (status === 200) {
           setCreditDetails(data);
           setSubscriptionExpireTime(unixToDate(data?.expired_timestamp_ms));
@@ -532,7 +534,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             </>
           )}
           {/* {!isEmpty(subscriptionExpire) && <Text style={Typography.description}>{Strings.setting.expireTime}: {formatTime(subscriptionExpire)}</Text>} */}
-          {!isEmpty(subscriptionExpireTime) && <Text style={Typography.description}>{Strings.setting.expireTime}: {subscriptionExpireTime}</Text>}
+          {!isEmpty(subscriptionPlan) && !isEmpty(subscriptionExpireTime) && <Text style={Typography.description}>{Strings.setting.expireTime}: {subscriptionExpireTime}</Text>}
         </View>
 
         <View style={{ height: Spacing.M }} />
