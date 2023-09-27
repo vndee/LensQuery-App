@@ -528,8 +528,9 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             </Pressable>
           </View>
 
-          {(!isEmpty(subscriptionPlan) || isFreeTrialActive) && (
-            <><Text style={Typography.description}>{Strings.setting.remainingFreeTextSnap}: {creditDetails?.remain_text_snap}</Text>
+          {(!isEmpty(subscriptionPlan) || isFreeTrialActive) && creditDetails && (
+            <>
+              <Text style={Typography.description}>{Strings.setting.remainingFreeTextSnap}: {creditDetails?.remain_text_snap}</Text>
               <Text style={Typography.description}>{Strings.setting.remainingFreeEquationSnap}: {creditDetails?.remain_equation_snap}</Text>
             </>
           )}
