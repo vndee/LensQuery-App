@@ -76,7 +76,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const [subscriptionExpireTime, setSubscriptionExpireTime] = useState<string>('');
 
   const handleCheckFreeTrial = async () => {
-    const { status, exp } = await checkFreeTrialStatus(userToken, email);
+    const { status, exp } = await checkFreeTrialStatus(userToken);
     // console.log('Free trial status', status, exp)
     if (status === 200) {
       setIsFreeTrialActive(true);

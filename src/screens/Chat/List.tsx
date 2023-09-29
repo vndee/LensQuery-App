@@ -10,7 +10,7 @@ import TextEdit from '../../components/Input/TextEdit';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getPressableStyle } from '../../styles/Touchable';
 import { StackScreenProps } from '@react-navigation/stack';
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { IChatBox, IMessageCollection } from '../../types/chat';
 import { NotFoundXML } from '../../components/Illustrations/NotFound';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
@@ -20,6 +20,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 import { LayoutAnimation, View, Text, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+import { checkFreeTrialStatus } from '../../services/api';
 
 const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) => {
   const realm = useRealm();
@@ -40,6 +41,22 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
   const [newNameError, setNewNameError] = useState<string>('');
 
   const { subscriptionPlan } = useSelector((state: any) => state.auth);
+  const [isAllowSnap, setIsAllowSnap] = useState<boolean>(false);
+
+  const handleCheckFreeTrial = async () => {
+    const { status, exp } = await checkFreeTrialStatus(userToken);
+    if (status === 200) {
+      setIsAllowSnap(true);
+    }
+  };
+
+  useEffect(() => {
+    if (isEmpty(subscriptionPlan)) {
+      handleCheckFreeTrial();
+    } else {
+      setIsAllowSnap(true);
+    }
+  }, [subscriptionPlan])
 
   const handleDeleteChatBox = () => {
     actionSheetRef.current?.hide();
@@ -232,7 +249,7 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
         <Pressable
           hitSlop={20}
           onPress={() => {
-            if (!isEmpty(subscriptionPlan)) {
+            if (isAllowSnap) {
               navigation.navigate('Lens');
             } else {
               navigation.navigate('Paywall');
