@@ -59,7 +59,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const realm = useRealm();
   const dispatch = useDispatch();
   const [key, setKey] = useState<string>('');
-  const { userToken, language, subscriptionPlan, subscriptionExpire } = useSelector((state: any) => state.auth);
+  const { userToken, language, subscriptionPlan, isLogin } = useSelector((state: any) => state.auth);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [keyErrorText, setKeyErrorText] = useState<string>('');
@@ -97,6 +97,10 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       .signOut()
       .then(() => {
         Purchases.logOut();
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        });
         console.log('User signed out!')
       });
   };
@@ -512,7 +516,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       </View>
       <ScrollView style={styles.container}>
         <View style={{ gap: Spacing.XS }}>
-          <View style={styles.row}>
+          {isLogin ? <View style={styles.row}>
             <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.subscription}</Text>
             <Pressable
               hitSlop={20}
@@ -521,7 +525,16 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             >
               <Text style={Typography.description}>{!isEmpty(subscriptionPlan) ? get(subscriptionName, subscriptionPlan, '') : isFreeTrialActive ? Strings.setting.freeTrial : Strings.setting.noPlan}</Text>
             </Pressable>
-          </View>
+          </View> : <View style={styles.row}>
+            <Text style={[Typography.body]}>{Strings.setting.signInAsGuest}</Text>
+            <Pressable
+              hitSlop={20}
+              onPress={() => navigation.navigate('Login')}
+              style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
+            >
+              <Text style={Typography.description}>{Strings.common.login}</Text>
+            </Pressable>
+          </View>}
 
           {(!isEmpty(subscriptionPlan) || isFreeTrialActive) && creditDetails && (
             <>
@@ -530,7 +543,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             </>
           )}
           {/* {!isEmpty(subscriptionExpire) && <Text style={Typography.description}>{Strings.setting.expireTime}: {formatTime(subscriptionExpire)}</Text>} */}
-          {!isEmpty(subscriptionPlan) && !isEmpty(subscriptionExpireTime) && <Text style={Typography.description}>{Strings.setting.expireTime}: {subscriptionExpireTime}</Text>}
+          {!isEmpty(subscriptionExpireTime) && <Text style={Typography.description}>{Strings.setting.expireTime}: {subscriptionExpireTime}</Text>}
         </View>
 
         <View style={{ height: Spacing.M }} />
@@ -542,14 +555,14 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         />
         <View style={{ height: Spacing.M }} />
         <View>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          {isLogin && <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <TextEdit
               label={Strings.setting.email}
               value={email}
               onChange={setEmail}
               isEdit={false}
             />
-          </KeyboardAvoidingView>
+          </KeyboardAvoidingView>}
 
           <View style={styles.row}>
             <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.providerLabel}</Text>
@@ -577,7 +590,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         </View>
         <View style={{ height: Spacing.XL }} />
 
-        <View style={styles.dangerZone}>
+        {isLogin && <View style={styles.dangerZone}>
           <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.dangerZone}</Text>
           <Text style={[Typography.description, { fontWeight: '300' }]}>{Strings.setting.dangerZoneDesc}</Text>
           <Pressable
@@ -603,7 +616,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
           >
             <Text style={[styles.btnLabel, { color: Colors.white }]}>{Strings.setting.actionDeleteAccuont}</Text>
           </Pressable>
-        </View>
+        </View>}
         <View style={{ height: Spacing.XL }} />
 
       </ScrollView >

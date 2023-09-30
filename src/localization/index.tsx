@@ -25,6 +25,7 @@ export default new LocalizedStrings({
       alertTitle: 'Alert',
       terms: 'Terms of Use',
       privacy: 'Privacy Policy',
+      loginRequired: 'Please login to enable this feature',
     },
 
     timeDiff: {
@@ -160,6 +161,7 @@ export default new LocalizedStrings({
       messageOptionCopy: 'Copy',
       messageOptionDelete: 'Delete message',
       notEnoughCredit: 'Not enough credit. Please add more credit to continue using this feature.',
+      insufficientQuota: 'You exceeded your current quota, please check your plan and billing details from your LLM provider.',
     },
 
     // Setting
@@ -194,6 +196,7 @@ export default new LocalizedStrings({
       deleteAccountConfirm: 'Are you sure you want to delete this account? All your data will be deleted permanently.',
       termOfUse: 'Term of use',
       privacyPolicy: 'Privacy policy',
+      signInAsGuest: 'You are currently using as guest',
     },
 
     // Change password
@@ -259,6 +262,7 @@ export default new LocalizedStrings({
       alertTitle: 'Thông báo',
       terms: 'Điều khoản sử dụng',
       privacy: 'Chính sách bảo mật',
+      loginRequired: 'Vui lòng đăng nhập để sử dụng tính năng này',
     },
 
     timeDiff: {
@@ -395,6 +399,7 @@ export default new LocalizedStrings({
       messageOptionDelete: 'Xóa tin nhắn',
       notEnoughCredit: 'Không đủ credit. Vui lòng thêm credit để tiếp tục sử dụng tính năng này.',
       deleteAccountConfirm: 'Bạn có chắc chắn muốn xóa tài khoản này? Tất cả dữ liệu của bạn sẽ bị xóa vĩnh viễn.',
+      insufficientQuota: 'Bạn đã vượt quá hạn mức hiện tại, vui lòng kiểm tra gói và chi tiết thanh toán từ nhà cung cấp LLM của bạn.',
     },
 
     // Setting
@@ -429,6 +434,7 @@ export default new LocalizedStrings({
       dangerZone: 'Vùng nguy hiểm',
       dangerZoneDesc: 'Sau khi xóa tài khoản, bạn sẽ không thể khôi phục lại. Vui lòng cân nhắc kỹ.',
       deleteAccountConfirm: 'Bạn có chắc chắn muốn xóa tài khoản này? Tất cả dữ liệu của bạn sẽ bị xóa vĩnh viễn.',
+      signInAsGuest: 'Bạn đang sử dụng tính năng này dưới dạng khách',
     },
 
     // Change password

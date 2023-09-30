@@ -25,7 +25,7 @@ import { checkFreeTrialStatus } from '../../services/api';
 const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) => {
   const realm = useRealm();
   const { language } = useSelector((state: any) => state.auth);
-  const { userToken } = useSelector((state: any) => state.auth);
+  const { isLogin, userToken } = useSelector((state: any) => state.auth);
   const listRef = useRef<FlashList<IChatBox> | null>(null);
   const listOfChats = useQuery<IChatBox>('ChatBox').filtered('userToken == $0', userToken).sorted('lastMessageAt', true);
   const actionSheetRef = useRef<ActionSheetRef>(null);
@@ -249,6 +249,18 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
         <Pressable
           hitSlop={20}
           onPress={() => {
+            if (!isLogin) {
+              Alert.alert(
+                Strings.common.alertTitle,
+                Strings.common.loginRequired,
+                [
+                  { text: Strings.common.cancel, onPress: () => { }, style: 'cancel' },
+                  { text: Strings.common.ok, onPress: () => navigation.navigate('Login'), style: 'destructive' }
+                ]
+              )
+              return;
+            }
+
             if (isAllowSnap) {
               navigation.navigate('Lens');
             } else {

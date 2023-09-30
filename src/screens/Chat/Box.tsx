@@ -115,6 +115,25 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       const message = constructMessage(chatCollection?.id, event.data, 'bot', true, selectedModel, userToken, selectedProvider);
       setFirstMessageState(message);
     } else if (event.type === 'error') {
+      try {
+        if (event.xhrStatus === 429) {
+          es?.close();
+          Alert.alert(
+            Strings.common.alertTitle,
+            Strings.chatBox.insufficientQuota,
+            [
+              {
+                text: Strings.common.ok,
+                onPress: handleUnknowError,
+              }
+            ]
+          )
+          return;
+        }
+      } catch (error) {
+        console.log('error', error);
+      }
+
       console.log('error', failedCount + 1, event);
       if (failedCount + 1 > 3) {
         es?.close();

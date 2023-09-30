@@ -92,6 +92,10 @@ const Register = ({ navigation, route }: StackScreenProps<Routes, 'Register'>): 
         console.log('Activate free trial response', resp);
 
         firebaseAuth.currentUser?.updateProfile({ displayName: name });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'ChatList' }],
+        })
         console.debug('Created user successfully and login!', firebaseAuth.currentUser);
       }).catch((error) => {
         setIsLoading(false);

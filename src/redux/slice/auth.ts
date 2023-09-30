@@ -1,11 +1,11 @@
 import appStorage from '../../storage';
-import { SLICE_NAME } from '../sliceNames';
-import { createSlice } from '@reduxjs/toolkit';
+import {SLICE_NAME} from '../sliceNames';
+import {createSlice} from '@reduxjs/toolkit';
 
 const initialStateAuth = {
   isLogin: appStorage.getBoolean('auth.isLogin') || false,
   language: appStorage.getString('auth.language') || 'en',
-  userToken: appStorage.getString('auth.userToken') || '',
+  userToken: appStorage.getString('auth.userToken') || 'guest-token',
   subscriptionPlan: '',
   freeTrialExp: appStorage.getString('auth.freeTrialExp') || '',
 };
@@ -33,10 +33,16 @@ const authSlice = createSlice({
     setFreeTrialExp: (state, action) => {
       state.freeTrialExp = action.payload;
       appStorage.set('auth.freeTrialExp', action.payload);
-    }
-  }
+    },
+  },
 });
 
-export const { setLogin, setLanguage, setUserToken, setSubscriptionPlan, setFreeTrialExp } = authSlice.actions;
+export const {
+  setLogin,
+  setLanguage,
+  setUserToken,
+  setSubscriptionPlan,
+  setFreeTrialExp,
+} = authSlice.actions;
 
 export default authSlice.reducer;

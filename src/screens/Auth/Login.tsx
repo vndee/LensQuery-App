@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StackScreenProps } from '@react-navigation/stack';
 import { FirebaseSignInResponse } from '../../types/firebase';
 import { getPressableStyle } from '../../styles/Touchable';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { LogoXML } from '../../components/Illustrations/Logo';
 import TextInputWithIcon from '../../components/Input/TextInputWithIcon';
 import { Colors, Spacing, Typography, Layout } from '../../styles/index';
@@ -71,6 +72,15 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
           appStorage.delete('auth.password');
         }
 
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'ChatList' }],
+          })
+        }
+
         setIsLoading(false);
       }).catch((error) => {
         console.log('errors', error);
@@ -121,6 +131,13 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
       style={styles.container}
       behavior={Platform.OS == 'ios' ? 'padding' : undefined}
     >
+      <Pressable
+        style={(pressed) => [styles.goBackBtn, getPressableStyle(pressed)]}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="close-outline" size={24} color={Colors.primary} />
+      </Pressable>
+
       <ScrollView contentContainerStyle={styles.container}>
         <View>
           <View style={styles.logoBtn}>
@@ -229,6 +246,18 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
+  goBackBtn: {
+    position: 'absolute',
+    top: Spacing.safePaddingTop,
+    left: Spacing.L,
+    zIndex: 1,
+    width: 36,
+    height: 36,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.borders
+  }
 });
 
 export default Login;
