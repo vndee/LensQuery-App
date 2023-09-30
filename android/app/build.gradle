@@ -80,8 +80,8 @@ android {
         applicationId "com.lensquery"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 18
-        versionName "0.2.7"
+        versionCode 19
+        versionName "0.2.8"
     }
     signingConfigs {
         debug {
