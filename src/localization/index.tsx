@@ -236,6 +236,7 @@ export default new LocalizedStrings({
       customLLMProvider: 'Custom LLM Provider',
       customLLMModel: 'Custom LLM Model',
       purchaseError: 'Purchase error, please try again later!',
+      restorePurchase: 'Restore purchase',
     }
   },
   // Vietnamese
@@ -474,6 +475,7 @@ export default new LocalizedStrings({
       customLLMProvider: 'Custom LLM Provider',
       customLLMModel: 'Custom LLM Model',
       purchaseError: 'Thanh toán thất bại, vui lòng thử lại sau!',
+      restorePurchase: 'Khôi phục mua hàng',
     }
   },
 });

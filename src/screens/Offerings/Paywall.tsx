@@ -93,6 +93,15 @@ const Paywall = ({ navigation, route }: StackScreenProps<Routes, 'Paywall'>): JS
     }
   }, [selectedPackage]);
 
+  const handleRestorePurchase = useCallback(async () => {
+    try {
+      const restore = await Purchases.restorePurchases();
+      console.log('Restore:', restore);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
   useEffect(() => {
     getOfferings();
   }, []);
@@ -106,7 +115,7 @@ const Paywall = ({ navigation, route }: StackScreenProps<Routes, 'Paywall'>): JS
       >
         <Ionicons name={"close"} size={26} color={Colors.black_two} />
       </Pressable>
-      <SvgXml xml={OuterSpaceXML} width={'100%'} height={'30%'} />
+      {/* <SvgXml xml={OuterSpaceXML} width={'30%'} height={'20%'} /> */}
       {selectedPackage && offeringsMetadata && (
         <SubscriptionInfo item={offeringsMetadata[selectedPackage.identifier]} />
       )}
@@ -123,6 +132,17 @@ const Paywall = ({ navigation, route }: StackScreenProps<Routes, 'Paywall'>): JS
           )}
         </View>
       )}
+
+      <Pressable
+        hitSlop={10}
+        onPress={handleRestorePurchase}
+        style={(pressed) => [getPressableStyle(pressed), styles.restorePurchase]}
+      >
+        <Text style={[Typography.body, { color: Colors.black_two }]}>
+          {Strings.paywall.restorePurchase}
+        </Text>
+      </Pressable>
+
       <View style={{ paddingHorizontal: Spacing.L, width: '100%' }}>
         <Button
           label={"Subscribe"}
@@ -168,6 +188,12 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     right: 0,
     width: 44,
     height: 44,
+  },
+  restorePurchase: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.M,
   }
 });
 
