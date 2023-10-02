@@ -1,4 +1,4 @@
-import { TGetModelPropertiesResponse } from "./openrouter";
+import {TGetModelPropertiesResponse} from './openrouter';
 
 export type OCRType = 'FREE_TEXT' | 'DOCUMENT_TEXT' | 'EQUATION_TEXT';
 
@@ -21,7 +21,7 @@ export type Routes = {
   ChatBox: {
     chatBoxId: string | undefined;
     imageUri: string | undefined;
-    type: OCRType
+    type: OCRType;
   };
   ChatList: undefined;
   ChatSearch: undefined;
@@ -33,6 +33,7 @@ export type Routes = {
     key: string | undefined;
   };
   Paywall: undefined;
+  Packages: undefined;
 };
 
 export type Label = {
@@ -40,4 +41,8 @@ export type Label = {
   label: string;
 };
 
-export const OCRLabels: Array<Label> = [{ label: 'Free Text', id: 'FREE_TEXT' }, { label: 'Document', id: 'DOCUMENT_TEXT' }, { label: 'Equation', id: 'EQUATION_TEXT' }];
+export const OCRLabels: Array<Label> = [
+  {label: 'Free Text', id: 'FREE_TEXT'},
+  {label: 'Document', id: 'DOCUMENT_TEXT'},
+  {label: 'Equation', id: 'EQUATION_TEXT'},
+];

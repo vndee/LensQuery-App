@@ -14,7 +14,7 @@ import Agreement from '../screens/Auth/Agreement';
 import ChangePassword from '../screens/Settings/ChangePassword';
 import ModelSelection from '../screens/Settings/ModelSelection';
 import Paywall from '../screens/Offerings/Paywall';
-
+import Packages from '../screens/Offerings/Package';
 import Login from '../screens/Auth/Login';
 import Register from '../screens/Auth/Register';
 import ResetPassword from '../screens/Auth/ResetPassword';
@@ -42,6 +42,7 @@ const MainStack = (): JSX.Element => {
           <Stack.Screen name="ChangePassword" component={ChangePassword} options={Platform.OS === 'ios' ? { headerShown: false, ...TransitionPresets.ModalPresentationIOS } : { headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
           <Stack.Screen name="ModelSelection" component={ModelSelection} options={Platform.OS === 'ios' ? { headerShown: false, ...TransitionPresets.ModalPresentationIOS } : { headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
           <Stack.Screen name="Paywall" component={Paywall} options={Platform.OS === 'ios' ? { headerShown: false, ...TransitionPresets.ModalPresentationIOS } : { headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
+          <Stack.Screen name="Packages" component={Packages} options={Platform.OS === 'ios' ? { headerShown: false, ...TransitionPresets.ModalPresentationIOS } : { headerShown: false, ...TransitionPresets.ModalFadeTransition }} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

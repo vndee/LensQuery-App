@@ -29,6 +29,19 @@ import { CreditDetails } from '../../types/config';
 import { checkFreeTrialStatus, deleteAccount, getSubscriptionDetails } from '../../services/api';
 import { OPENAI_KEY_HELP, OPENROUTER_KEY_HELP, subscriptionName } from '../../utils/Constants';
 
+const defaultLensQueryModel: TGetModelPropertiesResponse = {
+  id: "openai/gpt-3.5-turbo",
+  pricing: {
+    prompt: 0.0000015,
+    completion: 0.000002
+  },
+  context_length: 4095,
+  per_request_limits: {
+    prompt_tokens: 2976803,
+    completion_tokens: 2232602
+  }
+};
+
 const defaultOpenRouterModel: TGetModelPropertiesResponse = {
   id: "openai/gpt-3.5-turbo",
   pricing: {
@@ -206,6 +219,28 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         }
       }
     });
+  };
+
+  const handleSaveLensQueryConfig = async () => {
+    realm.write(() => {
+      if (!appConf) {
+        const newRecord: IAppConfig = {
+          userToken: userToken,
+          defaultProvider: 'LensQuery',
+          openAI: {
+            apiKey: '',
+            defaultModel: ''
+          },
+          openRouter: {
+            apiKey: '',
+            defaultModel: ''
+          },
+        }
+        realm.create('AppConfig', newRecord);
+      } else {
+        appConf.defaultProvider = 'LensQuery';
+      }
+    });
   }
 
   const handleSaveKey = async () => {
@@ -299,9 +334,43 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
   const providerOptions: Array<ActionItemProps> = [
     {
+      label: Strings.setting.lensQueryProvider,
+      color: Colors.text_color,
+      onPress: () => {
+        if (isLogin) {
+          setSelectedProvider('LensQuery');
+          handleSaveLensQueryConfig();
+          setKeyErrorText('');
+          providerActionSheetRef.current?.hide();
+        } else {
+          providerActionSheetRef.current?.hide();
+          Alert.alert(
+            Strings.common.alertTitle,
+            Strings.common.loginRequired,
+            [
+              {
+                text: Strings.common.cancel,
+                onPress: () => { },
+                style: 'cancel'
+              },
+              {
+                text: Strings.common.ok,
+                onPress: () => navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Login' }],
+                }),
+                style: 'default'
+              }
+            ]
+          )
+        }
+      }
+    },
+    {
       label: Strings.setting.openAIProvider,
       color: Colors.text_color,
       onPress: () => {
+        setIsEditing(true);
         setSelectedProvider('OpenAI');
         setKeyErrorText('');
         providerActionSheetRef.current?.hide();
@@ -311,11 +380,12 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       label: Strings.setting.openRouterProvider,
       color: Colors.text_color,
       onPress: () => {
+        setIsEditing(true);
         setSelectedProvider('OpenRouter');
         setKeyErrorText('');
         providerActionSheetRef.current?.hide();
       }
-    }
+    },
   ]
 
   const languageOptions: Array<InlineOptionSheetProps> = [
@@ -501,6 +571,24 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       </>)
   };
 
+  const renderLensQuery = () => {
+    return (
+      <View style={styles.keyInfo}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+          <Text>{Strings.setting.balanceHelper}</Text>
+          <Text style={[Typography.title, { fontWeight: '800' }]}> 5 </Text>
+          <Text>{Strings.setting.creditRemaining}</Text>
+        </View>
+        <Pressable
+          style={(pressed) => [styles.addCreditBtn, getPressableStyle(pressed)]}
+          onPress={() => navigation.navigate('Packages')}
+        >
+          <Text style={[styles.btnLabel, { color: Colors.off_white }]}>{Strings.setting.addCreditBtn}</Text>
+        </Pressable>
+      </View>
+    )
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <View style={[Layout.header, { paddingHorizontal: Spacing.horizontalPadding }]}>
@@ -515,39 +603,6 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         </Pressable>
       </View>
       <ScrollView style={styles.container}>
-        <View style={{ gap: Spacing.XS }}>
-          {isLogin ? <View style={styles.row}>
-            <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.subscription}</Text>
-            <Pressable
-              hitSlop={20}
-              onPress={() => navigation.navigate('Paywall')}
-              style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
-            >
-              <Text style={Typography.description}>{!isEmpty(subscriptionPlan) ? get(subscriptionName, subscriptionPlan, '') : isFreeTrialActive ? Strings.setting.freeTrial : Strings.setting.noPlan}</Text>
-            </Pressable>
-          </View> : <View style={styles.row}>
-            <Text style={[Typography.body]}>{Strings.setting.signInAsGuest}</Text>
-            <Pressable
-              hitSlop={20}
-              onPress={() => navigation.navigate('Login')}
-              style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
-            >
-              <Text style={Typography.description}>{Strings.common.login}</Text>
-            </Pressable>
-          </View>}
-
-          {(!isEmpty(subscriptionPlan) || isFreeTrialActive) && creditDetails && (
-            <>
-              <Text style={Typography.description}>{Strings.setting.remainingFreeTextSnap}: {creditDetails?.remain_text_snap}</Text>
-              <Text style={Typography.description}>{Strings.setting.remainingFreeEquationSnap}: {creditDetails?.remain_equation_snap}</Text>
-            </>
-          )}
-          {/* {!isEmpty(subscriptionExpire) && <Text style={Typography.description}>{Strings.setting.expireTime}: {formatTime(subscriptionExpire)}</Text>} */}
-          {!isEmpty(subscriptionExpireTime) && <Text style={Typography.description}>{Strings.setting.expireTime}: {subscriptionExpireTime}</Text>}
-        </View>
-
-        <View style={{ height: Spacing.M }} />
-
         <InlineOptionSheet
           title={Strings.setting.language}
           options={languageOptions}
@@ -576,7 +631,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             </Pressable>
             <Pressable
               hitSlop={20}
-              onPress={() => { setIsEditing(true); providerActionSheetRef.current?.show(); }}
+              onPress={() => { providerActionSheetRef.current?.show(); }}
               style={(pressed) => [{ marginLeft: Spacing.XXS }, getPressableStyle(pressed)]}
             >
               <Ionicons name="settings-outline" size={20} color={Colors.primary} />
@@ -585,7 +640,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
           <View style={{ height: Spacing.M }} />
 
-          {selectedProvider === 'OpenAI' ? renderOpenAIKeySetup() : renderOpenRouterKeySetup()}
+          {selectedProvider === 'OpenAI' ? renderOpenAIKeySetup() : selectedProvider === 'OpenRouter' ? renderOpenRouterKeySetup() : renderLensQuery()}
 
         </View>
         <View style={{ height: Spacing.XL }} />
@@ -622,7 +677,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       </ScrollView >
 
       {
-        isEditing &&
+        isEditing && selectedProvider !== 'LensQuery' &&
         <View style={styles.footer}>
           <Pressable
             style={(pressed) => [styles.btnBottomOutline, getPressableStyle(pressed)]}

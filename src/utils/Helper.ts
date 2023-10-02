@@ -1,12 +1,12 @@
-import { isEmpty } from 'lodash';
-import Strings from '../localization'
-import { IMessage } from '../types/chat';
+import {isEmpty} from 'lodash';
+import Strings from '../localization';
+import {IMessage} from '../types/chat';
 import ImageSize from 'react-native-image-size';
 
 export const checkEmailValid = (email: string) => {
   const regex = /\S+@\S+\.\S+/;
   return regex.test(email);
-}
+};
 
 export const formatTimeDiff = (time: number) => {
   const now = Date.now();
@@ -24,28 +24,41 @@ export const formatTimeDiff = (time: number) => {
   } else {
     return new Date(time).toLocaleDateString();
   }
-}
+};
 
 export const unixToTime = (unix: number) => {
-  const options = { hour: 'numeric', minute: 'numeric' };
+  const options = {hour: 'numeric', minute: 'numeric'};
   // @ts-ignore
   return new Date(unix).toLocaleTimeString(undefined, options);
 };
 
 export const unixToTimeWithSeconds = (unix: number) => {
-  const options = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  const options = {hour: 'numeric', minute: 'numeric', second: 'numeric'};
   // @ts-ignore
   return new Date(unix).toLocaleTimeString(undefined, options);
 };
 
 export const formatTime = (time: string) => {
-  const options = { hour: 'numeric', minute: 'numeric', year: 'numeric', month: 'long', day: 'numeric' };
+  const options = {
+    hour: 'numeric',
+    minute: 'numeric',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  };
   // @ts-ignore
   return new Date(time).toLocaleDateString(undefined, options);
 };
 
 export const unixToDate = (unix: number) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  };
   // @ts-ignore
   return new Date(unix).toLocaleDateString(undefined, options);
 };
@@ -57,7 +70,8 @@ export const constructMessage = (
   isInterupted: boolean,
   engineId: string,
   userToken: string,
-  provider: string): IMessage => {
+  provider: string,
+): IMessage => {
   return {
     id: new Realm.BSON.ObjectId().toHexString(),
     collectionId: chatCollectionId,
@@ -69,10 +83,12 @@ export const constructMessage = (
     updateAt: new Date().getTime(),
     userToken: userToken,
     provider: provider,
-  }
+  };
 };
 
-export const getImageSize = async (uri: string): Promise<{ width: number; height: number; }> => {
+export const getImageSize = async (
+  uri: string,
+): Promise<{width: number; height: number}> => {
   const size = await ImageSize.getSize(uri);
 
   let width = size.width;
@@ -87,9 +103,9 @@ export const getImageSize = async (uri: string): Promise<{ width: number; height
 
   return {
     width,
-    height
-  }
-}
+    height,
+  };
+};
 
 export const maskApiKey = (text: string) => {
   if (isEmpty(text)) return '';
@@ -104,9 +120,14 @@ export const maskApiKey = (text: string) => {
 
 export const getOcrResponseText = (labels: string[], text: string) => {
   if (labels.length === 0 && isEmpty(text)) return '';
-  if (labels.length === 0) return `This is the text that was extracted from your given image:\n${text}`;
+  if (labels.length === 0)
+    return `This is the text that was extracted from your given image:\n${text}`;
 
   const labelStr = labels.join(', ');
   const answer = `Detected label(s) from your given image (sorted in descending order by confidence score):\n${labelStr}\n\nThis is the text that was extracted from your given image:\n${text}`;
   return answer;
-}
+};
+
+export const formatNumber = (d: number): string => {
+  return d.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};

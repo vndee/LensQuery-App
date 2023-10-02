@@ -1,10 +1,10 @@
-import { TGetModelPropertiesResponse } from './openrouter';
+import {TGetModelPropertiesResponse} from './openrouter';
 
 export type IAppConfig = {
   userToken: string;
   apiKey: string;
   defaultModel: string;
-}
+};
 
 export type ISubscriptionConfig = {
   name: string;
@@ -12,7 +12,7 @@ export type ISubscriptionConfig = {
   EquationOCRSnap: number;
   FullChatExperience: boolean;
   CustomLLMProvider: boolean;
-}
+};
 
 export type CreditDetails = {
   ID: string;
@@ -25,4 +25,19 @@ export type CreditDetails = {
   remain_equation_snap: number;
   ammount_text_snap: number;
   remain_text_snap: number;
-}
+};
+
+export type IPackageConfig = {
+  amount: {
+    rc_bronze: number;
+    rc_gold: number;
+    rc_silver: number;
+  };
+  cost: {
+    'gpt-3.5': number;
+    'gpt-4': number;
+    'llama-13b': number;
+    snap_free_text: number;
+    snap_equation_text: number;
+  };
+};
