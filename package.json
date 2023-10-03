@@ -6,6 +6,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
+    "list": "echo \"List command skipped by Yarn Berry\"",
     "start": "react-native start",
     "test": "jest",
     "pod": "cd ios && pod install && cd ..",
