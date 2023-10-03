@@ -3377,7 +3377,7 @@ __metadata:
     react-native-get-random-values: ^1.9.0
     react-native-image-cropview: ^1.0.0
     react-native-image-picker: ^5.6.1
-    react-native-image-size: "https://github.com/wh201906/react-native-image-size.git"
+    react-native-image-size: "https://github.com/vndee/react-native-image-size.git"
     react-native-loading-spinner-overlay: ^3.0.1
     react-native-localization: ^2.3.2
     react-native-mmkv: ^2.10.1
@@ -10585,10 +10585,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-image-size@https://github.com/wh201906/react-native-image-size.git":
+"react-native-image-size@https://github.com/vndee/react-native-image-size.git":
   version: 1.1.5
-  resolution: "react-native-image-size@https://github.com/wh201906/react-native-image-size.git#commit=6927595b701f169067e6aa2aa7ec74c0aac7bf4a"
-  checksum: 4adc426e820409d49b84c6e13d150e8d1d4694c8349e9dfcda83924bef6aec3d855e9974f5c9d240710c1426b5e0c41156ee3d5ce9f80a8ffe9c3d64bd12e477
+  resolution: "react-native-image-size@https://github.com/vndee/react-native-image-size.git#commit=538734b05ba81068212639c1e82ddb2ac0543fef"
+  checksum: 3f3b625a568b318f27c8c9588bce7618be241110b28ad76801fd7e7e8963b0188c7bbd6b6f9007ecd87a8c728c9a8fda8ee88d854b2e75f022c693b41ed2c7c1
   languageName: node
   linkType: hard
 
