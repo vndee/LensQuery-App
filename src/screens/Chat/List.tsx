@@ -40,24 +40,6 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
   const [selectedNewName, setSelectedNewName] = useState<string>('');
   const [newNameError, setNewNameError] = useState<string>('');
 
-  const { subscriptionPlan } = useSelector((state: any) => state.auth);
-  const [isAllowSnap, setIsAllowSnap] = useState<boolean>(false);
-
-  const handleCheckFreeTrial = async () => {
-    const { status, exp } = await checkFreeTrialStatus(userToken);
-    if (status === 200) {
-      setIsAllowSnap(true);
-    }
-  };
-
-  useEffect(() => {
-    if (isEmpty(subscriptionPlan)) {
-      handleCheckFreeTrial();
-    } else {
-      setIsAllowSnap(true);
-    }
-  }, [subscriptionPlan])
-
   const handleDeleteChatBox = () => {
     actionSheetRef.current?.hide();
     realm.write(() => {
@@ -261,10 +243,10 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
               return;
             }
 
-            if (isAllowSnap) {
+            if (isLogin) {
               navigation.navigate('Lens');
             } else {
-              navigation.navigate('Paywall');
+              navigation.navigate('Login');
             }
           }}
           style={({ pressed }) => [styles.fabBtn02, { opacity: pressed ? 0.4 : 1 }]}

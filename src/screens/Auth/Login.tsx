@@ -131,12 +131,14 @@ const Login = ({ navigation, route }: StackScreenProps<Routes, 'Login'>): JSX.El
       style={styles.container}
       behavior={Platform.OS == 'ios' ? 'padding' : undefined}
     >
-      <Pressable
-        style={(pressed) => [styles.goBackBtn, getPressableStyle(pressed)]}
-        onPress={() => navigation.goBack()}
-      >
-        <Ionicons name="close-outline" size={24} color={Colors.primary} />
-      </Pressable>
+      {navigation.canGoBack() &&
+        <Pressable
+          style={(pressed) => [styles.goBackBtn, getPressableStyle(pressed)]}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="close-outline" size={24} color={Colors.primary} />
+        </Pressable>
+      }
 
       <ScrollView contentContainerStyle={styles.container}>
         <View>

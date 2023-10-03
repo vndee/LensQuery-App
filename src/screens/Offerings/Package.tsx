@@ -19,6 +19,7 @@ import { formatNumber } from '../../utils/Helper';
 
 
 const Packages = ({ navigation, route }: StackScreenProps<Routes, 'Packages'>): JSX.Element => {
+  const { from } = route.params;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [packages, setPackages] = useState<PurchasesPackage[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<PurchasesPackage | null>(null);
@@ -89,7 +90,12 @@ const Packages = ({ navigation, route }: StackScreenProps<Routes, 'Packages'>): 
   }, [selectedPackage]);
 
   const handleGoBack = useCallback(() => {
-    if (navigation.canGoBack()) {
+    if (from === 'chatbox') {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'ChatList' }],
+      });
+    } else if (navigation.canGoBack()) {
       navigation.goBack();
     }
   }, []);

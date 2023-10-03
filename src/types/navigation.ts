@@ -33,7 +33,9 @@ export type Routes = {
     key: string | null;
   };
   Paywall: undefined;
-  Packages: undefined;
+  Packages: {
+    from: 'chatbox' | 'settings';
+  };
 };
 
 export type Label = {

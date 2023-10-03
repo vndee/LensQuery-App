@@ -117,7 +117,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       setFirstMessageState(message);
     } else if (event.type === 'error') {
       try {
-        if (event.xhrStatus === 429) {
+        if (event.xhrStatus === 429 && selectedProvider === 'OpenRouter') {
           es?.close();
           Alert.alert(
             Strings.common.alertTitle,
@@ -126,6 +126,19 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
               {
                 text: Strings.common.ok,
                 onPress: handleUnknowError,
+              }
+            ]
+          )
+          return;
+        } else if (event.xhrStatus === 402 && selectedProvider === 'LensQuery') {
+          es?.close();
+          Alert.alert(
+            Strings.common.alertTitle,
+            Strings.chatBox.notEnoughCredit,
+            [
+              {
+                text: Strings.common.ok,
+                onPress: () => navigation.navigate('Packages', { from: 'chatbox' }),
               }
             ]
           )
@@ -197,7 +210,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         const token = await firebaseAuth.currentUser?.getIdToken();
         AUTHORIZATION_HEADER = `${token}`;
       }
-
+      console.log('AUTHORIZATION_HEADER', AUTHORIZATION_HEADER);
       es = new EventSource(`${HOST}/chat/completions`, {
         method: 'POST',
         headers: {
@@ -296,7 +309,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
               if (_chatBox) realm.delete(_chatBox);
               if (_messageCollection) realm.delete(_messageCollection);
             })
-            navigation.navigate('Paywall')
+            navigation.navigate('Packages', { from: 'chatbox' })
           },
           style: 'default'
         },

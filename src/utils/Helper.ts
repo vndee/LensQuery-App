@@ -129,7 +129,10 @@ export const getOcrResponseText = (labels: string[], text: string) => {
 };
 
 export const formatNumber = (d: number): string => {
-  return d.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return d
+    .toFixed(0)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 export const formatCredit = (credit: number): string => {

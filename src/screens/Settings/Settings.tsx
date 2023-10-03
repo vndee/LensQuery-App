@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Routes } from '../../types/navigation';
 import Button from '../../components/Button';
 import auth from '@react-native-firebase/auth';
@@ -25,7 +25,8 @@ import { TGetKeyLimitResponse, TGetModelPropertiesResponse } from '../../types/o
 import { View, Text, StyleSheet, ScrollView, Pressable, Platform, KeyboardAvoidingView, Linking, Alert } from 'react-native';
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
-import { CreditDetails } from '../../types/config';
+import { CreditDetails, IPackageConfig } from '../../types/config';
+import { formatNumber } from '../../utils/Helper';
 import { checkFreeTrialStatus, deleteAccount, getCreditDetails } from '../../services/api';
 import { OPENAI_KEY_HELP, OPENROUTER_KEY_HELP, subscriptionName } from '../../utils/Constants';
 
@@ -80,6 +81,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const providerActionSheetRef = React.useRef<ActionSheetRef>(null);
   const appConf = useObject<IAppConfig>('AppConfig', userToken);
   const [email, setEmail] = useState<string>('');
+  const [offeringsMetadata, setOfferingsMetadata] = useState<IPackageConfig | null>(null);
   const [creditDetails, setCreditDetails] = useState<CreditDetails | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<string>(appConf?.defaultProvider || 'LensQuery');
   const [openRouterKeyInfo, setOpenRouterKeyInfo] = useState<TGetKeyLimitResponse | null>(null);
@@ -97,6 +99,25 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         console.log('User signed out!')
       });
   };
+
+  const getOfferings = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const offerings = await Purchases.getOfferings();
+      console.log(offerings.all['credit_offerings'])
+      if (offerings.current !== null) {
+        setOfferingsMetadata(offerings.all['credit_offerings'].metadata as IPackageConfig);
+        console.log(offerings.all['credit_offerings'].metadata as IPackageConfig)
+        // setOfferingsMetadata(offerings.current.metadata as { [key: string]: ISubscriptionConfig });
+      }
+      setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (appConf) {
@@ -475,6 +496,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
       }
     });
 
+    getOfferings();
     return subscriber;
   }, []);
 
@@ -493,6 +515,15 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
     return unsubscribe;
   }, [navigation]);
+
+  const BenefitInfo = ({ amount, description }: { amount: number, description: string }) => {
+    return (
+      <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+        <Text style={[Typography.description, { fontWeight: 'bold' }]}>~{formatNumber(amount)}</Text>
+        <Text style={Typography.description}> {description}</Text>
+      </View>
+    )
+  };
 
   const renderOpenAIKeySetup = () => {
     return (
@@ -620,16 +651,23 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             </Pressable>
           </View>}
         <View style={styles.keyInfo}>
-          {creditDetails && <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+          {(isLogin && creditDetails && offeringsMetadata) ? <><View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
             <Text>{Strings.setting.balanceHelper}</Text>
-            <Text style={[Typography.title, { fontWeight: '800' }]}> {formatCredit(creditDetails?.credit_amount)} </Text>
+            <Text style={[Typography.title, { fontWeight: '800' }]}> {formatCredit(creditDetails?.credit_amount ?? 0)} </Text>
             <Text>{Strings.setting.creditRemaining}</Text>
-          </View>}
+          </View>
+            <Text style={[Typography.description]}>{Strings.paywall.thisMeanYouHave}</Text>
+            <BenefitInfo amount={creditDetails?.credit_amount / offeringsMetadata.cost.snap_free_text} description={Strings.paywall.freeTextSnap} />
+            <BenefitInfo amount={creditDetails?.credit_amount / offeringsMetadata.cost.snap_equation_text} description={Strings.paywall.equationTextSnap} />
+            <BenefitInfo amount={creditDetails?.credit_amount * offeringsMetadata.cost['gpt-3.5']} description={Strings.paywall.gpt35Token} />
+            <BenefitInfo amount={creditDetails?.credit_amount * offeringsMetadata.cost['gpt-4']} description={Strings.paywall.gpt4Token} />
+            <BenefitInfo amount={creditDetails?.credit_amount * offeringsMetadata.cost['llama-13b']} description={Strings.paywall.llamaToken} />
+          </> : <Text>{Strings.common.loginRequired}</Text>}
           <Pressable
             style={(pressed) => [styles.addCreditBtn, getPressableStyle(pressed)]}
-            onPress={() => navigation.navigate('Packages')}
+            onPress={() => isLogin ? navigation.navigate('Packages', { from: 'settings' }) : navigation.navigate('Login')}
           >
-            <Text style={[styles.btnLabel, { color: Colors.off_white }]}>{Strings.setting.addCreditBtn}</Text>
+            <Text style={[styles.btnLabel, { color: Colors.off_white }]}>{isLogin ? Strings.setting.addCreditBtn : Strings.login.loginBtn}</Text>
           </Pressable>
         </View>
       </View>

@@ -4,9 +4,10 @@ import {
   CameraDeviceFormat,
   CameraRuntimeError,
   PhotoFile,
-  sortFormats,
+  useCameraDevice,
   useCameraDevices,
   VideoFile,
+  useCameraFormat
 } from 'react-native-vision-camera';
 import Button from '../../components/Button';
 import { Routes } from '../../types/navigation';
@@ -50,8 +51,29 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
   const [enableNightMode, setEnableNightMode] = useState(false);
 
   // camera format settings
-  const devices = useCameraDevices();
-  const device = devices[cameraPosition];
+  // const devices = useCameraDevices();
+  // const device = useCameraDevice(cameraPosition);
+  const device = useCameraDevice(cameraPosition, {
+    physicalDevices: ['ultra-wide-angle-camera', 'wide-angle-camera', 'telephoto-camera'],
+  })
+
+  const [targetFps, setTargetFps] = useState(60)
+
+  const screenAspectRatio = Spacing.SCREEN_HEIGHT / Spacing.SCREEN_WIDTH
+  const format = useCameraFormat(device, [
+    { fps: targetFps },
+    { videoAspectRatio: screenAspectRatio },
+    { videoResolution: 'max' },
+    { photoAspectRatio: screenAspectRatio },
+    { photoResolution: 'max' },
+  ])
+
+  const fps = Math.min(format?.maxFps ?? 1, targetFps)
+
+  const supportsFlash = device?.hasFlash ?? false
+  const supportsHdr = format?.supportsPhotoHDR
+  const supports60Fps = useMemo(() => device?.formats.some((f) => f.maxFps >= 60), [device?.formats])
+  const canToggleNightMode = device?.supportsLowLightBoost ?? false
 
   const requestCameraPermission = useCallback(async () => {
     console.log('Requesting camera permission...');
@@ -64,62 +86,6 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
       setCameraPosition(() => cameraPosition);
     }
   }, []);
-
-  const formats = useMemo<CameraDeviceFormat[]>(() => {
-    if (device?.formats == null) return [];
-    return device.formats.sort(sortFormats);
-  }, [device?.formats]);
-
-  const supportFocus = useMemo<boolean>(() => {
-    if (device == null) return false;
-    return device.supportsFocus;
-  }, [device?.supportsFocus]);
-
-  //#region Memos
-  const [is60Fps, setIs60Fps] = useState(true);
-  const fps = useMemo(() => {
-    if (!is60Fps) return 30;
-
-    if (enableNightMode && !device?.supportsLowLightBoost) {
-      // User has enabled Night Mode, but Night Mode is not natively supported, so we simulate it by lowering the frame rate.
-      return 30;
-    }
-
-    const supportsHdrAt60Fps = formats.some((f) => f.supportsVideoHDR && f.maxFps >= 60);
-    if (enableHdr && !supportsHdrAt60Fps) {
-      // User has enabled HDR, but HDR is not supported at 60 FPS.
-      return 30;
-    }
-
-    const supports60Fps = formats.some((f) => f.maxFps >= 60);
-    if (!supports60Fps) {
-      // 60 FPS is not supported by any format.
-      return 30;
-    }
-    // If nothing blocks us from using it, we default to 60 FPS.
-    return 60;
-  }, [device?.supportsLowLightBoost, enableHdr, enableNightMode, formats, is60Fps]);
-
-  const supportsCameraFlipping = useMemo(() => devices.back != null && devices.front != null, [devices.back, devices.front]);
-  const supportsFlash = device?.hasFlash ?? false;
-  const supportsHdr = useMemo(() => formats.some((f) => f.supportsVideoHDR || f.supportsPhotoHDR), [formats]);
-  // const supports60Fps = useMemo(() => formats.some((f) => f.frameRateRanges.some((rate) => frameRateIncluded(rate, 60))), [formats]);
-  const canToggleNightMode = enableNightMode
-    ? true // it's enabled so you have to be able to turn it off again
-    : (device?.supportsLowLightBoost ?? false) || fps > 30; // either we have native support, or we can lower the FPS
-  //#endregion
-
-  const format = useMemo(() => {
-    let result = formats;
-    if (enableHdr) {
-      // We only filter by HDR capable formats if HDR is set to true.
-      // Otherwise we ignore the `supportsVideoHDR` property and accept formats which support HDR `true` or `false`
-      result = result.filter((f) => f.supportsVideoHDR || f.supportsPhotoHDR);
-    }
-
-    // find the first format that includes the given FPS
-    return result.find((f) => f.maxFps >= fps);
-  }, [formats, fps, enableHdr]);
 
   //#region Animated Zoom
   // This just maps the zoom factor to a percentage value.
@@ -279,11 +245,11 @@ const Lens = ({ navigation, route }: StackScreenProps<Routes, 'Lens'>): JSX.Elem
       />
 
       <View style={styles.rightButtonRow}>
-        {supportsCameraFlipping && (
+        {/* {supportsCameraFlipping && (
           <Pressable style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20} onPress={onFlipCameraPressed}>
             <Ionicons name="camera-reverse" color="white" size={24} />
           </Pressable>
-        )}
+        )} */}
         {supportsFlash && (
           <Pressable style={(pressed) => [styles.button, getPressableStyle(pressed)]} hitSlop={20} onPress={onFlashPressed}>
             <Ionicons name={flash === 'on' ? 'flash' : 'flash-off'} color="white" size={24} />
