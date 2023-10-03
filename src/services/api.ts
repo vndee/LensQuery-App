@@ -248,12 +248,12 @@ const getOCRText = async (image: string, type: string) => {
   return resp;
 };
 
-const getSubscriptionDetails = async (): Promise<CreditDetailsResponse> => {
+const getCreditDetails = async (): Promise<CreditDetailsResponse> => {
   try {
     const resp = await queryBackend.get('/api/v1/credit/details');
     return {status: resp.status, data: resp.data as CreditDetails};
   } catch (error: any) {
-    console.error('getSubscriptionDetails error:', error?.response?.data);
+    console.error('getCreditDetails error:', error?.response?.data);
     return {status: error?.response?.status, data: {} as CreditDetails};
   }
 };
@@ -375,7 +375,7 @@ export {
   getOCRResult,
   getTermsOfUse,
   getPrivacyPolicy,
-  getSubscriptionDetails,
+  getCreditDetails,
   requestResetPassword,
   verifyResetPasswordCode,
   changePassword,

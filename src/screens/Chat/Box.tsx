@@ -191,7 +191,6 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       setInputMessage('');
       console.log(`using model ${selectedModel} from ${selectedProvider}`)
 
-
       const HOST = selectedProvider === 'OpenAI' ? OPENAI_HOST : selectedProvider === 'OpenRouter' ? OPENROUTER_HOST : LENSQYER_CHAT_HOST;
       let AUTHORIZATION_HEADER = `Bearer ${apiKey}`;
       if (selectedProvider === 'LensQuery') {

@@ -11,7 +11,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import { StackScreenProps } from '@react-navigation/stack';
 import { setLanguage } from '../../redux/slice/auth';
-import { maskApiKey, formatTime, unixToDate } from '../../utils/Helper';
+import { maskApiKey, formatTime, unixToDate, formatCredit } from '../../utils/Helper';
 import { IAppConfig } from '../../types/chat';
 import Purchases from 'react-native-purchases';
 import { getKeyLimit } from '../../services/openrouter';
@@ -26,7 +26,7 @@ import { View, Text, StyleSheet, ScrollView, Pressable, Platform, KeyboardAvoidi
 import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/ActionSheet/InlineOptionSheet';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 import { CreditDetails } from '../../types/config';
-import { checkFreeTrialStatus, deleteAccount, getSubscriptionDetails } from '../../services/api';
+import { checkFreeTrialStatus, deleteAccount, getCreditDetails } from '../../services/api';
 import { OPENAI_KEY_HELP, OPENROUTER_KEY_HELP, subscriptionName } from '../../utils/Constants';
 
 const defaultLensQueryModel: TGetModelPropertiesResponse = {
@@ -106,7 +106,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         setKey(appConf?.openRouter?.apiKey || '');
       }
     }
-    console.log('AppConf:', appConf)
+    // console.log('AppConf:', appConf)
   }, [appConf]);
 
   useEffect(() => {
@@ -480,22 +480,15 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
-      getSubscriptionDetails().then((res) => {
+      getCreditDetails().then((res) => {
         const { status, data } = res;
-        // console.log('Subscription details', data)
         if (status === 200) {
           setCreditDetails(data);
-          console.log('Credit details', data)
+          console.log('Credit details', data.credit_amount)
         }
       }).catch((err) => {
         console.debug('~ err', err)
       });
-
-      // Purchases.getCustomerInfo().then((res) => {
-      //   console.debug('~ res', res)
-      // }).catch((err) => {
-      //   console.debug('~ err', err)
-      // });
     });
 
     return unsubscribe;
@@ -627,11 +620,11 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             </Pressable>
           </View>}
         <View style={styles.keyInfo}>
-          <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+          {creditDetails && <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
             <Text>{Strings.setting.balanceHelper}</Text>
-            <Text style={[Typography.title, { fontWeight: '800' }]}> 5 </Text>
+            <Text style={[Typography.title, { fontWeight: '800' }]}> {formatCredit(creditDetails?.credit_amount)} </Text>
             <Text>{Strings.setting.creditRemaining}</Text>
-          </View>
+          </View>}
           <Pressable
             style={(pressed) => [styles.addCreditBtn, getPressableStyle(pressed)]}
             onPress={() => navigation.navigate('Packages')}

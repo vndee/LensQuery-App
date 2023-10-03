@@ -63,21 +63,21 @@ const MainApplication = (): JSX.Element => {
       Purchases.configure({ apiKey: REVENUECAT_API_KEY_ANDROID });
     }
 
-    Purchases.addCustomerInfoUpdateListener(async (purchaserInfo) => {
-      console.log('purchaserInfo', purchaserInfo?.entitlements);
-      if (!isEmpty(purchaserInfo?.entitlements?.active)) {
-        const entitlements = Object.values(purchaserInfo?.entitlements?.active)[0];
-        const { isActive, identifier, expirationDate } = entitlements;
+    // Purchases.addCustomerInfoUpdateListener(async (purchaserInfo) => {
+    //   console.log('purchaserInfo', purchaserInfo?.entitlements);
+    //   if (!isEmpty(purchaserInfo?.entitlements?.active)) {
+    //     const entitlements = Object.values(purchaserInfo?.entitlements?.active)[0];
+    //     const { isActive, identifier, expirationDate } = entitlements;
 
-        if (isActive) {
-          dispatch(setSubscriptionPlan(identifier));
-        } else {
-          dispatch(setSubscriptionPlan(''));
-        }
-      } else {
-        dispatch(setSubscriptionPlan(''));
-      }
-    });
+    //     if (isActive) {
+    //       dispatch(setSubscriptionPlan(identifier));
+    //     } else {
+    //       dispatch(setSubscriptionPlan(''));
+    //     }
+    //   } else {
+    //     dispatch(setSubscriptionPlan(''));
+    //   }
+    // });
   };
 
   useEffect(() => {
