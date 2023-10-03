@@ -52,6 +52,7 @@ export interface EventSourceOptions {
   debug?: boolean;
   pollingInterval?: number;
   timeoutBeforeConnection?: number;
+  isLenQuery?: boolean;
 }
 
 export type EventSourceEvent =
@@ -92,14 +93,15 @@ class EventSource {
   eventType: string | undefined;
   status: number;
 
-  eventHandlers: { [key: string]: Function[] };
+  eventHandlers: {[key: string]: Function[]};
 
   method: string;
   timeout: number;
-  headers: { [key: string]: string };
+  headers: {[key: string]: string};
   body?: {};
   debug: boolean;
   timeoutBeforeConnection: number;
+  isLensQuery: boolean;
 
   _xhr: XMLHttpRequest;
   _pollTimer: NodeJS.Timeout | null;
@@ -124,7 +126,7 @@ class EventSource {
     this.body = options.body || undefined;
     this.debug = options.debug || false;
     this.timeoutBeforeConnection = options.timeoutBeforeConnection ?? 500;
-
+    this.isLensQuery = options.isLenQuery ?? false;
     this._xhr = new XMLHttpRequest();
     this._pollTimer = null;
 
@@ -159,22 +161,26 @@ class EventSource {
         // close connection
         console.log('[EventSource][onreadystatechange] DONE', response);
 
-        this.dispatch('done', { type: 'done', data: response });
+        this.dispatch('done', {type: 'done', data: response});
         this.close();
         return;
       } else if (line && line.startsWith('data: ')) {
-        const str = line.replace('data: ', '');
-        // convert str to json object
-        try {
-          const data = JSON.parse(str).choices[0].delta;
-          if ('content' in data) {
-            response = response + data.content;
+        if (this.isLensQuery) {
+          response = response + line.replace('data: ', '');
+        } else {
+          const str = line.replace('data: ', '');
+          // convert str to json object
+          try {
+            const data = JSON.parse(str).choices[0].delta;
+            if ('content' in data) {
+              response = response + data.content;
+            }
+          } catch (error) {
+            console.error(
+              '[EventSource][onreadystatechange] Error parsing json',
+              error,
+            );
           }
-        } catch (error) {
-          console.error(
-            '[EventSource][onreadystatechange] Error parsing json',
-            error,
-          );
         }
       }
     }
@@ -217,7 +223,7 @@ class EventSource {
         if (xhr.status === 200) {
           if (xhr?.responseText.trim() !== '') {
             const response = this.getResponseText(xhr);
-            this.dispatch('message', { type: 'message', data: response });
+            this.dispatch('message', {type: 'message', data: response});
           }
         }
 
@@ -233,7 +239,7 @@ class EventSource {
         if (xhr.status >= 200 && xhr.status < 400) {
           if (this.status === this.CONNECTING) {
             this.status = this.OPEN;
-            this.dispatch('open', { type: 'open' });
+            this.dispatch('open', {type: 'open'});
           }
 
           // this._handleEvent(xhr.responseText || '');
@@ -249,7 +255,7 @@ class EventSource {
               '[EventSource][onreadystatechange][DONE] response',
               response,
             );
-            this.dispatch('done', { type: 'done', data: response });
+            this.dispatch('done', {type: 'done', data: response});
             this.close();
             // this._pollAgain(this.interval);
           }
@@ -310,7 +316,7 @@ class EventSource {
 
       this._xhr.onabort = () => {
         this.status = this.CLOSED;
-        this.dispatch('close', { type: 'close' });
+        this.dispatch('close', {type: 'close'});
         console.log('abort XHR');
       };
     } catch (e) {
@@ -420,7 +426,7 @@ class EventSource {
       this._xhr.abort();
     }
 
-    this.dispatch('close', { type: 'close' });
+    this.dispatch('close', {type: 'close'});
   }
 
   terminate() {

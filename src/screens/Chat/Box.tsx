@@ -18,6 +18,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import { useRealm, useObject } from '../../storage/realm';
+import firebaseAuth from '../../services/firebase';
 import { useKeyboardVisible } from '../../hooks/useKeyboard';
 import ProgressCircle from 'react-native-progress/CircleSnail';
 import { Colors, Spacing, Typography, Layout } from '../../styles';
@@ -26,7 +27,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { IMessage, IChatBox, IMessageCollection } from '../../types/chat';
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Alert, Platform, Keyboard, Modal, Pressable } from 'react-native';
-import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE, OPENROUTER_HOST } from '../../utils/Constants';
+import { CHAT_HISTORY_CACHE_LENGTH, CHAT_HISTORY_LOAD_LENGTH, OPENAI_HOST, CHAT_WINDOW_SIZE, OPENROUTER_HOST, LENSQYER_CHAT_HOST } from '../../utils/Constants';
 
 const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => {
   let failedCount: number = 0;
@@ -157,7 +158,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
     }
   };
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
     Keyboard.dismiss();
 
     failedCount = 0;
@@ -190,16 +191,25 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       setInputMessage('');
       console.log(`using model ${selectedModel} from ${selectedProvider}`)
 
-      es = new EventSource(`${selectedProvider === 'OpenAI' ? OPENAI_HOST : OPENROUTER_HOST}/chat/completions`, {
+
+      const HOST = selectedProvider === 'OpenAI' ? OPENAI_HOST : selectedProvider === 'OpenRouter' ? OPENROUTER_HOST : LENSQYER_CHAT_HOST;
+      let AUTHORIZATION_HEADER = `Bearer ${apiKey}`;
+      if (selectedProvider === 'LensQuery') {
+        const token = await firebaseAuth.currentUser?.getIdToken();
+        AUTHORIZATION_HEADER = `${token}`;
+      }
+
+      es = new EventSource(`${HOST}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
+          Authorization: AUTHORIZATION_HEADER,
           'HTTP-Referer': 'https://lensquery.com',
           'X-Title': 'LensQuery'
         },
         body: JSON.stringify(requestBody),
         debug: false,
+        isLenQuery: selectedProvider === 'LensQuery',
       })
       es.addEventListener('open', handleEvensourceEvent);
       es.addEventListener('message', handleEvensourceEvent);
@@ -314,6 +324,9 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
       } else {
         return { status: false, key: '', model: '', provider: '' }
       }
+    } else if (appConf?.defaultProvider === 'LensQuery') {
+      const defaultModel = JSON.parse(appConf?.lensQuery.defaultModel) as TGetModelPropertiesResponse;
+      return { status: true, key: '', model: defaultModel?.id, provider: appConf?.defaultProvider }
     }
 
     return { status: false, key: '', model: '', provider: '' }
