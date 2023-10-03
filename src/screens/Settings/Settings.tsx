@@ -27,6 +27,7 @@ import InlineOptionSheet, { InlineOptionSheetProps } from '../../components/Acti
 import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 import { CreditDetails, IPackageConfig } from '../../types/config';
 import { formatNumber } from '../../utils/Helper';
+import Spinner from 'react-native-loading-spinner-overlay';
 import { checkFreeTrialStatus, deleteAccount, getCreditDetails } from '../../services/api';
 import { OPENAI_KEY_HELP, OPENROUTER_KEY_HELP, subscriptionName } from '../../utils/Constants';
 
@@ -86,6 +87,8 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const [selectedProvider, setSelectedProvider] = useState<string>(appConf?.defaultProvider || 'LensQuery');
   const [openRouterKeyInfo, setOpenRouterKeyInfo] = useState<TGetKeyLimitResponse | null>(null);
   const [selectedDefaultModel, setSelectedDefaultModel] = useState<TGetModelPropertiesResponse | null>(null);
+  const [isLoadingOfferings, setIsLoadingOfferings] = useState<boolean>(false);
+  const [isLoadingCredits, setIsLoadingCredits] = useState<boolean>(false);
 
   const handleLogout = () => {
     auth()
@@ -102,20 +105,19 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
   const getOfferings = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setIsLoadingOfferings(true);
       const offerings = await Purchases.getOfferings();
-      console.log(offerings.all['credit_offerings'])
       if (offerings.current !== null) {
         setOfferingsMetadata(offerings.all['credit_offerings'].metadata as IPackageConfig);
         console.log(offerings.all['credit_offerings'].metadata as IPackageConfig)
         // setOfferingsMetadata(offerings.current.metadata as { [key: string]: ISubscriptionConfig });
       }
-      setIsLoading(false);
+      setIsLoadingOfferings(false);
     } catch (e) {
       console.log(e);
-      setIsLoading(false);
+      setIsLoadingOfferings(false);
     } finally {
-      setIsLoading(false);
+      setIsLoadingOfferings(false);
     }
   }, []);
 
@@ -502,6 +504,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
+      setIsLoadingCredits(true);
       getCreditDetails().then((res) => {
         const { status, data } = res;
         if (status === 200) {
@@ -510,6 +513,8 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         }
       }).catch((err) => {
         console.debug('~ err', err)
+      }).finally(() => {
+        setIsLoadingCredits(false);
       });
     });
 
@@ -651,18 +656,24 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             </Pressable>
           </View>}
         <View style={styles.keyInfo}>
-          {(isLogin && creditDetails && offeringsMetadata) ? <><View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-            <Text>{Strings.setting.balanceHelper}</Text>
-            <Text style={[Typography.title, { fontWeight: '800' }]}> {formatCredit(creditDetails?.credit_amount ?? 0)} </Text>
-            <Text>{Strings.setting.creditRemaining}</Text>
-          </View>
-            <Text style={[Typography.description]}>{Strings.paywall.thisMeanYouHave}</Text>
-            <BenefitInfo amount={creditDetails?.credit_amount / offeringsMetadata.cost.snap_free_text} description={Strings.paywall.freeTextSnap} />
-            <BenefitInfo amount={creditDetails?.credit_amount / offeringsMetadata.cost.snap_equation_text} description={Strings.paywall.equationTextSnap} />
-            <BenefitInfo amount={creditDetails?.credit_amount * offeringsMetadata.cost['gpt-3.5']} description={Strings.paywall.gpt35Token} />
-            <BenefitInfo amount={creditDetails?.credit_amount * offeringsMetadata.cost['gpt-4']} description={Strings.paywall.gpt4Token} />
-            <BenefitInfo amount={creditDetails?.credit_amount * offeringsMetadata.cost['llama-13b']} description={Strings.paywall.llamaToken} />
-          </> : <Text>{Strings.common.loginRequired}</Text>}
+          <Spinner
+            visible={isLoading || isLoadingOfferings || isLoadingCredits}
+            textContent={Strings.common.loading}
+            textStyle={{ color: Colors.white }}
+          />
+          {isLogin ?
+            creditDetails && offeringsMetadata && <><View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+              <Text>{Strings.setting.balanceHelper}</Text>
+              <Text style={[Typography.title, { fontWeight: '800' }]}> {formatCredit(creditDetails?.credit_amount ?? 0)} </Text>
+              <Text>{Strings.setting.creditRemaining}</Text>
+            </View>
+              <Text style={[Typography.description]}>{Strings.paywall.thisMeanYouHave}</Text>
+              <BenefitInfo amount={creditDetails?.credit_amount / offeringsMetadata.cost.snap_free_text} description={Strings.paywall.freeTextSnap} />
+              <BenefitInfo amount={creditDetails?.credit_amount / offeringsMetadata.cost.snap_equation_text} description={Strings.paywall.equationTextSnap} />
+              <BenefitInfo amount={creditDetails?.credit_amount * offeringsMetadata.cost['gpt-3.5']} description={Strings.paywall.gpt35Token} />
+              <BenefitInfo amount={creditDetails?.credit_amount * offeringsMetadata.cost['gpt-4']} description={Strings.paywall.gpt4Token} />
+              <BenefitInfo amount={creditDetails?.credit_amount * offeringsMetadata.cost['llama-13b']} description={Strings.paywall.llamaToken} />
+            </> : <Text>{Strings.common.loginRequired}</Text>}
           <Pressable
             style={(pressed) => [styles.addCreditBtn, getPressableStyle(pressed)]}
             onPress={() => isLogin ? navigation.navigate('Packages', { from: 'settings' }) : navigation.navigate('Login')}
