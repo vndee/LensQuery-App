@@ -35,19 +35,19 @@ const MainApplication = (): JSX.Element => {
     if (user) {
       dispatch(setLogin(true));
       dispatch(setUserToken(user?.uid));
-      const { customerInfo, created } = await Purchases.logIn(user?.uid);
-      console.log('customerInfo', customerInfo?.entitlements, created)
-      if (!isEmpty(customerInfo?.entitlements?.active)) {
-        const entitlements = Object.values(customerInfo?.entitlements?.active)[0];
-        const { isActive, identifier, expirationDateMillis } = entitlements;
+      // const { customerInfo, created } = await Purchases.logIn(user?.uid);
+      // console.log('customerInfo', customerInfo?.entitlements, created)
+      // if (!isEmpty(customerInfo?.entitlements?.active)) {
+      //   const entitlements = Object.values(customerInfo?.entitlements?.active)[0];
+      //   const { isActive, identifier, expirationDateMillis } = entitlements;
 
-        if (isActive) {
-          dispatch(setSubscriptionPlan(identifier));
-          // dispatch(setSubscriptionExpire(unixToDate(expirationDateMillis)));
-        } else {
-          dispatch(setSubscriptionPlan(''));
-        }
-      }
+      //   if (isActive) {
+      //     dispatch(setSubscriptionPlan(identifier));
+      //     // dispatch(setSubscriptionExpire(unixToDate(expirationDateMillis)));
+      //   } else {
+      //     dispatch(setSubscriptionPlan(''));
+      //   }
+      // }
     } else {
       dispatch(setLogin(false));
       clearStorageAuthCreds();

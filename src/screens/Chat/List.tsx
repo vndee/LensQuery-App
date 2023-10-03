@@ -224,7 +224,25 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
       </View>
 
       <View style={styles.fab}>
-        <Pressable style={({ pressed }) => [styles.fabBtn01, { opacity: pressed ? 0.4 : 1 }]} onPress={() => navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: undefined, type: 'FREE_TEXT' })} hitSlop={20}>
+        <Pressable
+          style={({ pressed }) => [styles.fabBtn01, { opacity: pressed ? 0.4 : 1 }]}
+          onPress={() => {
+            if (!isLogin) {
+              Alert.alert(
+                Strings.common.alertTitle,
+                Strings.common.loginRequired,
+                [
+                  { text: Strings.common.cancel, onPress: () => { }, style: 'cancel' },
+                  { text: Strings.common.ok, onPress: () => navigation.navigate('Login'), style: 'destructive' }
+                ]
+              )
+              return;
+            } else {
+              navigation.navigate('ChatBox', { chatBoxId: undefined, imageUri: undefined, type: 'FREE_TEXT' })
+            }
+          }}
+          hitSlop={20}
+        >
           <MaterialCommunityIcons name='chat-plus-outline' size={18} color={Colors.white} />
         </Pressable>
 
@@ -241,12 +259,8 @@ const ChatList = ({ navigation, route }: StackScreenProps<Routes, 'ChatList'>) =
                 ]
               )
               return;
-            }
-
-            if (isLogin) {
-              navigation.navigate('Lens');
             } else {
-              navigation.navigate('Login');
+              navigation.navigate('Lens');
             }
           }}
           style={({ pressed }) => [styles.fabBtn02, { opacity: pressed ? 0.4 : 1 }]}
