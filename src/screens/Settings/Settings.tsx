@@ -81,29 +81,9 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
   const appConf = useObject<IAppConfig>('AppConfig', userToken);
   const [email, setEmail] = useState<string>('');
   const [creditDetails, setCreditDetails] = useState<CreditDetails | null>(null);
-  const [selectedProvider, setSelectedProvider] = useState<string>(appConf?.defaultProvider || 'OpenAI');
+  const [selectedProvider, setSelectedProvider] = useState<string>(appConf?.defaultProvider || 'LensQuery');
   const [openRouterKeyInfo, setOpenRouterKeyInfo] = useState<TGetKeyLimitResponse | null>(null);
   const [selectedDefaultModel, setSelectedDefaultModel] = useState<TGetModelPropertiesResponse | null>(null);
-
-  const [isFreeTrialActive, setIsFreeTrialActive] = useState<boolean>(false);
-  const [subscriptionExpireTime, setSubscriptionExpireTime] = useState<string>('');
-
-  const handleCheckFreeTrial = async () => {
-    const { status, exp } = await checkFreeTrialStatus(userToken);
-    // console.log('Free trial status', status, exp)
-    if (status === 200) {
-      setIsFreeTrialActive(true);
-      setSubscriptionExpireTime(unixToDate(exp * 1000));
-    }
-  };
-
-  useEffect(() => {
-    if (isEmpty(email)) return;
-
-    if (isEmpty(subscriptionPlan)) {
-      handleCheckFreeTrial();
-    }
-  }, [subscriptionPlan, email]);
 
   const handleLogout = () => {
     auth()
@@ -126,6 +106,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         setKey(appConf?.openRouter?.apiKey || '');
       }
     }
+    console.log('AppConf:', appConf)
   }, [appConf]);
 
   useEffect(() => {
@@ -138,13 +119,20 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         } catch (error) {
           setSelectedDefaultModel(defaultOpenAIModel);
         }
-      } else {
+      } else if (selectedProvider === 'OpenRouter') {
         setKey(appConf?.openRouter?.apiKey || '');
         try {
           const defaultModel = JSON.parse(appConf?.openRouter.defaultModel) as TGetModelPropertiesResponse;
           setSelectedDefaultModel(defaultModel);
         } catch (error) {
           setSelectedDefaultModel(defaultOpenRouterModel);
+        }
+      } else if (selectedProvider === 'LensQuery') {
+        try {
+          const defaultModel = JSON.parse(appConf?.openRouter.defaultModel) as TGetModelPropertiesResponse;
+          setSelectedDefaultModel(defaultModel);
+        } catch (error) {
+          setSelectedDefaultModel(defaultLensQueryModel);
         }
       }
     }
@@ -172,6 +160,10 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             defaultModel: JSON.stringify(defaultOpenAIModel)
           },
           openRouter: {
+            apiKey: '',
+            defaultModel: ''
+          },
+          lensQuery: {
             apiKey: '',
             defaultModel: ''
           }
@@ -209,6 +201,10 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             apiKey: key,
             defaultModel: JSON.stringify(defaultOpenRouterModel)
           },
+          lensQuery: {
+            apiKey: '',
+            defaultModel: ''
+          }
         }
         realm.create('AppConfig', newRecord);
       } else {
@@ -235,10 +231,17 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             apiKey: '',
             defaultModel: ''
           },
+          lensQuery: {
+            apiKey: '',
+            defaultModel: JSON.stringify(defaultLensQueryModel)
+          }
         }
         realm.create('AppConfig', newRecord);
       } else {
         appConf.defaultProvider = 'LensQuery';
+        if (appConf.lensQuery) {
+          appConf.lensQuery.defaultModel = JSON.stringify(selectedDefaultModel);
+        }
       }
     });
   }
@@ -426,9 +429,38 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         } finally {
 
         }
+      } else if (appConf.defaultProvider === 'LensQuery') {
+        try {
+          const defaultModel = JSON.parse(appConf?.lensQuery.defaultModel) as TGetModelPropertiesResponse;
+          setSelectedDefaultModel(defaultModel);
+        } catch (error) {
+          console.debug('~ something went wrong when parsing default model')
+        } finally {
+
+        }
       }
     } else {
-      setSelectedProvider('OpenAI');
+      setSelectedProvider('LensQuery');
+      setSelectedDefaultModel(defaultLensQueryModel);
+      realm.write(() => {
+        const newRecord: IAppConfig = {
+          userToken: userToken,
+          defaultProvider: 'LensQuery',
+          openAI: {
+            apiKey: '',
+            defaultModel: ''
+          },
+          openRouter: {
+            apiKey: '',
+            defaultModel: ''
+          },
+          lensQuery: {
+            apiKey: '',
+            defaultModel: JSON.stringify(defaultLensQueryModel)
+          }
+        }
+        realm.create('AppConfig', newRecord);
+      })
     }
   }
 
@@ -453,7 +485,6 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
         // console.log('Subscription details', data)
         if (status === 200) {
           setCreditDetails(data);
-          setSubscriptionExpireTime(unixToDate(data?.expired_timestamp_ms));
           console.log('Credit details', data)
         }
       }).catch((err) => {
@@ -541,7 +572,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
               onPress={() => navigation.navigate('ModelSelection', {
                 provider: appConf?.defaultProvider,
                 callback: (model: TGetModelPropertiesResponse) => setSelectedDefaultModel(model),
-                key: appConf?.defaultProvider === 'OpenAI' ? appConf?.openAI?.apiKey : appConf?.openRouter?.apiKey
+                key: appConf?.defaultProvider === 'OpenAI' ? appConf?.openAI?.apiKey : appConf?.defaultProvider === 'OpenRouter' ? appConf?.openRouter?.apiKey : null
               })}
               style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
             >
@@ -562,7 +593,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
               style={(pressed) => [styles.addCreditBtn, getPressableStyle(pressed)]}
               onPress={() => Linking.openURL('https://openrouter.ai/account')}
             >
-              <Text style={[styles.btnLabel, { color: Colors.text_color }]}>{Strings.setting.addCreditBtn}</Text>
+              <Text style={[styles.btnLabel, { color: Colors.white }]}>{Strings.setting.addCreditBtn}</Text>
             </Pressable>
           </View>
         )}
@@ -573,18 +604,41 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
 
   const renderLensQuery = () => {
     return (
-      <View style={styles.keyInfo}>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-          <Text>{Strings.setting.balanceHelper}</Text>
-          <Text style={[Typography.title, { fontWeight: '800' }]}> 5 </Text>
-          <Text>{Strings.setting.creditRemaining}</Text>
+      <View style={{ gap: Spacing.L }}>
+        {selectedDefaultModel?.id &&
+          <View style={styles.row}>
+            <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.defaultModel}</Text>
+            <Pressable
+              onPress={() => navigation.navigate('ModelSelection', {
+                provider: appConf?.defaultProvider,
+                callback: (model: TGetModelPropertiesResponse) => {
+                  setSelectedDefaultModel(model);
+                  realm.write(() => {
+                    if (appConf?.lensQuery) {
+                      appConf.lensQuery.defaultModel = JSON.stringify(model)
+                    }
+                  })
+                },
+                key: appConf?.defaultProvider === 'OpenAI' ? appConf?.openAI?.apiKey : appConf?.defaultProvider === 'OpenRouter' ? appConf?.openRouter?.apiKey : null
+              })}
+              style={(pressed) => [styles.providerBtn, getPressableStyle(pressed)]}
+            >
+              <Text style={[Typography.description]}>{selectedDefaultModel.id}</Text>
+            </Pressable>
+          </View>}
+        <View style={styles.keyInfo}>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+            <Text>{Strings.setting.balanceHelper}</Text>
+            <Text style={[Typography.title, { fontWeight: '800' }]}> 5 </Text>
+            <Text>{Strings.setting.creditRemaining}</Text>
+          </View>
+          <Pressable
+            style={(pressed) => [styles.addCreditBtn, getPressableStyle(pressed)]}
+            onPress={() => navigation.navigate('Packages')}
+          >
+            <Text style={[styles.btnLabel, { color: Colors.off_white }]}>{Strings.setting.addCreditBtn}</Text>
+          </Pressable>
         </View>
-        <Pressable
-          style={(pressed) => [styles.addCreditBtn, getPressableStyle(pressed)]}
-          onPress={() => navigation.navigate('Packages')}
-        >
-          <Text style={[styles.btnLabel, { color: Colors.off_white }]}>{Strings.setting.addCreditBtn}</Text>
-        </Pressable>
       </View>
     )
   }

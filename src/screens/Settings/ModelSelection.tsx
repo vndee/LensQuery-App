@@ -13,6 +13,9 @@ import { Typography, Layout, Colors, Spacing } from '../../styles';
 import { TGetModelPropertiesResponse } from '../../types/openrouter';
 import { getOpenRouterModelProperties } from '../../services/openrouter';
 import { TextInput } from 'react-native-gesture-handler';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { getLensQueryModelProperties } from '../../services/api';
+import BottomActionSheet, { ActionItemProps, ActionSheetRef } from '../../components/ActionSheet/BottomSheet';
 
 const ModelSelection = ({ navigation, route }: StackScreenProps<Routes, 'ModelSelection'>) => {
   const { provider, callback, key } = route.params;
@@ -21,10 +24,86 @@ const ModelSelection = ({ navigation, route }: StackScreenProps<Routes, 'ModelSe
   const [originalData, setOriginalData] = useState<Array<TGetModelPropertiesResponse> | null>([]);
   const [openRouterModelProperties, setOpenRouterModelProperties] = useState<Array<TGetModelPropertiesResponse> | null>([]);
 
+  const actionSheetRef = React.useRef<ActionSheetRef>(null);
+  const actionFilters: Array<ActionItemProps> = [
+    {
+      label: Strings.modelSelection.sortByName,
+      color: Colors.text_color,
+      onPress: () => {
+        if (openRouterModelProperties) {
+          const sortedData = [...openRouterModelProperties].sort((a, b) => a.id.localeCompare(b.id));
+          setOpenRouterModelProperties(sortedData);
+        }
+        actionSheetRef.current?.hide();
+      },
+    },
+    {
+      label: Strings.modelSelection.sortByLowerCompletionCost,
+      color: Colors.text_color,
+      onPress: () => {
+        if (openRouterModelProperties) {
+          const sortedData = [...openRouterModelProperties].sort((a, b) => a.pricing.completion - b.pricing.completion);
+          setOpenRouterModelProperties(sortedData);
+        }
+        actionSheetRef.current?.hide();
+      },
+    },
+    {
+      label: Strings.modelSelection.sortByHigherCompletionCost,
+      color: Colors.text_color,
+      onPress: () => {
+        if (openRouterModelProperties) {
+          const sortedData = [...openRouterModelProperties].sort((a, b) => b.pricing.completion - a.pricing.completion);
+          setOpenRouterModelProperties(sortedData);
+        }
+        actionSheetRef.current?.hide();
+      },
+    },
+    {
+      label: Strings.modelSelection.sortByLowerPromptCost,
+      color: Colors.text_color,
+      onPress: () => {
+        if (openRouterModelProperties) {
+          const sortedData = [...openRouterModelProperties].sort((a, b) => a.pricing.prompt - b.pricing.prompt);
+          setOpenRouterModelProperties(sortedData);
+        }
+        actionSheetRef.current?.hide();
+      },
+    },
+    {
+      label: Strings.modelSelection.sortByHigherPromptCost,
+      color: Colors.text_color,
+      onPress: () => {
+        if (openRouterModelProperties) {
+          const sortedData = [...openRouterModelProperties].sort((a, b) => b.pricing.prompt - a.pricing.prompt);
+          setOpenRouterModelProperties(sortedData);
+        }
+        actionSheetRef.current?.hide();
+      },
+    }
+  ];
+
   const handleGetOpenRouterModelProperties = async () => {
     try {
       setIsLoading(true);
       const { status, data } = await getOpenRouterModelProperties();
+      if (status === 200) {
+        setOpenRouterModelProperties(data);
+        setOriginalData(data);
+      } else {
+        console.log('error:', status, data);
+      }
+    } catch (error) {
+      console.debug('[error]:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLensQueryModelProperties = async () => {
+    try {
+      setIsLoading(true);
+      const { status, data } = await getLensQueryModelProperties();
       if (status === 200) {
         setOpenRouterModelProperties(data);
         setOriginalData(data);
@@ -64,7 +143,11 @@ const ModelSelection = ({ navigation, route }: StackScreenProps<Routes, 'ModelSe
   };
 
   useEffect(() => {
-    handleGetOpenRouterModelProperties();
+    if (provider === 'OpenRouter') {
+      handleGetOpenRouterModelProperties();
+    } else if (provider === 'LensQuery') {
+      handleLensQueryModelProperties();
+    }
   }, []);
 
   return (
@@ -87,7 +170,13 @@ const ModelSelection = ({ navigation, route }: StackScreenProps<Routes, 'ModelSe
           onChangeText={handleOnSearchFilter}
           style={{ flex: 1, marginLeft: Spacing.S }}
         />
+        <Feather name="sliders" size={20} color={Colors.second_text_color} onPress={() => actionSheetRef.current?.show()} />
       </View>
+      <Spinner
+        visible={isLoading}
+        textContent={Strings.common.loading}
+        textStyle={{ color: Colors.white }}
+      />
       {openRouterModelProperties && openRouterModelProperties?.length > 0 && (
         <View style={styles.container}>
           <FlashList
@@ -100,6 +189,11 @@ const ModelSelection = ({ navigation, route }: StackScreenProps<Routes, 'ModelSe
           />
         </View>
       )}
+
+      <BottomActionSheet
+        actionRef={actionSheetRef}
+        actions={actionFilters}
+      />
     </View>
   );
 };

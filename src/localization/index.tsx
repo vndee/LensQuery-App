@@ -10,6 +10,7 @@ export default new LocalizedStrings({
       yes: 'Yes',
       no: 'No',
       save: 'Save',
+      loading: 'Loading...',
       delete: 'Delete',
       logout: 'Logout',
       login: 'Login',
@@ -228,6 +229,11 @@ export default new LocalizedStrings({
       promptCost: "Prompt cost",
       completionCost: "Completion cost",
       contextLength: "Context length",
+      sortByName: "Sort by name",
+      sortByLowerCompletionCost: "Sort by lower completion cost",
+      sortByHigherCompletionCost: "Sort by higher completion cost",
+      sortByLowerPromptCost: "Sort by lower prompt cost",
+      sortByHigherPromptCost: "Sort by higher prompt cost",
     },
 
     // Paywall
@@ -260,6 +266,7 @@ export default new LocalizedStrings({
       yes: 'Có',
       no: 'Không',
       save: 'Lưu',
+      loading: 'Đang tải...',
       delete: 'Xóa',
       logout: 'Đăng xuất',
       login: 'Đăng nhập',
@@ -479,6 +486,11 @@ export default new LocalizedStrings({
       promptCost: "Prompt cost",
       completionCost: "Completion cost",
       contextLength: "Context length",
+      sortByName: "Sắp xếp theo tên",
+      sortByLowerCompletionCost: "Sắp xếp theo completion cost thấp",
+      sortByHigherCompletionCost: "Sắp xếp theo completion cost cao",
+      sortByLowerPromptCost: "Sắp xếp theo prompt cost thấp",
+      sortByHigherPromptCost: "Sắp xếp theo prompt cost cao",
     },
 
     // Paywall

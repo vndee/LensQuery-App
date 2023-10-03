@@ -30,7 +30,7 @@ export type Routes = {
   ModelSelection: {
     provider: string | undefined;
     callback: (item: TGetModelPropertiesResponse) => void;
-    key: string | undefined;
+    key: string | null;
   };
   Paywall: undefined;
   Packages: undefined;

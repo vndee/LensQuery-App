@@ -1,8 +1,8 @@
-import Realm from "realm";
-import { IAppConfig } from "../types/chat";
-import { createRealmContext } from "@realm/react";
-import { IChatBox, IMessage, IProvider } from "../types/chat";
-import { TGetModelPropertiesResponse } from "../types/openrouter";
+import Realm from 'realm';
+import {IAppConfig} from '../types/chat';
+import {createRealmContext} from '@realm/react';
+import {IChatBox, IMessage, IProvider} from '../types/chat';
+import {TGetModelPropertiesResponse} from '../types/openrouter';
 
 // Models
 class Provider extends Realm.Object<IProvider> {
@@ -10,31 +10,33 @@ class Provider extends Realm.Object<IProvider> {
   apiKey!: string;
 
   static schema: Realm.ObjectSchema = {
-    name: "Provider",
+    name: 'Provider',
     embedded: true,
     properties: {
-      defaultModel: "string",
-      apiKey: "string",
+      defaultModel: 'string',
+      apiKey: 'string',
     },
   };
-};
+}
 
 class AppConfig extends Realm.Object<IAppConfig> {
   userToken!: string;
   openAI!: Provider;
   openRouter!: Provider;
+  lensQuery!: Provider;
   defaultProvider!: string;
 
   static schema: Realm.ObjectSchema = {
-    name: "AppConfig",
-    primaryKey: "userToken",
+    name: 'AppConfig',
+    primaryKey: 'userToken',
     properties: {
-      userToken: "string",
-      defaultProvider: "string",
-      openAI: "Provider",
-      openRouter: "Provider",
-    }
-  }
+      userToken: 'string',
+      defaultProvider: 'string',
+      openAI: 'Provider',
+      openRouter: 'Provider',
+      lensQuery: 'Provider',
+    },
+  };
 }
 
 class ChatBox extends Realm.Object<IChatBox> {
@@ -49,21 +51,21 @@ class ChatBox extends Realm.Object<IChatBox> {
   userToken!: string; // specific user token
 
   static schema: Realm.ObjectSchema = {
-    name: "ChatBox",
-    primaryKey: "id",
+    name: 'ChatBox',
+    primaryKey: 'id',
     properties: {
-      id: "string",
-      name: "string",
-      engineId: "string",
-      collectionId: "string",
-      lastMessage: "string",
-      lastMessageAt: "int",
-      createAt: "int",
-      updateAt: "int",
-      userToken: "string",
+      id: 'string',
+      name: 'string',
+      engineId: 'string',
+      collectionId: 'string',
+      lastMessage: 'string',
+      lastMessageAt: 'int',
+      createAt: 'int',
+      updateAt: 'int',
+      userToken: 'string',
     },
   };
-};
+}
 
 class Message extends Realm.Object<IMessage> {
   id!: string;
@@ -78,22 +80,22 @@ class Message extends Realm.Object<IMessage> {
   provider!: string;
 
   static schema: Realm.ObjectSchema = {
-    name: "Message",
-    primaryKey: "id",
+    name: 'Message',
+    primaryKey: 'id',
     properties: {
-      id: "string",
-      collectionId: "string",
-      type: "string",
-      content: "string",
-      isInterupted: "bool",
-      engineId: "string",
-      createAt: "int",
-      updateAt: "int",
-      userToken: "string",
-      provider: "string",
+      id: 'string',
+      collectionId: 'string',
+      type: 'string',
+      content: 'string',
+      isInterupted: 'bool',
+      engineId: 'string',
+      createAt: 'int',
+      updateAt: 'int',
+      userToken: 'string',
+      provider: 'string',
     },
   };
-};
+}
 
 class MessageCollection extends Realm.Object<MessageCollection> {
   id!: string;
@@ -104,25 +106,26 @@ class MessageCollection extends Realm.Object<MessageCollection> {
   userToken!: string; // specific user token
 
   static schema: Realm.ObjectSchema = {
-    name: "MessageCollection",
-    primaryKey: "id",
+    name: 'MessageCollection',
+    primaryKey: 'id',
     properties: {
-      id: "string",
-      chatBox: "ChatBox",
-      messages: "Message[]",
-      createAt: "int",
-      updateAt: "int",
-      userToken: "string",
+      id: 'string',
+      chatBox: 'ChatBox',
+      messages: 'Message[]',
+      createAt: 'int',
+      updateAt: 'int',
+      userToken: 'string',
     },
   };
-};
+}
 
 const realmConfig = {
-  path: "lensquery.realm",
+  path: 'lensquery.realm',
   schema: [Provider, AppConfig, ChatBox, Message, MessageCollection],
-  schemaVersion: 18,
+  schemaVersion: 19,
   encryptionKey: new Int8Array(64),
-  // deleteRealmIfMigrationNeeded: true,
+  deleteRealmIfMigrationNeeded: true,
 };
 
-export const { RealmProvider, useRealm, useObject, useQuery } = createRealmContext(realmConfig);
+export const {RealmProvider, useRealm, useObject, useQuery} =
+  createRealmContext(realmConfig);

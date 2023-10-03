@@ -8,7 +8,7 @@ export type IChatEngine = {
 export type IProvider = {
   defaultModel: string;
   apiKey: string;
-}
+};
 
 export type IChatBox = {
   id: string;
@@ -20,7 +20,7 @@ export type IChatBox = {
   createAt: number; // unix timestamp
   updateAt: number; // unix timestamp
   userToken: string; // specific user token
-}
+};
 
 export type IMessage = {
   id: string;
@@ -33,7 +33,7 @@ export type IMessage = {
   updateAt: number; // unix timestamp
   userToken: string; // specific user token
   provider: string;
-}
+};
 
 export type IMessageCollection = {
   id: string;
@@ -43,11 +43,12 @@ export type IMessageCollection = {
   createAt: number; // unix timestamp
   updateAt: number; // unix timestamp
   userToken: string; // specific user token
-}
+};
 
 export type IAppConfig = {
   userToken: string;
   openAI: IProvider;
   openRouter: IProvider;
+  lensQuery: IProvider;
   defaultProvider: string;
-}
+};
