@@ -210,7 +210,7 @@ const ChatBox = ({ navigation, route }: StackScreenProps<Routes, 'ChatBox'>) => 
         const token = await firebaseAuth.currentUser?.getIdToken();
         AUTHORIZATION_HEADER = `${token}`;
       }
-      console.log('AUTHORIZATION_HEADER', AUTHORIZATION_HEADER);
+      // console.log('AUTHORIZATION_HEADER', AUTHORIZATION_HEADER);
       es = new EventSource(`${HOST}/chat/completions`, {
         method: 'POST',
         headers: {
