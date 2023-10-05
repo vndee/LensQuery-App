@@ -715,7 +715,7 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             />
           </KeyboardAvoidingView>}
 
-          <View style={styles.row}>
+          {/* <View style={styles.row}>
             <Text style={[Typography.body, { fontWeight: '500' }]}>{Strings.setting.providerLabel}</Text>
             <Pressable
               hitSlop={20}
@@ -732,9 +732,9 @@ const Settings = ({ navigation }: StackScreenProps<Routes, 'Settings'>) => {
             >
               <Ionicons name="settings-outline" size={20} color={Colors.primary} />
             </Pressable>
-          </View>
+          </View> */}
 
-          <View style={{ height: Spacing.M }} />
+          {/* <View style={{ height: Spacing.M }} /> */}
 
           {selectedProvider === 'OpenAI' ? renderOpenAIKeySetup() : selectedProvider === 'OpenRouter' ? renderOpenRouterKeySetup() : renderLensQuery()}
 
