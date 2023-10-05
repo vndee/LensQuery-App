@@ -35,6 +35,7 @@ const MainApplication = (): JSX.Element => {
     if (user) {
       dispatch(setLogin(true));
       dispatch(setUserToken(user?.uid));
+      setUpRevenueCat(user?.uid);
       // const { customerInfo, created } = await Purchases.logIn(user?.uid);
       // console.log('customerInfo', customerInfo?.entitlements, created)
       // if (!isEmpty(customerInfo?.entitlements?.active)) {
@@ -54,13 +55,13 @@ const MainApplication = (): JSX.Element => {
     }
   };
 
-  const setUpRevenueCat = async () => {
+  const setUpRevenueCat = async (user_id: string) => {
     Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
 
     if (Platform.OS === 'ios') {
-      Purchases.configure({ apiKey: REVENUECAT_API_KEY_IOS });
+      Purchases.configure({ apiKey: REVENUECAT_API_KEY_IOS, appUserID: user_id });
     } else if (Platform.OS === 'android') {
-      Purchases.configure({ apiKey: REVENUECAT_API_KEY_ANDROID });
+      Purchases.configure({ apiKey: REVENUECAT_API_KEY_ANDROID, appUserID: user_id });
     }
 
     // Purchases.addCustomerInfoUpdateListener(async (purchaserInfo) => {
@@ -81,7 +82,6 @@ const MainApplication = (): JSX.Element => {
   };
 
   useEffect(() => {
-    setUpRevenueCat();
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
   }, []);
